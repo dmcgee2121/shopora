@@ -1,0 +1,14 @@
+[build]
+command = "npm run build"
+publish = "dist"
+functions = "netlify/functions"
+
+[build.environment]
+# Supabase project URLs are public configuration and are embedded in the client bundle
+# via VITE_SUPABASE_URL. Keep the scanner from flagging that known-public value.
+SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200

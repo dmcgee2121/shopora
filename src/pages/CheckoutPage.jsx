@@ -42,6 +42,7 @@ export default function CheckoutPage() {
   const shipping = subtotal > 75 ? 0 : 7.95;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
+  const isStripeCheckout = authSource === 'supabase';
 
   useEffect(() => {
     if (!currentUser) {
@@ -119,7 +120,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async () => {
     if (!items.length) {
       setError(
-        authSource === 'supabase'
+        isStripeCheckout
           ? 'Your cart is empty. Add items before placing an order.'
           : 'Your cart is empty. Add items before placing a demo order.',
       );
@@ -129,8 +130,8 @@ export default function CheckoutPage() {
     const nextErrors = validateCheckout();
     if (Object.keys(nextErrors).length) {
       setError(
-        authSource === 'supabase'
-          ? 'Please fix the highlighted fields before placing your order.'
+        isStripeCheckout
+          ? 'Please fix the highlighted fields before continuing to secure payment.'
           : 'Please fix the highlighted fields before placing your demo order.',
       );
       setFieldErrors(nextErrors);
@@ -169,15 +170,15 @@ export default function CheckoutPage() {
         shipping,
         tax,
         total,
-        status: authSource === 'supabase' ? 'Processing' : 'Pending',
-        paymentStatus: authSource === 'supabase' ? 'Pending' : 'Demo Paid',
-        paymentProvider: authSource === 'supabase' ? 'Stripe' : 'Demo',
+        status: isStripeCheckout ? 'Processing' : 'Pending',
+        paymentStatus: isStripeCheckout ? 'Pending' : 'Demo Paid',
+        paymentProvider: isStripeCheckout ? 'Stripe' : 'Demo',
         currency: 'USD',
       });
 
       setPlacedOrderId(order.id);
 
-      if (authSource === 'supabase') {
+      if (isStripeCheckout) {
         try {
           const session = await createStripeCheckoutSession(order.id);
           clearCart();
@@ -187,10 +188,9 @@ export default function CheckoutPage() {
           window.location.assign(session.url);
           return;
         } catch (stripeError) {
-          const stripeMessage =
-            stripeError instanceof Error ? stripeError.message : 'Stripe Checkout is unavailable right now.';
+          console.warn('Stripe Checkout start failed', stripeError);
           setError(
-            `Your order was saved, but Stripe Checkout could not start. ${stripeMessage}`,
+            'Your order was saved, but secure payment could not start right now. Please try again in a few minutes.',
           );
           return;
         }
@@ -202,7 +202,8 @@ export default function CheckoutPage() {
       setError('');
       navigate(`/order-confirmation/${order.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to place your order right now.');
+      console.warn('Order placement failed', err);
+      setError('We could not place your order right now. Please check your information and try again.');
     }
   };
 
@@ -214,13 +215,13 @@ export default function CheckoutPage() {
           <div>
             <h1>Checkout</h1>
             <p>
-              {authSource === 'supabase'
-                ? 'Stripe Checkout test mode will open after your order is saved.'
-                : 'Demo mode only. No payment will be processed yet.'}
+              {isStripeCheckout
+                ? 'Review your order, then continue to Stripe to enter payment details securely.'
+                : 'Demo mode only. No payment will be processed.'}
             </p>
           </div>
         </div>
-        <span className="count-badge">{authSource === 'supabase' ? 'Stripe test mode' : 'Demo order'}</span>
+        <span className="count-badge">{isStripeCheckout ? 'Secure Stripe checkout' : 'Demo order'}</span>
       </div>
 
       {!isAuthenticated ? (
@@ -397,33 +398,18 @@ export default function CheckoutPage() {
           </div>
 
           <div className="form-card">
-            <h2>Payment placeholder</h2>
-            <label>
-              Card number
-              <input
-                name="cardNumber"
-                type="text"
-                placeholder="4242 4242 4242 4242"
-                value={form.cardNumber}
-                onChange={handleChange}
-              />
-            </label>
-            <div className="form-grid">
-              <label>
-                Expiration
-                <input
-                  name="expiration"
-                  type="text"
-                  placeholder="12/28"
-                  value={form.expiration}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                CVC
-                <input name="cvc" type="text" placeholder="123" value={form.cvc} onChange={handleChange} />
-              </label>
-            </div>
+            <h2>Payment</h2>
+            {isStripeCheckout ? (
+              <div className="checkout-secure-payment-note">
+                <strong>Secure payment</strong>
+                <p>Payment is securely processed by Stripe. You’ll enter your card details on the next screen.</p>
+              </div>
+            ) : (
+              <div className="checkout-secure-payment-note">
+                <strong>Demo payment</strong>
+                <p>This demo checkout will not charge a card or process a real payment.</p>
+              </div>
+            )}
           </div>
         </form>
 
@@ -460,8 +446,8 @@ export default function CheckoutPage() {
             <strong>${total.toFixed(2)}</strong>
           </div>
           <p className="checkout-demo-note">
-            {authSource === 'supabase'
-              ? 'Your order is saved first, then Stripe Checkout opens in test mode.'
+            {isStripeCheckout
+              ? 'You’ll review and enter payment details securely with Stripe before the order is completed.'
               : 'This is a frontend-only demo checkout flow. No payment will be processed.'}
           </p>
           <button
@@ -470,7 +456,7 @@ export default function CheckoutPage() {
             onClick={handlePlaceOrder}
             disabled={!items.length}
           >
-            {authSource === 'supabase' ? 'Continue to Stripe Checkout' : 'Place Demo Order'}
+            {isStripeCheckout ? 'Continue to Secure Payment' : 'Place Demo Order'}
           </button>
           {placedOrderId && error ? (
             <Link to={`/order-confirmation/${placedOrderId}`} className="btn btn-ghost full-width">

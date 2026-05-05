@@ -1,15 +1,15 @@
 const items = [
   {
-    title: 'Easy Returns',
-    text: 'Return in store or by mail within 30 days.',
-  },
-  {
     title: 'Secure Checkout',
-    text: 'Your information is safe with us.',
+    text: 'Checkout is powered by Stripe for a familiar, trusted payment flow.',
   },
   {
-    title: 'New Styles Weekly',
-    text: 'Fresh arrivals from your favorite brands.',
+    title: 'Order Tracking',
+    text: 'Track orders and receipts from your account after purchase.',
+  },
+  {
+    title: 'Simple Departments',
+    text: 'Browse clothing, accessories, shoes, and sale items in one place.',
   },
 ];
 

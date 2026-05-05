@@ -6,6 +6,14 @@ import ProductCard from './ProductCard';
 import SectionHeading from './SectionHeading';
 import { useProductCatalog } from '../context/ProductCatalogContext';
 
+const sortLabels = {
+  featured: 'Featured',
+  priceAsc: 'Price: Low to High',
+  priceDesc: 'Price: High to Low',
+  newest: 'Newest',
+  rating: 'Top Rated',
+};
+
 function sortProducts(list, sort) {
   const items = [...list];
 
@@ -23,8 +31,15 @@ function sortProducts(list, sort) {
   }
 }
 
+function getPriceLabel(price) {
+  if (price === 'under50') return 'Under $50';
+  if (price === '50to100') return '$50 to $100';
+  if (price === 'over100') return 'Over $100';
+  return '';
+}
+
 export default function CategoryPage({ title, description, department, saleOnly = false }) {
-  const { products } = useProductCatalog();
+  const { products, isCatalogLoading } = useProductCatalog();
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get('category') ?? '';
   const size = searchParams.get('size') ?? '';
@@ -59,7 +74,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
     }
 
     return list;
-  }, [category, department, price, q, saleFilter, saleOnly, size, sort]);
+  }, [department, products, q, saleFilter, saleOnly]);
 
   const availableCategories = useMemo(
     () => [...new Set(scopedProducts.map((product) => product.category))],
@@ -111,14 +126,31 @@ export default function CategoryPage({ title, description, department, saleOnly 
     setSearchParams(next);
   };
 
+  const resetFilters = () => setSearchParams(new URLSearchParams());
+  const activeFilterCount = [category, size, price, saleFilter && !saleOnly].filter(Boolean).length;
+  const browsingLabel = saleOnly
+    ? 'Sale collection'
+    : department
+      ? `${title} department`
+      : 'All departments';
+  const filterSummary = [
+    category ? `Category: ${category}` : '',
+    size ? `Size: ${size}` : '',
+    price ? `Price: ${getPriceLabel(price)}` : '',
+    saleFilter && !saleOnly ? 'Sale only' : '',
+    sort && sort !== 'featured' ? `Sort: ${sortLabels[sort] ?? sort}` : '',
+  ].filter(Boolean);
+  const isInitialCatalogLoading = isCatalogLoading && products.length === 0;
+  const countLabel = isInitialCatalogLoading ? 'Loading styles' : `${filteredProducts.length} products`;
+
   return (
     <section className="catalog-page">
       <div className="container">
         <CatalogStatusNote className="category-catalog-status" />
         <SectionHeading
           title={title}
-          description={description}
-          action={<span className="count-badge">{filteredProducts.length} products</span>}
+          description={`${description} You are browsing the ${browsingLabel.toLowerCase()}.`}
+          action={<span className="count-badge">{countLabel}</span>}
         />
 
         <div className="catalog-toolbar">
@@ -127,15 +159,36 @@ export default function CategoryPage({ title, description, department, saleOnly 
               Sort
               <select value={sort} onChange={(event) => updateSearchParams({ sort: event.target.value })}>
                 <option value="featured">Featured</option>
-                <option value="newest">Newest</option>
-                <option value="rating">Top rated</option>
                 <option value="priceAsc">Price: Low to High</option>
                 <option value="priceDesc">Price: High to Low</option>
+                <option value="newest">Newest</option>
+                <option value="rating">Top Rated</option>
               </select>
             </label>
           </div>
-          {q ? <div className="query-chip">Search: “{q}”</div> : null}
+          <div className="catalog-context">
+            <span className="query-chip">{browsingLabel}</span>
+            {q ? <span className="query-chip">Search: &quot;{q}&quot;</span> : null}
+            {activeFilterCount ? (
+              <span className="query-chip">
+                {activeFilterCount} filter{activeFilterCount === 1 ? '' : 's'} applied
+              </span>
+            ) : null}
+          </div>
         </div>
+
+        {filterSummary.length ? (
+          <div className="active-filter-row" aria-label="Active catalog filters">
+            {filterSummary.map((item) => (
+              <span key={item} className="query-chip">
+                {item}
+              </span>
+            ))}
+            <button type="button" className="text-button" onClick={resetFilters}>
+              Reset filters
+            </button>
+          </div>
+        ) : null}
 
         <div className="catalog-layout">
           <FilterSidebar
@@ -149,7 +202,12 @@ export default function CategoryPage({ title, description, department, saleOnly 
           />
 
           <div className="product-results">
-            {filteredProducts.length ? (
+            {isInitialCatalogLoading ? (
+              <div className="empty-state">
+                <h3>Loading styles.</h3>
+                <p>We are getting the latest catalog ready. Products will appear here shortly.</p>
+              </div>
+            ) : filteredProducts.length ? (
               <div className="product-grid">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
@@ -157,14 +215,10 @@ export default function CategoryPage({ title, description, department, saleOnly 
               </div>
             ) : (
               <div className="empty-state">
-                <h3>No products match these filters.</h3>
-                <p>Try clearing a filter or search term to see more styles.</p>
-                <button
-                  type="button"
-                  className="btn btn-dark"
-                  onClick={() => setSearchParams(new URLSearchParams())}
-                >
-                  Clear filters
+                <h3>No styles match those filters.</h3>
+                <p>Clear your filters or broaden the search to continue browsing the collection.</p>
+                <button type="button" className="btn btn-dark" onClick={resetFilters}>
+                  Reset filters
                 </button>
               </div>
             )}

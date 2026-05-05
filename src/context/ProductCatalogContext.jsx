@@ -8,6 +8,19 @@ import { normalizeProductFromSupabase, productToSupabasePayload } from '../utils
 const ProductCatalogContext = createContext(null);
 const CATALOG_KEY = 'shopora_product_catalog_v1';
 const CATALOG_READ_TIMEOUT_MS = 10000;
+const CATALOG_SOURCE = {
+  LOCAL: 'local',
+  SUPABASE: 'supabase',
+  FALLBACK: 'fallback',
+  EMPTY: 'empty',
+};
+const CATALOG_LOAD_STATE = {
+  LOADING: 'loading',
+  LOADED_SUPABASE: 'loaded-supabase',
+  LOADED_FALLBACK: 'loaded-fallback',
+  FALLBACK_AFTER_ERROR: 'fallback-after-error',
+  EMPTY: 'empty',
+};
 
 function normalizeProduct(product) {
   const safeProduct = product && typeof product === 'object' ? product : {};
@@ -57,6 +70,11 @@ function writeCatalog(products) {
   window.localStorage.setItem(CATALOG_KEY, JSON.stringify(products));
 }
 
+function warnCatalogFallback(reason, details = {}) {
+  if (!import.meta.env.DEV) return;
+  console.warn('ShopOra catalog fallback:', { reason, ...details });
+}
+
 function createProductId() {
   const stamp = Date.now().toString(36);
   const random = Math.random().toString(36).slice(2, 8);
@@ -104,9 +122,17 @@ function normalizeCatalogFromLocalStorage() {
   return readCatalog();
 }
 
+function getCatalogLoadState(catalogSource, isCatalogLoading, catalogError) {
+  if (isCatalogLoading) return CATALOG_LOAD_STATE.LOADING;
+  if (catalogSource === CATALOG_SOURCE.SUPABASE) return CATALOG_LOAD_STATE.LOADED_SUPABASE;
+  if (catalogSource === CATALOG_SOURCE.FALLBACK && catalogError) return CATALOG_LOAD_STATE.FALLBACK_AFTER_ERROR;
+  if (catalogSource === CATALOG_SOURCE.EMPTY) return CATALOG_LOAD_STATE.EMPTY;
+  return CATALOG_LOAD_STATE.LOADED_FALLBACK;
+}
+
 export function ProductCatalogProvider({ children }) {
   const [catalog, setCatalog] = useState(() => normalizeCatalogFromLocalStorage());
-  const [catalogSource, setCatalogSource] = useState('local');
+  const [catalogSource, setCatalogSource] = useState(CATALOG_SOURCE.LOCAL);
   const [isCatalogLoading, setIsCatalogLoading] = useState(Boolean(isSupabaseConfigured && supabase));
   const [catalogError, setCatalogError] = useState('');
   const [isCatalogSaving, setIsCatalogSaving] = useState(false);
@@ -121,8 +147,9 @@ export function ProductCatalogProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    if (catalogSource === CATALOG_SOURCE.EMPTY) return;
     writeCatalog(catalog);
-  }, [catalog]);
+  }, [catalog, catalogSource]);
 
   const clearCatalogMutationError = useCallback(() => {
     setCatalogMutationError('');
@@ -143,7 +170,7 @@ export function ProductCatalogProvider({ children }) {
   const loadLocalCatalog = useCallback(() => {
     const nextCatalog = normalizeCatalogFromLocalStorage();
     setCatalog(nextCatalog);
-    setCatalogSource('local');
+    setCatalogSource(nextCatalog.length ? CATALOG_SOURCE.LOCAL : CATALOG_SOURCE.EMPTY);
     setCatalogError('');
     setIsCatalogLoading(false);
     return nextCatalog;
@@ -172,15 +199,49 @@ export function ProductCatalogProvider({ children }) {
 
       if (productsError) throw productsError;
       if (imagesError) throw imagesError;
+      if (!Array.isArray(productsData)) {
+        throw new Error('The live catalog returned an unexpected product response.');
+      }
+      if (imagesData != null && !Array.isArray(imagesData)) {
+        throw new Error('The live catalog returned an unexpected image response.');
+      }
 
       const imagesByProductId = groupImagesByProductId(imagesData ?? []);
-      const nextCatalog = (productsData ?? []).map((row) =>
-        normalizeProductFromSupabase(row, imagesByProductId.get(normalizeId(row.id)) ?? []),
-      );
+      const nextCatalog = (productsData ?? [])
+        .map((row) => normalizeProductFromSupabase(row, imagesByProductId.get(normalizeId(row.id)) ?? []))
+        .filter(Boolean);
+
+      if (!nextCatalog.length) {
+        const fallbackCatalog = normalizeCatalogFromLocalStorage();
+
+        if (fallbackCatalog.length) {
+          warnCatalogFallback('live-catalog-empty', {
+            fallbackCount: fallbackCatalog.length,
+          });
+
+          if (mountedRef.current) {
+            setCatalog(fallbackCatalog);
+            setCatalogSource(CATALOG_SOURCE.FALLBACK);
+            setCatalogError('');
+            setIsCatalogLoading(false);
+          }
+
+          return fallbackCatalog;
+        }
+
+        if (mountedRef.current) {
+          setCatalog([]);
+          setCatalogSource(CATALOG_SOURCE.EMPTY);
+          setCatalogError('');
+          setIsCatalogLoading(false);
+        }
+
+        return [];
+      }
 
       if (mountedRef.current) {
         setCatalog(nextCatalog);
-        setCatalogSource('supabase');
+        setCatalogSource(CATALOG_SOURCE.SUPABASE);
         setCatalogError('');
         setIsCatalogLoading(false);
       }
@@ -189,11 +250,17 @@ export function ProductCatalogProvider({ children }) {
     } catch (error) {
       if (typeof timeoutId !== 'undefined') clearTimeout(timeoutId);
       const nextCatalog = normalizeCatalogFromLocalStorage();
+      const message = getCleanErrorMessage(error, 'Live catalog unavailable.');
+
+      warnCatalogFallback('live-catalog-read-failed', {
+        fallbackCount: nextCatalog.length,
+        message,
+      });
 
       if (mountedRef.current) {
         setCatalog(nextCatalog);
-        setCatalogSource('fallback');
-        setCatalogError(getCleanErrorMessage(error, 'Supabase catalog unavailable.'));
+        setCatalogSource(nextCatalog.length ? CATALOG_SOURCE.FALLBACK : CATALOG_SOURCE.EMPTY);
+        setCatalogError(nextCatalog.length ? message : 'No catalog products are available.');
         setIsCatalogLoading(false);
       }
 
@@ -211,7 +278,8 @@ export function ProductCatalogProvider({ children }) {
     return undefined;
   }, [loadLocalCatalog, refreshProducts]);
 
-  const usingSupabase = catalogSource === 'supabase' && Boolean(supabase);
+  const usingSupabase = catalogSource === CATALOG_SOURCE.SUPABASE && Boolean(supabase);
+  const catalogLoadState = getCatalogLoadState(catalogSource, isCatalogLoading, catalogError);
 
   const runMutation = useCallback(
     async (mutation) => {
@@ -347,7 +415,7 @@ export function ProductCatalogProvider({ children }) {
     return runMutation(() => {
       const nextCatalog = seedProducts.map(normalizeProduct);
       setCatalog(nextCatalog);
-      setCatalogSource('local');
+      setCatalogSource(nextCatalog.length ? CATALOG_SOURCE.LOCAL : CATALOG_SOURCE.EMPTY);
       setCatalogError('');
       return nextCatalog;
     });
@@ -357,6 +425,7 @@ export function ProductCatalogProvider({ children }) {
     () => ({
       products: catalog,
       catalogSource,
+      catalogLoadState,
       isCatalogLoading,
       catalogError,
       isCatalogSaving,
@@ -371,6 +440,7 @@ export function ProductCatalogProvider({ children }) {
     [
       catalog,
       catalogSource,
+      catalogLoadState,
       isCatalogLoading,
       catalogError,
       isCatalogSaving,

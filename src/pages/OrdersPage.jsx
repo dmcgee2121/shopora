@@ -4,8 +4,15 @@ import ShopOraImage from '../components/ShopOraImage';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
 import { getOrderItemImage } from '../utils/orderItemUtils';
+import {
+  getOrderStatusClass,
+  getOrderStatusLabel,
+  getPaymentStatusLabel,
+} from '../utils/statusUtils';
 
 function formatDate(value) {
+  if (!value) return '';
+
   try {
     return new Date(value).toLocaleDateString(undefined, {
       month: 'short',
@@ -17,21 +24,28 @@ function formatDate(value) {
   }
 }
 
-function getStatusClass(status) {
-  switch (status) {
-    case 'Pending':
-      return 'order-status-pending';
-    case 'Processing':
-      return 'order-status-processing';
-    case 'Shipped':
-      return 'order-status-shipped';
-    case 'Delivered':
-      return 'order-status-delivered';
-    case 'Cancelled':
-      return 'order-status-cancelled';
-    default:
-      return '';
-  }
+function safeNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function formatMoney(value) {
+  return `$${safeNumber(value).toFixed(2)}`;
+}
+
+function hasMoneyValue(value) {
+  return value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value));
+}
+
+function getItemName(item) {
+  return item?.name || item?.product?.name || item?.product_name || 'Order item';
+}
+
+function getItemDetails(item) {
+  const details = [`Qty ${safeNumber(item?.quantity, 1)}`];
+  if (item?.size) details.push(`Size ${item.size}`);
+  if (item?.color) details.push(item.color);
+  return details.join(' | ');
 }
 
 export default function OrdersPage() {
@@ -59,19 +73,21 @@ export default function OrdersPage() {
   return (
     <section className="container account-page">
       <div className="section-heading">
-        <div className="page-heading-brand-wrap">
-          <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
-          <div>
-            <p className="eyebrow">Account</p>
-            <h1>Orders</h1>
-            <p>
-              {currentUser
-                ? `Order history for ${currentUser.firstName}.`
-                : 'Completed orders will appear here.'}
-            </p>
+          <div className="page-heading-brand-wrap">
+            <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
+            <div>
+              <p className="eyebrow">Account</p>
+              <h1>Orders</h1>
+              <p>
+                {currentUser
+                  ? `Order history for ${currentUser.firstName || 'your account'}.`
+                  : 'Completed orders will appear here.'}
+              </p>
+            </div>
           </div>
-        </div>
-        <span className="count-badge">{orders.length} order{orders.length === 1 ? '' : 's'}</span>
+        <span className="count-badge">
+          {orders.length} order{orders.length === 1 ? '' : 's'}
+        </span>
       </div>
 
       {ordersError ? <div className="auth-message auth-message-error">{ordersError}</div> : null}
@@ -80,84 +96,84 @@ export default function OrdersPage() {
         <div className="account-order-list">
           {orders.map((order) => {
             const orderItems = Array.isArray(order.items) ? order.items : [];
+            const orderStatusLabel = getOrderStatusLabel(order.status);
+            const paymentStatusLabel = getPaymentStatusLabel(order.paymentStatus, {
+              demoMode: Boolean(order.demoMode),
+            });
+            const orderStatusClass = getOrderStatusClass(order.status);
+            const orderDate = formatDate(order.createdAt);
+            const itemCount = orderItems.length;
+            const isCancelled = orderStatusLabel === 'Canceled';
 
             return (
               <article
                 key={order.id}
-                className={order.status === 'Cancelled' ? 'account-order-card is-cancelled' : 'account-order-card'}
+                className={isCancelled ? 'account-order-card is-cancelled' : 'account-order-card'}
               >
                 <div className="account-order-top">
                   <div>
                     <span className="account-order-number">{order.orderNumber}</span>
-                    <p>{formatDate(order.createdAt)}</p>
+                    <p>{orderDate || 'Order date unavailable'}</p>
                   </div>
                   <div className="account-order-tags">
-                    <span className={`status-badge ${getStatusClass(order.status)}`}>{order.status}</span>
-                    <span className="status-badge">{order.paymentStatus}</span>
+                    <span className={`status-badge ${orderStatusClass}`}>{orderStatusLabel || 'Pending'}</span>
+                    <span className="status-badge">{paymentStatusLabel}</span>
                   </div>
                 </div>
 
                 <div className="account-order-summary">
                   <div>
                     <span>Items</span>
-                    <strong>{orderItems.length}</strong>
+                    <strong>{itemCount}</strong>
                   </div>
                   <div>
                     <span>Total</span>
-                    <strong>${Number(order.total ?? 0).toFixed(2)}</strong>
+                    <strong>{hasMoneyValue(order.total) ? formatMoney(order.total) : 'Unavailable'}</strong>
                   </div>
                   <div>
-                    <span>Email</span>
-                    <strong>{order.customerEmail}</strong>
+                    <span>Customer</span>
+                    <strong>{order.customerName || order.customerEmail || 'Customer details unavailable'}</strong>
                   </div>
                   <div>
-                    <span>Payment</span>
-                    <strong>
-                      {order.paymentStatus}
-                      {order.paymentProvider ? ` · ${order.paymentProvider}` : ''}
-                    </strong>
+                    <span>Order status</span>
+                    <strong>{orderStatusLabel || 'Pending'}</strong>
                   </div>
                 </div>
 
                 <div className="account-order-items">
-                  {orderItems.slice(0, 3).map((item) => (
-                    <div key={item.key} className="account-order-item">
+                  {orderItems.slice(0, 3).map((item, index) => (
+                    <div key={item.key || item.id || index} className="account-order-item">
                       <ShopOraImage
                         src={getOrderItemImage(item)}
-                        alt={item.name || 'Order item'}
+                        alt={getItemName(item)}
                         className="account-order-item-image"
                         fallbackText="ShopOra"
                       />
                       <div className="account-order-item-copy">
-                        <strong>{item.name}</strong>
-                        <p>
-                          Qty {item.quantity}
-                          {item.size ? ` · Size ${item.size}` : ''}
-                          {item.color ? ` · ${item.color}` : ''}
-                        </p>
+                        <strong>{getItemName(item)}</strong>
+                        <p>{getItemDetails(item)}</p>
                       </div>
-                      <strong>${(Number(item.unitPrice ?? 0) * Number(item.quantity ?? 0)).toFixed(2)}</strong>
+                      <strong>{formatMoney(safeNumber(item?.unitPrice) * safeNumber(item?.quantity, 1))}</strong>
                     </div>
                   ))}
+                  {!orderItems.length ? <p className="account-order-empty-items">Item details are unavailable.</p> : null}
                 </div>
 
                 <div className="account-order-footer">
                   <div className="account-order-stats">
                     <span>
-                      {orderItems.length} item{orderItems.length === 1 ? '' : 's'}
+                      {itemCount} item{itemCount === 1 ? '' : 's'}
                     </span>
-                    <strong>${Number(order.total ?? 0).toFixed(2)}</strong>
+                    <strong>{hasMoneyValue(order.total) ? formatMoney(order.total) : 'Unavailable'}</strong>
                   </div>
-                  {order.status === 'Cancelled' ? (
-                    <p className="account-order-cancelled-note">
-                      Cancelled orders remain in your history for reference.
-                    </p>
+                  {isCancelled ? (
+                    <p className="account-order-cancelled-note">Canceled orders stay in your history for reference.</p>
                   ) : null}
                 </div>
 
                 <div className="account-order-actions">
                   <Link to={`/account/orders/${order.id}`} className="btn btn-ghost btn-small">
-                    View Details
+                    View Receipt
                   </Link>
                 </div>
               </article>
@@ -169,8 +185,8 @@ export default function OrdersPage() {
           <h2>{authSource === 'supabase' ? 'No orders yet.' : 'No demo orders yet.'}</h2>
           <p>
             {authSource === 'supabase'
-              ? 'Your Supabase customer orders will appear here after checkout.'
-              : 'This storefront is running in frontend-only demo mode, so completed orders will show up here after checkout.'}
+              ? 'Your orders will appear here after checkout.'
+              : 'Demo orders on this device will appear here after checkout.'}
           </p>
           <Link to="/women" className="btn btn-dark">
             Start shopping

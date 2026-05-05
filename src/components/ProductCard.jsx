@@ -47,27 +47,34 @@ function HeartIcon({ filled = false }) {
         d="M12 21s-7.1-4.2-9.4-8.5C.6 8.9 2.7 5.5 6.4 5.2c2-.2 3.8.7 5.1 2 1.3-1.3 3.1-2.2 5.1-2 3.7.3 5.8 3.7 3.8 7.3C19.1 16.8 12 21 12 21Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.6"
         strokeLinejoin="round"
+        strokeWidth="1.6"
       />
     </svg>
   );
 }
 
+function formatMoney(value) {
+  const numeric = Number(value);
+  return `$${Number.isFinite(numeric) ? numeric.toFixed(2) : '0.00'}`;
+}
+
 function StarRating({ rating, reviewCount }) {
-  const filledStars = Math.round(rating);
+  const safeRating = Number.isFinite(rating) ? rating : 0;
+  const safeReviewCount = Number.isFinite(reviewCount) ? reviewCount : 0;
+  const filledStars = Math.round(safeRating);
 
   return (
-    <div className="rating" aria-label={`Rated ${rating.toFixed(1)} out of 5 by ${reviewCount} reviewers`}>
+    <div className="rating" aria-label={`Rated ${safeRating.toFixed(1)} out of 5 by ${safeReviewCount} reviewers`}>
       <div className="rating-stars" aria-hidden="true">
         {Array.from({ length: 5 }, (_, index) => (
           <span key={index} className={index < filledStars ? 'filled' : ''}>
-            ★
+            &#9733;
           </span>
         ))}
       </div>
       <span className="rating-value">
-        {rating.toFixed(1)} · {reviewCount}
+        {safeRating.toFixed(1)} | {safeReviewCount}
       </span>
     </div>
   );
@@ -92,17 +99,24 @@ export default function ProductCard({ product }) {
   const navigate = useNavigate();
   const location = useLocation();
   const safeProduct = product ?? {};
+  const productId = safeProduct.id ?? '';
+  const productName = safeProduct.name || 'ShopOra style';
+  const productBrand = safeProduct.brand || 'ShopOra';
+  const productCategory = safeProduct.category || safeProduct.department || 'Style';
+  const productPath = productId ? `/product/${productId}` : '#';
   const price = safeProduct.salePrice ?? safeProduct.price ?? 0;
+  const hasSalePrice = safeProduct.salePrice !== null && safeProduct.salePrice !== undefined;
   const sizes = Array.isArray(safeProduct.sizes) ? safeProduct.sizes : [];
   const colors = Array.isArray(safeProduct.colors) ? safeProduct.colors : [];
   const images = Array.isArray(safeProduct.images) ? safeProduct.images : safeProduct.image ? [safeProduct.image] : [];
   const primarySize = sizes[0];
   const primaryColor = colors[0];
-  const previewImage = hovered && images.length > 1 ? getProductImage(safeProduct, 1) : safeProduct.image;
-  const isSaved = typeof isSavedItem === 'function' ? Boolean(isSavedItem(safeProduct.id)) : false;
+  const previewImage = hovered && images.length > 1 ? getProductImage(safeProduct, 1) : getProductImage(safeProduct);
+  const isSaved = typeof isSavedItem === 'function' ? Boolean(isSavedItem(productId)) : false;
   const redirectTarget = encodeURIComponent(`${location.pathname}${location.search}`);
   const stockState = getStockState(Number(safeProduct.stockCount ?? 0));
   const isOutOfStock = stockState.tone === 'out';
+  const canAddToCart = Boolean(productId) && !isOutOfStock;
 
   const handleSave = () => {
     if (!isAuthenticated) {
@@ -111,7 +125,7 @@ export default function ProductCard({ product }) {
     }
 
     if (typeof toggleSavedItem === 'function') {
-      toggleSavedItem(product);
+      toggleSavedItem(safeProduct);
     }
   };
 
@@ -121,63 +135,73 @@ export default function ProductCard({ product }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Link to={`/product/${product.id}`} className="product-image-link">
-        <div className="product-media">
-        <ShopOraImage
-          src={previewImage}
-          alt={safeProduct.name}
-          className={`product-media-image${hovered ? ' is-hovered' : ''}`}
-          fallbackText="Image coming soon"
-        />
-          {safeProduct.isNew ? <span className="badge badge-new">New</span> : null}
-          {safeProduct.isSale ? <span className="badge badge-sale">Sale</span> : null}
-          {isOutOfStock ? <span className="badge badge-stock badge-stock-out">{stockState.label}</span> : null}
-          {safeProduct.stockCount > 0 && safeProduct.stockCount <= 7 ? (
-            <span className="badge badge-stock badge-stock-low">{stockState.label}</span>
-          ) : null}
-        </div>
-      </Link>
+      <div className="product-media-wrap">
+        <Link to={productPath} className="product-image-link">
+          <div className="product-media">
+            <ShopOraImage
+              src={previewImage}
+              alt={productName}
+              className={`product-media-image${hovered ? ' is-hovered' : ''}`}
+              fallbackText="Image coming soon"
+            />
+            <div className="badge-stack badge-stack-left">
+              {safeProduct.isNew ? <span className="badge badge-new">New</span> : null}
+            </div>
+            <div className="badge-stack badge-stack-right">
+              {safeProduct.isSale ? <span className="badge badge-sale">Sale</span> : null}
+              {isOutOfStock ? <span className="badge badge-stock badge-stock-out">{stockState.label}</span> : null}
+              {safeProduct.stockCount > 0 && safeProduct.stockCount <= 7 ? (
+                <span className="badge badge-stock badge-stock-low">{stockState.label}</span>
+              ) : null}
+            </div>
+          </div>
+        </Link>
 
-      <button
-        type="button"
-        className={isSaved ? 'save-button is-saved' : 'save-button'}
-        aria-label={isSaved ? `Remove ${product.name} from saved items` : `Save ${product.name}`}
-        onClick={handleSave}
-      >
-        <HeartIcon filled={isSaved} />
-      </button>
+        <button
+          type="button"
+          className={isSaved ? 'save-button is-saved' : 'save-button'}
+          aria-label={isSaved ? `Remove ${productName} from saved items` : `Save ${productName}`}
+          onClick={handleSave}
+        >
+          <HeartIcon filled={isSaved} />
+        </button>
+      </div>
 
       <div className="product-body">
-        <p className="product-brand">{safeProduct.brand}</p>
-        <Link to={`/product/${safeProduct.id}`} className="product-name">
-          {safeProduct.name}
+        <p className="product-brand">{productBrand}</p>
+        <Link to={productPath} className="product-name">
+          {productName}
         </Link>
+        <p className="product-meta">{productCategory}</p>
         <div className="price-row">
-          <span className="price">${price.toFixed(2)}</span>
-          {safeProduct.salePrice ? <span className="compare-price">${Number(safeProduct.price ?? 0).toFixed(2)}</span> : null}
+          <span className={hasSalePrice ? 'price price-sale' : 'price'}>{formatMoney(price)}</span>
+          {hasSalePrice ? <span className="compare-price">{formatMoney(safeProduct.price)}</span> : null}
         </div>
         <StarRating rating={Number(safeProduct.rating ?? 0)} reviewCount={Number(safeProduct.reviewCount ?? 0)} />
         <p className={`stock-note stock-note-${stockState.tone}`}>{stockState.label}</p>
-        <div className="product-swatches" aria-label={`${safeProduct.name} colors`}>
-          {colors.slice(0, 4).map((color) => (
-            <span key={color} className="swatch" title={color} aria-label={color}>
-              <span style={{ backgroundColor: getSwatchColor(color) }} />
-            </span>
-          ))}
-        </div>
+        {colors.length ? (
+          <div className="product-swatches" aria-label={`${productName} colors`}>
+            {colors.slice(0, 4).map((color) => (
+              <span key={color} className="swatch" title={color} aria-label={color}>
+                <span style={{ backgroundColor: getSwatchColor(color) }} />
+              </span>
+            ))}
+            {colors.length > 4 ? <span className="swatch-more">+{colors.length - 4}</span> : null}
+          </div>
+        ) : null}
         <div className="card-actions">
           <button
             type="button"
             className="btn btn-dark btn-small"
-            disabled={isOutOfStock}
+            disabled={!canAddToCart}
             onClick={() => {
               addItem(safeProduct, { size: primarySize, color: primaryColor });
-              if (!isOutOfStock) openMiniCart();
+              openMiniCart();
             }}
           >
             {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
           </button>
-          <Link to={`/product/${safeProduct.id}`} className="btn btn-ghost btn-small">
+          <Link to={productPath} className="btn btn-ghost btn-small">
             View Details
           </Link>
         </div>

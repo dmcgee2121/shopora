@@ -9,6 +9,11 @@ export default function FilterSidebar({
 }) {
   return (
     <aside className="filter-sidebar">
+      <div className="filter-heading">
+        <h2>Refine</h2>
+        <p>Narrow the collection by category, price, size, or sale styles.</p>
+      </div>
+
       <div className="filter-block">
         <h3>Category</h3>
         <div className="pill-group">
@@ -73,7 +78,7 @@ export default function FilterSidebar({
           checked={saleOnly}
           onChange={(event) => onChange({ saleOnly: event.target.checked })}
         />
-        Sale only
+        Sale styles only
       </label>
     </aside>
   );

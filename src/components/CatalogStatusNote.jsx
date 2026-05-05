@@ -1,27 +1,31 @@
 import { useProductCatalog } from '../context/ProductCatalogContext';
 
-function getCatalogLabel(catalogSource) {
-  switch (catalogSource) {
-    case 'supabase':
-      return 'Supabase catalog';
-    case 'fallback':
-      return 'Supabase unavailable - using local fallback';
-    case 'local':
+function getCatalogLabel(catalogSource, catalogLoadState) {
+  switch (catalogLoadState) {
+    case 'loading':
+      return 'Loading catalog';
+    case 'loaded-supabase':
+      return 'Live catalog loaded';
+    case 'fallback-after-error':
+      return 'Demo catalog shown';
+    case 'empty':
+      return 'No catalog products';
+    case 'loaded-fallback':
     default:
-      return 'Local demo catalog';
+      return catalogSource === 'local' ? 'Local demo catalog' : 'Demo catalog shown';
   }
 }
 
-function getTone(catalogSource, isCatalogLoading) {
-  if (isCatalogLoading) {
+function getTone(catalogLoadState) {
+  if (catalogLoadState === 'loading') {
     return 'stock-low';
   }
 
-  if (catalogSource === 'supabase') {
+  if (catalogLoadState === 'loaded-supabase') {
     return 'stock-in';
   }
 
-  if (catalogSource === 'fallback') {
+  if (catalogLoadState === 'fallback-after-error') {
     return 'stock-low';
   }
 
@@ -29,7 +33,7 @@ function getTone(catalogSource, isCatalogLoading) {
 }
 
 export default function CatalogStatusNote({ variant = 'storefront', className = '' }) {
-  const { catalogSource, isCatalogLoading, catalogError, catalogMutationError, isCatalogSaving } =
+  const { catalogSource, catalogLoadState, isCatalogLoading, catalogError, catalogMutationError, isCatalogSaving } =
     useProductCatalog();
   const showNote = variant === 'admin' || isCatalogLoading;
 
@@ -37,15 +41,11 @@ export default function CatalogStatusNote({ variant = 'storefront', className = 
     return null;
   }
 
-  const label =
-    variant === 'admin' && isCatalogLoading
-      ? 'Loading catalog'
-      : isCatalogLoading
-        ? 'Loading catalog'
-        : getCatalogLabel(catalogSource);
-  const tone = getTone(catalogSource, isCatalogLoading);
+  const label = getCatalogLabel(catalogSource, catalogLoadState);
+  const tone = getTone(catalogLoadState);
   const showMutationError = variant === 'admin' && catalogMutationError;
-  const showCatalogError = variant === 'admin' && catalogError && catalogSource === 'fallback';
+  const showCatalogError =
+    variant === 'admin' && catalogError && ['fallback-after-error', 'empty'].includes(catalogLoadState);
 
   return (
     <div className={`catalog-status-note ${variant} ${className}`.trim()} aria-live="polite">

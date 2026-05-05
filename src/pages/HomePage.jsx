@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import PromoBar from '../components/PromoBar';
+import TrustStrip from '../components/TrustStrip';
 import HomeCampaign from '../components/HomeCampaign';
 import FeaturedBrands from '../components/FeaturedBrands';
 import DepartmentTiles from '../components/DepartmentTiles';
@@ -12,7 +13,8 @@ import { useProductCatalog } from '../context/ProductCatalogContext';
 import { idsMatch } from '../utils/idUtils';
 
 export default function HomePage() {
-  const { products } = useProductCatalog();
+  const { products, isCatalogLoading } = useProductCatalog();
+  const isInitialCatalogLoading = isCatalogLoading && products.length === 0;
   const trendingProducts = [...products]
     .sort((a, b) => {
       const score = (product) =>
@@ -30,6 +32,8 @@ export default function HomePage() {
         <CatalogStatusNote className="home-catalog-status" />
         <Hero />
 
+        <TrustStrip />
+
         <HomeCampaign />
 
         <FeaturedBrands />
@@ -39,14 +43,21 @@ export default function HomePage() {
         <section className="section-block" id="trending-now">
           <SectionHeading
             title="Trending Now"
-            description="The mix shoppers are moving toward right now: new, polished, and ready to wear."
+            description="New pieces across clothing, accessories, shoes, and everyday departments."
             action={<Link to="/search?q=blazer">Browse more</Link>}
           />
-          <div className="product-grid">
-            {trendingProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {isInitialCatalogLoading ? (
+            <div className="empty-state">
+              <h3>Loading featured products.</h3>
+              <p>We are getting the latest catalog ready for browsing.</p>
+            </div>
+          ) : (
+            <div className="product-grid">
+              {trendingProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </section>
 
         <WhyShopOra />

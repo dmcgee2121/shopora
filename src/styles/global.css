@@ -611,6 +611,10 @@ main {
   box-shadow: var(--shadow);
 }
 
+.product-media-wrap {
+  position: relative;
+}
+
 .product-media {
   position: relative;
   aspect-ratio: 4 / 5;
@@ -681,6 +685,33 @@ main {
   color: #fff;
 }
 
+.badge-stack {
+  position: absolute;
+  top: 14px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.badge-stack-left {
+  left: 14px;
+}
+
+.badge-stack-right {
+  right: 14px;
+  align-items: flex-end;
+}
+
+.badge-stack .badge {
+  position: static;
+  top: auto;
+  right: auto;
+  left: auto;
+}
+
 .product-body {
   padding: 16px 16px 18px;
 }
@@ -739,6 +770,13 @@ main {
   line-height: 1.35;
 }
 
+.product-meta {
+  margin: -4px 0 10px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 .price-row {
   display: flex;
   align-items: baseline;
@@ -748,6 +786,10 @@ main {
 .price {
   font-size: 1.05rem;
   font-weight: 800;
+}
+
+.price-sale {
+  color: #8e5642;
 }
 
 .compare-price {
@@ -826,6 +868,12 @@ main {
   height: 18px;
   border-radius: 999px;
   display: block;
+}
+
+.swatch-more {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
 .color-swatch.active {
@@ -956,6 +1004,23 @@ main {
   flex-wrap: wrap;
 }
 
+.catalog-context,
+.active-filter-row,
+.empty-state-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.active-filter-row {
+  margin: -6px 0 20px;
+}
+
+.empty-state-actions {
+  justify-content: center;
+}
+
 .toolbar-group {
   display: flex;
   align-items: center;
@@ -997,6 +1062,26 @@ main {
   border: 1px solid var(--border);
   background: rgba(255, 253, 250, 0.9);
   box-shadow: var(--shadow-soft);
+}
+
+.filter-heading {
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(228, 217, 204, 0.9);
+}
+
+.filter-heading h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  line-height: 0.95;
+}
+
+.filter-heading p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 0.92rem;
 }
 
 .filter-block + .filter-block {

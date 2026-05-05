@@ -15,13 +15,23 @@ function sortResults(list, sort) {
       return items.sort((a, b) => (b.salePrice ?? b.price) - (a.salePrice ?? a.price));
     case 'newest':
       return items.sort((a, b) => Number(b.isNew) - Number(a.isNew));
+    case 'rating':
+      return items.sort((a, b) => b.rating - a.rating);
     default:
       return items;
   }
 }
 
+const sortLabels = {
+  featured: 'Featured',
+  priceAsc: 'Price: Low to High',
+  priceDesc: 'Price: High to Low',
+  newest: 'Newest',
+  rating: 'Top Rated',
+};
+
 export default function SearchResults() {
-  const { products } = useProductCatalog();
+  const { products, isCatalogLoading } = useProductCatalog();
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q')?.trim() ?? '';
   const sort = searchParams.get('sort') ?? 'featured';
@@ -49,9 +59,12 @@ export default function SearchResults() {
     });
 
     return sortResults(matched, sort);
-  }, [query, sort]);
+  }, [products, query, sort]);
 
   const heading = query ? `Search results for "${query}"` : 'Search ShopOra';
+  const resetSearch = () => setSearchParams(new URLSearchParams());
+  const isInitialCatalogLoading = isCatalogLoading && products.length === 0;
+  const countLabel = isInitialCatalogLoading ? 'Loading styles' : `${results.length} products`;
 
   return (
     <section className="search-page">
@@ -64,7 +77,7 @@ export default function SearchResults() {
               ? 'Browse the styles that match your search.'
               : 'Use the search bar in the navbar to look for products, categories, and colors.'
           }
-          action={query ? <span className="count-badge">{results.length} products</span> : null}
+          action={query ? <span className="count-badge">{countLabel}</span> : null}
         />
 
         {query ? (
@@ -80,10 +93,14 @@ export default function SearchResults() {
                   <option value="priceAsc">Price: Low to High</option>
                   <option value="priceDesc">Price: High to Low</option>
                   <option value="newest">Newest</option>
+                  <option value="rating">Top Rated</option>
                 </select>
               </label>
             </div>
-            <div className="query-chip">Showing matches for "{query}"</div>
+            <div className="catalog-context">
+              <span className="query-chip">Showing matches for &quot;{query}&quot;</span>
+              {sort !== 'featured' ? <span className="query-chip">Sort: {sortLabels[sort] ?? sort}</span> : null}
+            </div>
           </div>
         ) : null}
 
@@ -95,6 +112,11 @@ export default function SearchResults() {
               Start Shopping
             </Link>
           </div>
+        ) : isInitialCatalogLoading ? (
+          <div className="empty-state search-empty">
+            <h2>Loading styles.</h2>
+            <p>We are getting the latest catalog ready before showing matching products.</p>
+          </div>
         ) : results.length ? (
           <div className="product-grid">
             {results.map((product) => (
@@ -104,10 +126,15 @@ export default function SearchResults() {
         ) : (
           <div className="empty-state search-empty">
             <h2>No results found.</h2>
-            <p>Try a different keyword or browse the full collection to find something close.</p>
-            <Link to="/" className="btn btn-dark">
-              Back to Shopping
-            </Link>
+            <p>Try a broader keyword, clear the search, or browse departments to keep shopping.</p>
+            <div className="empty-state-actions">
+              <button type="button" className="btn btn-dark" onClick={resetSearch}>
+                Clear Search
+              </button>
+              <Link to="/" className="btn btn-ghost">
+                Browse Departments
+              </Link>
+            </div>
           </div>
         )}
       </div>

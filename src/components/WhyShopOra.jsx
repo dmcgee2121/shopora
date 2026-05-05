@@ -1,7 +1,7 @@
 const cards = [
   {
     title: 'Curated Style',
-    text: 'Thoughtful product editing that keeps the assortment easy to browse and on trend.',
+    text: 'Thoughtful product editing keeps the assortment easy to browse and aligned with a modern retail feel.',
   },
   {
     title: 'Simple Shopping',
@@ -9,11 +9,11 @@ const cards = [
   },
   {
     title: 'Everyday Value',
-    text: 'Fresh markdowns, practical wardrobe staples, and reliable seasonal updates.',
+    text: 'Fresh markdowns, practical wardrobe staples, and seasonal updates that feel accessible.',
   },
   {
     title: 'Secure Checkout',
-    text: 'A calm checkout experience built to feel polished and trustworthy.',
+    text: 'A calm checkout experience with secure payment handoff and order records in your account.',
   },
 ];
 

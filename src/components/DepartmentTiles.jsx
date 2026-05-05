@@ -6,25 +6,25 @@ const departments = [
   {
     label: 'Women',
     path: '/women',
-    description: 'Dresses, tops, denim, and tailored layers.',
+    description: 'Dresses, tops, denim, and tailored layers for everyday wear.',
     key: 'women',
   },
   {
     label: 'Men',
     path: '/men',
-    description: 'Refined essentials and modern everyday fits.',
+    description: 'Refined essentials, smart layers, and modern everyday fits.',
     key: 'men',
   },
   {
     label: 'Shoes',
     path: '/shoes',
-    description: 'Sneakers, loafers, heels, and boots.',
+    description: 'Sneakers, loafers, heels, and boots for the full wardrobe.',
     key: 'shoes',
   },
   {
     label: 'Accessories',
     path: '/accessories',
-    description: 'Bags, belts, jewelry, and finishing details.',
+    description: 'Bags, belts, jewelry, and finishing details in one place.',
     key: 'accessories',
   },
   {
@@ -50,7 +50,7 @@ export default function DepartmentTiles({ products }) {
       <div className="section-heading">
         <div>
           <h2>Shop by Department</h2>
-          <p>Browse the store the way a department-store customer expects to shop.</p>
+          <p>Move through the store by department, from apparel to finishing details.</p>
         </div>
       </div>
 

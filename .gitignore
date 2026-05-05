@@ -8,3 +8,5 @@ dist/
 /*.jpg
 /*.jpeg
 /*.webp
+# Local Netlify folder
+.netlify

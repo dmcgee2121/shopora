@@ -20,6 +20,18 @@ const defaultForm = {
   cvc: '',
 };
 
+function isLocalDebugMode() {
+  if (import.meta.env.DEV) {
+    return true;
+  }
+
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  return ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
+}
+
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const { isAuthenticated, currentUser, authSource } = useAuth();
@@ -188,7 +200,9 @@ export default function CheckoutPage() {
           window.location.assign(session.url);
           return;
         } catch (stripeError) {
-          console.warn('Stripe Checkout start failed', stripeError);
+          if (isLocalDebugMode()) {
+            console.warn('Stripe Checkout start failed', stripeError);
+          }
           setError(
             'Your order was saved, but secure payment could not start right now. Please try again in a few minutes.',
           );
@@ -202,7 +216,9 @@ export default function CheckoutPage() {
       setError('');
       navigate(`/order-confirmation/${order.id}`);
     } catch (err) {
-      console.warn('Order placement failed', err);
+      if (isLocalDebugMode()) {
+        console.warn('Order placement failed', err);
+      }
       setError('We could not place your order right now. Please check your information and try again.');
     }
   };

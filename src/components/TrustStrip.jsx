@@ -1,15 +1,15 @@
 const items = [
   {
-    title: 'Secure Checkout',
-    text: 'Checkout is powered by Stripe for a familiar, trusted payment flow.',
+    title: 'Curated Departments',
+    text: 'Shop women, men, shoes, accessories, and sale edits from one clean storefront.',
   },
   {
     title: 'Order Tracking',
-    text: 'Track orders and receipts from your account after purchase.',
+    text: 'Keep tabs on orders and receipts from your account after purchase.',
   },
   {
-    title: 'Simple Departments',
-    text: 'Browse clothing, accessories, shoes, and sale items in one place.',
+    title: 'Secure Checkout',
+    text: 'Checkout is powered by Stripe for a familiar, trusted payment handoff.',
   },
 ];
 

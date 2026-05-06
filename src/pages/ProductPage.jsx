@@ -9,6 +9,7 @@ import { useCart } from '../context/CartContext';
 import { useMiniCart } from '../context/MiniCartContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
 import { getProductImage } from '../data/products';
+import { getProductMerchandisingBadges, getProductShelfLabel } from '../utils/merchandising';
 import { idsMatch, normalizeId } from '../utils/idUtils';
 
 const RECENT_KEY = 'shopora-recently-viewed-v1';
@@ -235,6 +236,8 @@ export default function ProductPage() {
 
   const price = product.salePrice ?? product.price;
   const currentImage = getProductImage(product, activeImage);
+  const shelfLabel = getProductShelfLabel(product);
+  const merchandisingBadges = getProductMerchandisingBadges(product);
 
   const handleAddToCart = () => {
     const added = addItem(product, {
@@ -272,8 +275,24 @@ export default function ProductPage() {
               className="product-detail-image"
               fallbackText="Image coming soon"
             />
-            {product.isNew ? <span className="badge badge-new">New</span> : null}
-            {product.isSale ? <span className="badge badge-sale">Sale</span> : null}
+            <div className="badge-stack badge-stack-left">
+              {merchandisingBadges
+                .filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured')
+                .map((badge) => (
+                  <span key={badge.label} className={`badge ${badge.tone}`}>
+                    {badge.label}
+                  </span>
+                ))}
+            </div>
+            <div className="badge-stack badge-stack-right">
+              {merchandisingBadges
+                .filter((badge) => badge.tone === 'badge-sale' || badge.tone.includes('badge-stock'))
+                .map((badge) => (
+                  <span key={badge.label} className={`badge ${badge.tone}`}>
+                    {badge.label}
+                  </span>
+                ))}
+            </div>
           </div>
 
           <div className="thumb-rail" aria-label="Product images">
@@ -300,6 +319,7 @@ export default function ProductPage() {
           <h1>{product.name}</h1>
           <div className="detail-subline">
             <span className="product-sku">SKU {product.sku}</span>
+            <span className="product-fit">{shelfLabel}</span>
             <span className="product-fit">{product.fit}</span>
           </div>
           <div className="rating rating-detail" aria-label={`Rated ${product.rating.toFixed(1)} out of 5`}>

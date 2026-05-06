@@ -74,8 +74,8 @@ export default function SearchResults() {
           title={heading}
           description={
             query
-              ? 'Browse the styles that match your search.'
-              : 'Use the search bar in the navbar to look for products, categories, and colors.'
+              ? 'Browse the styles that match your search across brands, departments, and colorways.'
+              : 'Use the search bar in the navbar to look for products, categories, brands, and colors.'
           }
           action={query ? <span className="count-badge">{countLabel}</span> : null}
         />
@@ -106,7 +106,7 @@ export default function SearchResults() {
 
         {!query ? (
           <div className="empty-state search-empty">
-            <h2>Search for clothing, shoes, and accessories.</h2>
+            <h2>Search the catalog.</h2>
             <p>Try names like blazer, sneakers, tote, or a color such as black or ivory.</p>
             <Link to="/" className="btn btn-dark">
               Start Shopping

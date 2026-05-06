@@ -131,7 +131,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const browsingLabel = saleOnly
     ? 'Sale collection'
     : department
-      ? `${title} department`
+      ? `${title} edit`
       : 'All departments';
   const filterSummary = [
     category ? `Category: ${category}` : '',
@@ -149,7 +149,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
         <CatalogStatusNote className="category-catalog-status" />
         <SectionHeading
           title={title}
-          description={`${description} You are browsing the ${browsingLabel.toLowerCase()}.`}
+          description={`${description} You are browsing the ${browsingLabel.toLowerCase()}. Use the filters to narrow the edit by style, price, and size.`}
           action={<span className="count-badge">{countLabel}</span>}
         />
 
@@ -177,7 +177,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
           </div>
         </div>
 
-        {filterSummary.length ? (
+            {filterSummary.length ? (
           <div className="active-filter-row" aria-label="Active catalog filters">
             {filterSummary.map((item) => (
               <span key={item} className="query-chip">
@@ -205,7 +205,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
             {isInitialCatalogLoading ? (
               <div className="empty-state">
                 <h3>Loading styles.</h3>
-                <p>We are getting the latest catalog ready. Products will appear here shortly.</p>
+                <p>We are getting the latest catalog ready. Featured products will appear here shortly.</p>
               </div>
             ) : filteredProducts.length ? (
               <div className="product-grid">
@@ -216,7 +216,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
             ) : (
               <div className="empty-state">
                 <h3>No styles match those filters.</h3>
-                <p>Clear your filters or broaden the search to continue browsing the collection.</p>
+                <p>Clear one filter or broaden the edit to continue browsing the collection.</p>
                 <button type="button" className="btn btn-dark" onClick={resetFilters}>
                   Reset filters
                 </button>

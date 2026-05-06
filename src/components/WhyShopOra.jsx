@@ -1,18 +1,18 @@
 const cards = [
   {
-    title: 'Curated Style',
-    text: 'Thoughtful product editing keeps the assortment easy to browse and aligned with a modern retail feel.',
+    title: 'Curated Merchandising',
+    text: 'Thoughtful editing keeps the assortment tight, readable, and aligned with a modern department-store feel.',
   },
   {
-    title: 'Simple Shopping',
-    text: 'Fast navigation, clear pricing, and a cart flow that stays out of the way.',
+    title: 'Simple Discovery',
+    text: 'Fast navigation, clear pricing, and direct paths into the departments shoppers want most.',
   },
   {
     title: 'Everyday Value',
-    text: 'Fresh markdowns, practical wardrobe staples, and seasonal updates that feel accessible.',
+    text: 'Fresh markdowns, practical wardrobe staples, and seasonal updates that stay accessible.',
   },
   {
-    title: 'Secure Checkout',
+    title: 'Trusted Checkout',
     text: 'A calm checkout experience with secure payment handoff and order records in your account.',
   },
 ];
@@ -23,7 +23,7 @@ export default function WhyShopOra() {
       <div className="section-heading">
         <div>
           <h2>Why ShopOra</h2>
-          <p>A storefront built to feel modern, approachable, and easy to shop.</p>
+          <p>A storefront designed for clear merchandising, simple navigation, and calm shopping.</p>
         </div>
       </div>
 

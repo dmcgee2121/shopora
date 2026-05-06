@@ -49,8 +49,8 @@ export default function DepartmentTiles({ products }) {
     <section className="section-block">
       <div className="section-heading">
         <div>
-          <h2>Shop by Department</h2>
-          <p>Move through the store by department, from apparel to finishing details.</p>
+          <h2>Featured Departments</h2>
+          <p>Browse the store by department and jump straight into the strongest edits.</p>
         </div>
       </div>
 

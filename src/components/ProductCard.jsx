@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useMiniCart } from '../context/MiniCartContext';
 import { getProductImage } from '../data/products';
+import { getProductMerchandisingBadges, getProductShelfLabel } from '../utils/merchandising';
 import ShopOraImage from './ShopOraImage';
 
 const SWATCH_COLORS = {
@@ -102,10 +103,10 @@ export default function ProductCard({ product }) {
   const productId = safeProduct.id ?? '';
   const productName = safeProduct.name || 'ShopOra style';
   const productBrand = safeProduct.brand || 'ShopOra';
-  const productCategory = safeProduct.category || safeProduct.department || 'Style';
   const productPath = productId ? `/product/${productId}` : '#';
   const price = safeProduct.salePrice ?? safeProduct.price ?? 0;
   const hasSalePrice = safeProduct.salePrice !== null && safeProduct.salePrice !== undefined;
+  const productDescription = typeof safeProduct.description === 'string' ? safeProduct.description.trim() : '';
   const sizes = Array.isArray(safeProduct.sizes) ? safeProduct.sizes : [];
   const colors = Array.isArray(safeProduct.colors) ? safeProduct.colors : [];
   const images = Array.isArray(safeProduct.images) ? safeProduct.images : safeProduct.image ? [safeProduct.image] : [];
@@ -117,6 +118,10 @@ export default function ProductCard({ product }) {
   const stockState = getStockState(Number(safeProduct.stockCount ?? 0));
   const isOutOfStock = stockState.tone === 'out';
   const canAddToCart = Boolean(productId) && !isOutOfStock;
+  const shelfLabel = getProductShelfLabel(safeProduct);
+  const merchandisingBadges = getProductMerchandisingBadges(safeProduct);
+  const leftBadges = merchandisingBadges.filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured');
+  const rightBadges = merchandisingBadges.filter((badge) => !leftBadges.includes(badge));
 
   const handleSave = () => {
     if (!isAuthenticated) {
@@ -145,14 +150,18 @@ export default function ProductCard({ product }) {
               fallbackText="Image coming soon"
             />
             <div className="badge-stack badge-stack-left">
-              {safeProduct.isNew ? <span className="badge badge-new">New</span> : null}
+              {leftBadges.map((badge) => (
+                <span key={badge.label} className={`badge ${badge.tone}`}>
+                  {badge.label}
+                </span>
+              ))}
             </div>
             <div className="badge-stack badge-stack-right">
-              {safeProduct.isSale ? <span className="badge badge-sale">Sale</span> : null}
-              {isOutOfStock ? <span className="badge badge-stock badge-stock-out">{stockState.label}</span> : null}
-              {safeProduct.stockCount > 0 && safeProduct.stockCount <= 7 ? (
-                <span className="badge badge-stock badge-stock-low">{stockState.label}</span>
-              ) : null}
+              {rightBadges.map((badge) => (
+                <span key={badge.label} className={`badge ${badge.tone}`}>
+                  {badge.label}
+                </span>
+              ))}
             </div>
           </div>
         </Link>
@@ -172,7 +181,8 @@ export default function ProductCard({ product }) {
         <Link to={productPath} className="product-name">
           {productName}
         </Link>
-        <p className="product-meta">{productCategory}</p>
+        {productDescription ? <p className="product-story">{productDescription}</p> : null}
+        <p className="product-meta">{shelfLabel}</p>
         <div className="price-row">
           <span className={hasSalePrice ? 'price price-sale' : 'price'}>{formatMoney(price)}</span>
           {hasSalePrice ? <span className="compare-price">{formatMoney(safeProduct.price)}</span> : null}

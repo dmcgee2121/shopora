@@ -345,7 +345,7 @@ main {
   font-size: clamp(3.3rem, 7vw, 5.7rem);
   line-height: 0.92;
   letter-spacing: -0.03em;
-  max-width: 8ch;
+  max-width: 11ch;
 }
 
 .hero-text {
@@ -666,6 +666,15 @@ main {
   left: auto;
 }
 
+.badge-featured {
+  background: rgba(143, 104, 50, 0.94);
+}
+
+.badge-online {
+  background: rgba(35, 31, 27, 0.82);
+  color: #fff;
+}
+
 .badge-stock {
   top: 14px;
   right: 14px;
@@ -770,8 +779,20 @@ main {
   line-height: 1.35;
 }
 
+.product-story {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  min-height: 2.85em;
+}
+
 .product-meta {
-  margin: -4px 0 10px;
+  margin: 0 0 10px;
   color: var(--muted);
   font-size: 0.88rem;
   line-height: 1.45;
@@ -1675,7 +1696,7 @@ main {
   font-size: clamp(2.6rem, 4.7vw, 4.8rem);
   line-height: 0.92;
   letter-spacing: -0.03em;
-  max-width: 10ch;
+  max-width: 11ch;
 }
 
 .campaign-copy p {
@@ -1691,6 +1712,13 @@ main {
   gap: 12px;
   flex-wrap: wrap;
   margin-top: 26px;
+}
+
+.campaign-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .campaign-visual {
@@ -1790,6 +1818,60 @@ main {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
+}
+
+.department-nav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.department-nav-card {
+  display: grid;
+  gap: 18px;
+  min-height: 162px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 250, 0.98), rgba(244, 236, 225, 0.92)),
+    rgba(255, 253, 250, 0.95);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.department-nav-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+  border-color: rgba(180, 138, 77, 0.35);
+}
+
+.department-nav-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.department-nav-top span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.65rem;
+  line-height: 0.95;
+}
+
+.department-nav-top strong {
+  color: var(--gold-dark);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.department-nav-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
 }
 
 .department-tile {
@@ -2380,6 +2462,7 @@ main {
 
   .brand-rail,
   .department-grid,
+  .department-nav,
   .why-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2534,23 +2617,27 @@ main {
 
   .brand-rail,
   .department-grid,
+  .department-nav,
   .why-grid {
     grid-template-columns: 1fr;
   }
 
   .brand-card,
   .department-tile,
+  .department-nav-card,
   .why-card {
     min-height: auto;
   }
 
   .brand-card-top,
-  .department-tile-head {
+  .department-tile-head,
+  .department-nav-top {
     align-items: flex-start;
   }
 
   .brand-card-top span,
-  .department-tile-head strong {
+  .department-tile-head strong,
+  .department-nav-top strong {
     white-space: normal;
     text-align: right;
   }

@@ -1,39 +1,48 @@
 import { Link } from 'react-router-dom';
-import { getProductImage, products } from '../data/products';
+import { getProductImage, products as fallbackProducts } from '../data/products';
 import ShopOraImage from './ShopOraImage';
 
-export default function HomeCampaign() {
-  const campaignImages = [products[0], products[4], products[9]].filter(Boolean);
+export default function HomeCampaign({ products = [] }) {
+  const featuredProducts = products.length ? products : fallbackProducts;
+  const heroProduct = featuredProducts.find((product) => product.isNew) ?? featuredProducts[0];
+  const supportProducts = featuredProducts
+    .filter((product) => product.id !== heroProduct?.id)
+    .slice(0, 2);
 
   return (
     <section className="home-campaign">
       <div className="campaign-copy">
-        <p className="campaign-kicker">Seasonal campaign</p>
-        <h2>Refresh Your Everyday Wardrobe</h2>
+        <p className="campaign-kicker">Curated edit</p>
+        <h2>Fresh arrivals for polished everyday dressing.</h2>
         <p>
-          Discover versatile styles, polished basics, and comfortable fits designed to work across
-          the week and into the weekend.
+          New pieces, polished essentials, and easy layers selected to make the store feel current
+          without making shopping feel crowded.
         </p>
         <div className="campaign-actions">
-          <a className="btn btn-dark" href="#trending-now">
+          <Link className="btn btn-dark" to="/women">
             Shop New Arrivals
-          </a>
-          <Link className="btn btn-outline" to="/sale">
-            Explore Sale
           </Link>
+          <Link className="btn btn-outline" to="/sale">
+            Explore Sale Picks
+          </Link>
+        </div>
+        <div className="campaign-tags" aria-label="Merchandising highlights">
+          <span className="query-chip">New styles</span>
+          <span className="query-chip">Best sellers</span>
+          <span className="query-chip">Limited markdowns</span>
         </div>
       </div>
 
       <div className="campaign-visual" aria-hidden="true">
         <div className="campaign-image main">
-          <ShopOraImage src={getProductImage(campaignImages[0])} alt="" className="campaign-photo" />
+          <ShopOraImage src={getProductImage(heroProduct)} alt="" className="campaign-photo" />
         </div>
         <div className="campaign-stack">
           <div className="campaign-image">
-            <ShopOraImage src={getProductImage(campaignImages[1])} alt="" className="campaign-photo" />
+            <ShopOraImage src={getProductImage(supportProducts[0])} alt="" className="campaign-photo" />
           </div>
           <div className="campaign-image">
-            <ShopOraImage src={getProductImage(campaignImages[2])} alt="" className="campaign-photo" />
+            <ShopOraImage src={getProductImage(supportProducts[1])} alt="" className="campaign-photo" />
           </div>
         </div>
       </div>

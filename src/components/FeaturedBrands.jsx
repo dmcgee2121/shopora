@@ -70,7 +70,7 @@ export default function FeaturedBrands() {
       <div className="section-heading">
         <div>
           <h2>Featured Brands</h2>
-          <p>Explore the labels shaping this season’s ShopOra edit.</p>
+          <p>Explore the labels shaping this season's ShopOra edit.</p>
         </div>
       </div>
 

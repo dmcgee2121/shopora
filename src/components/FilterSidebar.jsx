@@ -10,7 +10,7 @@ export default function FilterSidebar({
   return (
     <aside className="filter-sidebar">
       <div className="filter-heading">
-        <h2>Refine</h2>
+        <h2>Refine the edit</h2>
         <p>Narrow the collection by category, price, size, or sale styles.</p>
       </div>
 

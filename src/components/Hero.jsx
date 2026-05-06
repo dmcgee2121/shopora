@@ -5,10 +5,11 @@ export default function Hero() {
   return (
     <section className="hero">
       <div className="hero-copy">
-        <p className="hero-tagline">Style for every moment.</p>
-        <h1>Looks that move with you.</h1>
+        <p className="hero-tagline">Curated department-store edit.</p>
+        <h1>New arrivals, everyday staples, and polished finds.</h1>
         <p className="hero-text">
-          Modern style. Effortless comfort. Pieces you&apos;ll reach for again and again.
+          Modern style, easy shopping, and a storefront built to help shoppers find what they need
+          fast.
         </p>
         <div className="hero-actions">
           <Link className="btn btn-dark" to="/women">
@@ -31,11 +32,11 @@ export default function Hero() {
         </div>
         <div className="hero-panel hero-panel-secondary">
           <div className="hero-mini-card">
-            <span>New Arrival</span>
+            <span>New Arrivals</span>
             <strong>Linen Blend Blazer</strong>
           </div>
           <div className="hero-mini-card alt">
-            <span>Sale</span>
+            <span>Sale Pick</span>
             <strong>Court Sneaker</strong>
           </div>
         </div>

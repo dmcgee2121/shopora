@@ -230,7 +230,7 @@ export default function ProductFormPage({ mode }) {
       <AdminPageHeader
         eyebrow="Catalog editor"
         title={mode === 'edit' ? 'Edit Product' : 'Add Product'}
-        subtitle="Update product merchandising, pricing, inventory flags, and content in one place."
+        subtitle="Update product merchandising, pricing, inventory flags, and content in one place without changing the write flow."
         actionLabel="Back to Products"
         actionTo="/admin/products"
         actionClassName="btn btn-ghost"
@@ -253,32 +253,38 @@ export default function ProductFormPage({ mode }) {
 
           <section className="admin-form-section">
             <div className="admin-form-section-header">
-              <h2>Basic Info</h2>
+              <h2>Product Basics</h2>
               <p>Core merchandising fields that define the product in the storefront.</p>
+              <p className="field-help">Required: name, brand, department, category, primary image, and base price.</p>
             </div>
             <div className="admin-form-grid">
               <label>
                 Name
+                <span className="field-help field-required">Required</span>
                 <input name="name" value={form.name} onChange={handleChange} />
                 {errors.name ? <span className="field-error">{errors.name}</span> : null}
               </label>
               <label>
                 Brand
+                <span className="field-help field-required">Required</span>
                 <input name="brand" value={form.brand} onChange={handleChange} />
                 {errors.brand ? <span className="field-error">{errors.brand}</span> : null}
               </label>
               <label>
                 Department
+                <span className="field-help field-required">Required</span>
                 <input name="department" value={form.department} onChange={handleChange} />
                 {errors.department ? <span className="field-error">{errors.department}</span> : null}
               </label>
               <label>
                 Category
+                <span className="field-help field-required">Required</span>
                 <input name="category" value={form.category} onChange={handleChange} />
                 {errors.category ? <span className="field-error">{errors.category}</span> : null}
               </label>
               <label className="full-span">
                 SKU
+                <span className="field-help">Optional. Leave blank or generate one for internal catalog tracking.</span>
                 <input name="sku" value={form.sku} onChange={handleChange} />
                 <span className="field-help">Internal product identifier used for catalog and operations.</span>
                 <button
@@ -296,6 +302,7 @@ export default function ProductFormPage({ mode }) {
               </label>
               <label className="full-span">
                 Product description
+                <span className="field-help">Optional. Keep this concise and shopper-facing.</span>
                 <textarea name="description" rows="4" value={form.description} onChange={handleChange} />
               </label>
             </div>
@@ -303,17 +310,20 @@ export default function ProductFormPage({ mode }) {
 
           <section className="admin-form-section">
             <div className="admin-form-section-header">
-              <h2>Pricing</h2>
+              <h2>Pricing &amp; Merchandising</h2>
               <p>Keep the base price and optional sale price aligned with the catalog presentation.</p>
+              <p className="field-help">Sale price must stay lower than the base price. Ratings and reviews are display-only metadata.</p>
             </div>
             <div className="admin-form-grid">
               <label>
                 Base price
+                <span className="field-help field-required">Required</span>
                 <input name="price" type="number" step="0.01" value={form.price} onChange={handleChange} />
                 {errors.price ? <span className="field-error">{errors.price}</span> : null}
               </label>
               <label>
                 Sale price
+                <span className="field-help">Optional. Leave blank when the product is not on sale.</span>
                 <input
                   name="salePrice"
                   type="number"
@@ -325,11 +335,13 @@ export default function ProductFormPage({ mode }) {
               </label>
               <label>
                 Rating
+                <span className="field-help">Optional. Shoppers see this as a 0 to 5 score.</span>
                 <input name="rating" type="number" step="0.1" value={form.rating} onChange={handleChange} />
                 {errors.rating ? <span className="field-error">{errors.rating}</span> : null}
               </label>
               <label>
                 Review count
+                <span className="field-help">Optional. Used for product page social proof.</span>
                 <input name="reviewCount" type="number" value={form.reviewCount} onChange={handleChange} />
                 {errors.reviewCount ? <span className="field-error">{errors.reviewCount}</span> : null}
               </label>
@@ -339,9 +351,8 @@ export default function ProductFormPage({ mode }) {
           <section className="admin-form-section">
             <div className="admin-form-section-header">
               <h2>Images</h2>
-              <p>
-                Use a consistent hero image and provide at least two fallback images for the gallery.
-              </p>
+              <p>Use one clean hero image and, when possible, a small gallery of fallback views.</p>
+              <p className="field-help">Paste hosted image URLs only. File uploads are not part of this editor yet.</p>
             </div>
             <div className="admin-preview-layout">
               <div className="admin-image-preview-panel">
@@ -369,16 +380,19 @@ export default function ProductFormPage({ mode }) {
               <div className="admin-gallery-preview-panel">
                 <label className="full-span">
                   Primary image
+                  <span className="field-help field-required">Required</span>
                   <input name="image" value={form.image} onChange={handleChange} />
+                  <span className="field-help">Use a direct image URL that loads in the browser preview.</span>
                   {errors.image ? <span className="field-error">{errors.image}</span> : null}
                 </label>
                 <div className="admin-gallery-preview-header">
                   <strong>Gallery previews</strong>
-                  <span className="field-help">Separate multiple image URLs with commas.</span>
+                  <span className="field-help">Optional. Separate multiple image URLs with commas.</span>
                 </div>
                 <label className="full-span">
                   Gallery image URLs, comma separated
                   <textarea name="images" rows="3" value={form.images} onChange={handleChange} />
+                  <span className="field-help">Add 2-4 URLs for alternate angles, details, or color views.</span>
                 </label>
                 <div className="admin-gallery-preview-grid">
                   {galleryImages.length ? (
@@ -405,13 +419,19 @@ export default function ProductFormPage({ mode }) {
 
           <section className="admin-form-section">
             <div className="admin-form-section-header">
-              <h2>Inventory &amp; Flags</h2>
+              <h2>Stock, Visibility &amp; Flags</h2>
               <p>Control availability and merchandising badges without touching the storefront code.</p>
+              <p className="field-help">
+                Products without an explicit status remain Active in the admin list. Draft and archived values are
+                shown if they already exist in the catalog data.
+              </p>
             </div>
             <div className="admin-form-grid">
               <label>
                 Stock count
+                <span className="field-help field-required">Required</span>
                 <input name="stockCount" type="number" value={form.stockCount} onChange={handleChange} />
+                <span className="field-help">Use 0 for out of stock. Low stock warnings appear automatically.</span>
                 {errors.stockCount ? <span className="field-error">{errors.stockCount}</span> : null}
               </label>
               <label>
@@ -458,12 +478,15 @@ export default function ProductFormPage({ mode }) {
                 <input name="isSale" type="checkbox" checked={form.isSale} onChange={handleChange} />
                 Sale
               </label>
+              <p className="field-help full-span">
+                These flags only change presentation. They do not alter pricing, inventory, or storefront contracts.
+              </p>
             </div>
           </section>
 
           <section className="admin-form-section">
             <div className="admin-form-section-header">
-              <h2>Product Details</h2>
+              <h2>Material, Fit &amp; Details</h2>
               <p>These fields power the product page accordion and detail sections.</p>
             </div>
             <div className="admin-form-grid">

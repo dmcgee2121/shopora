@@ -6,7 +6,6 @@ import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import { useAuth } from '../../context/AuthContext';
 import { useOrders } from '../../context/OrdersContext';
 import { useProductCatalog } from '../../context/ProductCatalogContext';
-import { getOrderItemImage } from '../../utils/orderItemUtils';
 import { getOrderStatusClass, getOrderStatusLabel, getPaymentStatusLabel } from '../../utils/statusUtils';
 
 function safeText(value, fallback = '-') {
@@ -74,29 +73,26 @@ function OrderActivityRow({ order }) {
   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
   const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
   const orderStatusClass = getOrderStatusClass(order.status);
-  const itemPreview = Array.isArray(order.items) && order.items.length ? order.items[0] : null;
 
   return (
     <article className="admin-activity-item">
-      <ShopOraImage
-        src={itemPreview ? getOrderItemImage(itemPreview) : ''}
-        alt={safeText(itemPreview?.name, 'Order item')}
-        className="admin-activity-thumb"
-        fallbackText="ShopOra"
-      />
       <div className="admin-activity-copy">
         <div className="admin-activity-copy-top">
           <div>
             <strong>{safeText(order.orderNumber, 'Order')}</strong>
             <p>
-              {safeText(order.customerName, 'Guest customer')} | {formatShortDate(order.createdAt)}
+              {safeText(order.customerName, 'Guest customer')}
             </p>
           </div>
           <strong>{formatMoney(order.total)}</strong>
         </div>
 
-        <div className="admin-activity-meta">
+        <div className="admin-activity-row">
           <span className={`status-badge ${orderStatusClass}`.trim()}>{getOrderStatusLabel(order.status)}</span>
+          <span className="admin-activity-date">{formatShortDate(order.createdAt)}</span>
+        </div>
+
+        <div className="admin-activity-meta">
           <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
           <span className="count-badge">
             {Array.isArray(order.items) ? order.items.length : 0} item
@@ -169,31 +165,6 @@ export default function AdminDashboard() {
       0,
     );
 
-    const orderItemCounts = new Map();
-    const productById = new Map(products.map((product) => [String(product.id), product]));
-
-    orderedOrders.forEach((order) => {
-      (Array.isArray(order.items) ? order.items : []).forEach((item) => {
-        const productId = String(item.productId ?? item.id ?? item.product?.id ?? item.name ?? '');
-        if (!productId) return;
-
-        const current = orderItemCounts.get(productId) ?? { quantity: 0, item };
-        current.quantity += Number(item.quantity ?? 0);
-        current.item = item;
-        orderItemCounts.set(productId, current);
-      });
-    });
-
-    const topOrderedProducts = Array.from(orderItemCounts.entries())
-      .map(([key, entry]) => ({
-        key,
-        quantity: entry.quantity,
-        product: productById.get(key) ?? null,
-        item: entry.item,
-      }))
-      .sort((a, b) => b.quantity - a.quantity)
-      .slice(0, 4);
-
     return {
       orderedOrders,
       activeOrders,
@@ -216,7 +187,6 @@ export default function AdminDashboard() {
       averageItemsPerOrder,
       repeatCustomerCount,
       totalInventoryValue,
-      topOrderedProducts,
     };
   }, [orders, products, users]);
 
@@ -246,7 +216,7 @@ export default function AdminDashboard() {
       <section className="admin-dashboard-overview">
         <div className="admin-dashboard-overview-main">
           <div className="admin-dashboard-section-heading">
-            <span>Store snapshot</span>
+            <span>Revenue and order activity</span>
             <p>Core numbers and live demo signals pulled from the current local product and order state.</p>
           </div>
 
@@ -254,29 +224,29 @@ export default function AdminDashboard() {
             <DashboardMetric
               label="Demo revenue"
               value={formatMoney(analytics.demoRevenueTotal)}
-              note={`${analytics.orderedOrders.length} orders total`}
+              note={`${analytics.orderedOrders.length} orders since the latest demo reset`}
             />
             <DashboardMetric
               label="Average order value"
               value={formatMoney(analytics.averageOrderValue)}
-              note={`${analytics.activeOrders.length} active orders`}
+              note={`${analytics.activeOrders.length} active orders currently in motion`}
             />
             <DashboardMetric
               label="Catalog value"
               value={formatMoney(analytics.totalInventoryValue)}
-              note={`${analytics.saleProducts} sale / ${analytics.newProducts} new items`}
+              note={`${analytics.saleProducts} sale items and ${analytics.newProducts} new arrivals`}
             />
             <DashboardMetric
               label="Customers"
               value={analytics.customerCount}
-              note={`${analytics.repeatCustomerCount} repeat shoppers`}
+              note={`${analytics.repeatCustomerCount} repeat shoppers in the demo data`}
             />
           </div>
 
           <div className="admin-dashboard-mini-grid">
             <div className="admin-dashboard-panel admin-dashboard-panel-soft">
               <div className="admin-dashboard-section-heading compact">
-                <span>Order flow</span>
+                <span>Order activity</span>
                 <p>Where the queue is concentrated right now.</p>
               </div>
 
@@ -348,31 +318,27 @@ export default function AdminDashboard() {
             <div className="admin-quick-action-grid">
               <QuickActionLink
                 to="/admin/products/new"
-                label="Add product"
+                label="Add Product"
                 description="Create a new catalog item."
                 className="btn btn-dark"
               />
               <QuickActionLink
                 to="/admin/products"
-                label="Manage catalog"
-                description="Edit or remove products."
+                label="Manage Products"
+                description="Edit, restock, or remove items."
               />
               <QuickActionLink
                 to="/admin/orders"
-                label="Review orders"
-                description="Update status and open receipts."
+                label="View Orders"
+                description="Review recent order activity."
               />
-              <QuickActionLink
-                to="/admin/customers"
-                label="View customers"
-                description="Browse the demo customer list."
-              />
+              <QuickActionLink to="/" label="View Storefront" description="See the public shop experience." />
             </div>
           </section>
 
           <section className="admin-dashboard-panel">
             <div className="admin-dashboard-section-heading compact">
-              <span>Customer pulse</span>
+              <span>Customer activity</span>
               <p>Local account and order signals worth watching during demos.</p>
             </div>
 
@@ -420,62 +386,23 @@ export default function AdminDashboard() {
             <div className="admin-empty-state admin-empty-state-tight">
               <h3>No orders yet.</h3>
               <p>Completed checkouts will appear here once demo orders are created.</p>
+              <div className="admin-empty-state-actions">
+                <Link to="/admin/orders" className="btn btn-ghost">
+                  View Orders
+                </Link>
+              </div>
             </div>
           )}
-        </section>
-
-        <section className="admin-dashboard-panel">
-          <div className="admin-dashboard-section-heading">
-            <span>Top ordered products</span>
-            <p>What customers have been buying most often in the demo data.</p>
+          <div className="admin-panel-footer">
+            <Link to="/admin/orders" className="text-button">
+              Open full order management
+            </Link>
           </div>
-
-          {analytics.topOrderedProducts.length ? (
-            <div className="admin-highlight-list">
-              {analytics.topOrderedProducts.map(({ key, quantity, product, item }) => (
-                <div key={key} className="admin-highlight-item">
-                  <ShopOraImage
-                    src={product?.image || item?.image || item?.productImage || ''}
-                    alt={safeText(product?.name || item?.name, 'Product')}
-                    className="admin-highlight-thumb"
-                    fallbackText="ShopOra"
-                  />
-                  <div className="admin-highlight-copy">
-                    <div className="admin-highlight-row">
-                      <strong>{safeText(product?.name || item?.name, 'Unnamed product')}</strong>
-                      <span className="count-badge">{quantity} sold</span>
-                    </div>
-                    <p>
-                      {safeText(product?.brand || item?.brand, 'ShopOra')} | {safeText(product?.category, 'Unassigned')}
-                    </p>
-                    <div className="admin-highlight-meta">
-                      <span>
-                        Stock {Number(product?.stockCount ?? 0)}
-                        {Number(product?.stockCount ?? 0) <= 0
-                          ? ' unavailable'
-                          : Number(product?.stockCount ?? 0) <= 7
-                            ? ' low'
-                            : ' healthy'}
-                      </span>
-                      <span>{product?.isSale ? 'Sale item' : product?.isNew ? 'New arrival' : 'Core catalog'}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="admin-empty-state admin-empty-state-tight">
-              <h3>No ordered products yet.</h3>
-              <p>Once customers place demo orders, the most popular items will appear here.</p>
-            </div>
-          )}
         </section>
-      </div>
 
-      <div className="admin-dashboard-panels admin-dashboard-panels-secondary">
         <section className="admin-dashboard-panel">
           <div className="admin-dashboard-section-heading">
-            <span>Low stock and attention needed</span>
+            <span>Inventory attention</span>
             <p>Items most likely to need a restock or follow-up.</p>
           </div>
 
@@ -500,7 +427,12 @@ export default function AdminDashboard() {
                         {safeText(product.brand, 'ShopOra')} | {safeText(product.department, 'Unassigned')} /{' '}
                         {safeText(product.category, 'Unassigned')}
                       </span>
-                      <span className={`status-badge ${stockClass}`.trim()}>{stockLabel}</span>
+                      <div className="admin-attention-row">
+                        <span className={`status-badge ${stockClass}`.trim()}>{stockLabel}</span>
+                        <span className="admin-attention-meta">
+                          {stockCount <= 0 ? 'Needs restock' : 'Low inventory'}
+                        </span>
+                      </div>
                     </div>
                   </article>
                 );
@@ -512,6 +444,51 @@ export default function AdminDashboard() {
               <p>No products are currently in the low-stock or out-of-stock buckets.</p>
             </div>
           )}
+
+          <div className="admin-panel-footer">
+            <Link to="/admin/products" className="text-button">
+              Open product management
+            </Link>
+          </div>
+        </section>
+      </div>
+
+      <div className="admin-dashboard-panels admin-dashboard-panels-secondary">
+        <section className="admin-dashboard-panel">
+          <div className="admin-dashboard-section-heading">
+            <span>Catalog health</span>
+            <p>Healthy, low, and out-of-stock status across the demo catalog.</p>
+          </div>
+
+          <div className="admin-progress-list">
+            <ProgressRow
+              label="Healthy stock"
+              value={analytics.inStockProducts}
+              total={products.length}
+              note="Safe for shoppers to discover and buy."
+              toneClass="stock-in"
+            />
+            <ProgressRow
+              label="Low stock"
+              value={analytics.lowStockItems.length}
+              total={products.length}
+              note="Worth replenishing soon."
+              toneClass="stock-low"
+            />
+            <ProgressRow
+              label="Out of stock"
+              value={analytics.outOfStockItems.length}
+              total={products.length}
+              note="Unavailable until replenished."
+              toneClass="stock-out"
+            />
+          </div>
+
+          <div className="admin-panel-footer">
+            <Link to="/admin/products" className="text-button">
+              Open product management
+            </Link>
+          </div>
         </section>
 
         <section className="admin-dashboard-panel">

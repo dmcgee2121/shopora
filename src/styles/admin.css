@@ -517,6 +517,20 @@
   font-size: 1rem;
 }
 
+.admin-activity-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.admin-activity-date,
+.admin-attention-meta {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
 .admin-activity-copy-top p,
 .admin-highlight-copy p {
   margin: 4px 0 0;
@@ -540,6 +554,19 @@
 .admin-dashboard-product-row {
   grid-template-columns: 64px minmax(0, 1fr);
   align-items: center;
+}
+
+.admin-attention-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-panel-footer {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .admin-empty-state-tight {
@@ -1626,9 +1653,19 @@
     flex-direction: column;
   }
 
+  .admin-activity-row,
+  .admin-attention-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .admin-activity-meta,
   .admin-highlight-meta {
     width: 100%;
+  }
+
+  .admin-panel-footer {
+    justify-content: flex-start;
   }
 
   .admin-quick-action {

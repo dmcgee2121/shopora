@@ -187,21 +187,23 @@ export default function ProductPage() {
   const galleryImages = Array.isArray(product?.images) ? product.images : product?.image ? [product.image] : [];
   const sizes = Array.isArray(product?.sizes) ? product.sizes : [];
   const colors = Array.isArray(product?.colors) ? product.colors : [];
+  const details = Array.isArray(product?.details) ? product.details : [];
   const stockCount = Number(product?.stockCount ?? 0);
   const isOutOfStock = stockCount <= 0;
+  const rating = Number(product?.rating ?? 0);
+  const reviewCount = Number(product?.reviewCount ?? 0);
+  const hasSalePrice = product?.salePrice !== null && product?.salePrice !== undefined;
+  const basePrice = Number(product?.price ?? 0);
+  const price = hasSalePrice ? Number(product.salePrice) : basePrice;
   const stockMessage =
-    stockCount <= 0
-      ? 'Out of stock'
-      : stockCount <= 7
-        ? `Only ${stockCount} left`
-        : 'In stock and ready to ship';
+    stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? `Only ${stockCount} left` : 'In stock and ready to ship';
 
   useEffect(() => {
     setSelectedSize(sizes[0] ?? '');
     setSelectedColor(colors[0] ?? '');
     setQuantity(1);
     setActiveImage(0);
-  }, [product?.id]);
+  }, [product?.id, sizes, colors]);
 
   useLayoutEffect(() => {
     if (!product) return;
@@ -234,10 +236,21 @@ export default function ProductPage() {
     );
   }
 
-  const price = product.salePrice ?? product.price;
   const currentImage = getProductImage(product, activeImage);
   const shelfLabel = getProductShelfLabel(product);
   const merchandisingBadges = getProductMerchandisingBadges(product);
+  const primaryBadges = merchandisingBadges.filter(
+    (badge) => badge.tone === 'badge-new' || badge.tone === 'badge-sale' || badge.tone === 'badge-featured',
+  );
+  const secondaryBadges = merchandisingBadges.filter((badge) => !primaryBadges.includes(badge));
+  const storyHighlights = details.slice(0, 3);
+  const quickFacts = [
+    { label: 'Material', value: product.material },
+    { label: 'Care', value: product.care },
+    { label: 'Fit', value: product.fit },
+    { label: 'Shipping', value: product.shippingNote },
+    { label: 'Returns', value: product.returnNote },
+  ].filter((item) => item.value);
 
   const handleAddToCart = () => {
     const added = addItem(product, {
@@ -252,9 +265,7 @@ export default function ProductPage() {
 
   const handleSave = () => {
     if (!isAuthenticated) {
-      navigate(
-        `/login?redirect=${encodeURIComponent(`${location.pathname}${location.search}`)}&message=save`,
-      );
+      navigate(`/login?redirect=${encodeURIComponent(`${location.pathname}${location.search}`)}&message=save`);
       return;
     }
 
@@ -276,45 +287,47 @@ export default function ProductPage() {
               fallbackText="Image coming soon"
             />
             <div className="badge-stack badge-stack-left">
-              {merchandisingBadges
-                .filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured')
-                .map((badge) => (
-                  <span key={badge.label} className={`badge ${badge.tone}`}>
-                    {badge.label}
-                  </span>
-                ))}
+              {primaryBadges.map((badge) => (
+                <span key={badge.label} className={`badge ${badge.tone}`}>
+                  {badge.label}
+                </span>
+              ))}
             </div>
             <div className="badge-stack badge-stack-right">
-              {merchandisingBadges
-                .filter((badge) => badge.tone === 'badge-sale' || badge.tone.includes('badge-stock'))
-                .map((badge) => (
-                  <span key={badge.label} className={`badge ${badge.tone}`}>
-                    {badge.label}
-                  </span>
-                ))}
+              {secondaryBadges.map((badge) => (
+                <span key={badge.label} className={`badge ${badge.tone}`}>
+                  {badge.label}
+                </span>
+              ))}
             </div>
           </div>
 
-          <div className="thumb-rail" aria-label="Product images">
-            {galleryImages.map((thumb, index) => (
-              <button
-                key={thumb}
-                type="button"
-                className={activeImage === index ? 'thumb active' : 'thumb'}
-                onClick={() => setActiveImage(index)}
-              >
-                <ShopOraImage
-                  src={thumb}
-                  alt={`${product.name} view ${index + 1}`}
-                  className="product-thumb-image"
-                  fallbackText="ShopOra"
-                />
-              </button>
-            ))}
-          </div>
+          {galleryImages.length > 1 ? (
+            <>
+              <div className="thumb-rail" aria-label="Product images">
+                {galleryImages.map((thumb, index) => (
+                  <button
+                    key={thumb}
+                    type="button"
+                    className={activeImage === index ? 'thumb active' : 'thumb'}
+                    onClick={() => setActiveImage(index)}
+                  >
+                    <ShopOraImage
+                      src={thumb}
+                      alt={`${product.name} view ${index + 1}`}
+                      className="product-thumb-image"
+                      fallbackText="ShopOra"
+                    />
+                  </button>
+                ))}
+              </div>
+              <p className="product-gallery-note">Tap a thumbnail for alternate angles and color views.</p>
+            </>
+          ) : null}
         </div>
 
         <div className="product-detail-copy">
+          <p className="product-page-kicker">Product overview</p>
           <p className="product-brand">{product.brand}</p>
           <h1>{product.name}</h1>
           <div className="detail-subline">
@@ -322,98 +335,142 @@ export default function ProductPage() {
             <span className="product-fit">{shelfLabel}</span>
             <span className="product-fit">{product.fit}</span>
           </div>
-          <div className="rating rating-detail" aria-label={`Rated ${product.rating.toFixed(1)} out of 5`}>
+          <div className="rating rating-detail" aria-label={`Rated ${rating.toFixed(1)} out of 5`}>
             <div className="rating-stars" aria-hidden="true">
               {Array.from({ length: 5 }, (_, index) => (
-                <span key={index} className={index < Math.round(product.rating) ? 'filled' : ''}>
-                  ★
+                <span key={index} className={index < Math.round(rating) ? 'filled' : ''}>
+                  &#9733;
                 </span>
               ))}
             </div>
             <span className="rating-value">
-              {product.rating.toFixed(1)} · {product.reviewCount} reviews
+              {rating.toFixed(1)} &middot; {reviewCount.toLocaleString()} reviews
             </span>
           </div>
           <div className="price-row price-row-large">
             <span className="price">${price.toFixed(2)}</span>
-            {product.salePrice ? <span className="compare-price">${product.price.toFixed(2)}</span> : null}
+            {hasSalePrice ? <span className="compare-price">${basePrice.toFixed(2)}</span> : null}
           </div>
+          <p className="price-note">A clear, demo-ready view of the price shoppers will pay today.</p>
           <p className={`stock-note stock-note-${isOutOfStock ? 'out' : stockCount <= 7 ? 'low' : 'in'}`}>
             {stockMessage}
           </p>
           <p className="detail-description">{product.description}</p>
 
-          <div className="selector-block">
-            <div className="selector-head">
-              <h3>Size</h3>
-              <button type="button" className="text-button" onClick={() => setSizeGuideOpen(true)}>
-                Size Guide
+          {quickFacts.length ? (
+            <div className="product-story-grid" aria-label="Product story and support highlights">
+              <article className="product-story-card">
+                <p className="product-section-label">Design notes</p>
+                <h3>How it wears</h3>
+                <ul className="product-story-list">
+                  {storyHighlights.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              </article>
+              <article className="product-story-card">
+                <p className="product-section-label">Fabric and fit</p>
+                <h3>What shoppers need to know</h3>
+                <dl className="product-fact-list">
+                  {quickFacts.map((fact) => (
+                    <div key={fact.label} className="product-fact-item">
+                      <dt>{fact.label}</dt>
+                      <dd>{fact.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>
+              <article className="product-story-card">
+                <p className="product-section-label">Support</p>
+                <h3>Confidence to buy</h3>
+                <ul className="product-story-list product-support-list">
+                  <li>Secure checkout through Stripe.</li>
+                  <li>{product.shippingNote}</li>
+                  <li>{product.returnNote}</li>
+                  <li>
+                    Need help? <Link to="/contact">Contact customer support</Link>.
+                  </li>
+                </ul>
+              </article>
+            </div>
+          ) : null}
+
+          <div className="product-purchase-panel">
+            <div className="selector-block">
+              <div className="selector-head">
+                <h3>Size</h3>
+                <button type="button" className="text-button" onClick={() => setSizeGuideOpen(true)}>
+                  Size Guide
+                </button>
+              </div>
+              <div className="chip-row">
+                {sizes.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    className={selectedSize === size ? 'chip active' : 'chip'}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="selector-block">
+              <h3>Color</h3>
+              <div className="swatch-row">
+                {colors.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className={selectedColor === color ? 'color-swatch active' : 'color-swatch'}
+                    onClick={() => setSelectedColor(color)}
+                    aria-label={color}
+                    title={color}
+                  >
+                    <span style={{ backgroundColor: getSwatchColor(color) }} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="selector-block">
+              <h3>Quantity</h3>
+              <QuantitySelector
+                quantity={quantity}
+                onDecrease={() => setQuantity((value) => Math.max(1, value - 1))}
+                onIncrease={() => setQuantity((value) => value + 1)}
+              />
+            </div>
+
+            <div className="product-actions">
+              <button type="button" className="btn btn-dark" onClick={handleAddToCart} disabled={isOutOfStock}>
+                {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
               </button>
+              <button type="button" className="btn btn-ghost" onClick={handleSave}>
+                {typeof isSavedItem === 'function' && isSavedItem(product.id) ? 'Saved' : 'Save Item'}
+              </button>
+              <Link to="/cart" className="btn btn-outline">
+                View Cart
+              </Link>
             </div>
-            <div className="chip-row">
-              {sizes.map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  className={selectedSize === size ? 'chip active' : 'chip'}
-                  onClick={() => setSelectedSize(size)}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="selector-block">
-            <h3>Color</h3>
-            <div className="swatch-row">
-              {colors.map((color) => (
-                <button
-                  key={color}
-                  type="button"
-                  className={selectedColor === color ? 'color-swatch active' : 'color-swatch'}
-                  onClick={() => setSelectedColor(color)}
-                  aria-label={color}
-                  title={color}
-                >
-                  <span style={{ backgroundColor: getSwatchColor(color) }} />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="selector-block">
-            <h3>Quantity</h3>
-            <QuantitySelector
-              quantity={quantity}
-              onDecrease={() => setQuantity((value) => Math.max(1, value - 1))}
-              onIncrease={() => setQuantity((value) => value + 1)}
-            />
-          </div>
-
-          <div className="product-actions">
-            <button type="button" className="btn btn-dark" onClick={handleAddToCart} disabled={isOutOfStock}>
-              {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-            </button>
-            <button type="button" className="btn btn-ghost" onClick={handleSave}>
-              {typeof isSavedItem === 'function' && isSavedItem(product.id) ? 'Saved' : 'Save Item'}
-            </button>
-            <Link to="/cart" className="btn btn-outline">
-              View Cart
-            </Link>
+            <p className="product-support-note">
+              Secure checkout, easy returns, and shipping updates are ready for a polished demo experience.
+            </p>
           </div>
 
           <div className="product-accordions">
             <details open>
-              <summary>Details</summary>
+              <summary>Product details</summary>
               <ul>
-                {product.details.map((detail) => (
+                {details.map((detail) => (
                   <li key={detail}>{detail}</li>
                 ))}
               </ul>
             </details>
             <details>
-              <summary>Material &amp; Care</summary>
+              <summary>Materials &amp; care</summary>
               <div className="accordion-copy">
                 <p>
                   <strong>Material:</strong> {product.material}
@@ -424,10 +481,13 @@ export default function ProductPage() {
               </div>
             </details>
             <details>
-              <summary>Shipping &amp; Returns</summary>
+              <summary>Shipping, returns, and support</summary>
               <div className="accordion-copy">
                 <p>{product.shippingNote}</p>
                 <p>{product.returnNote}</p>
+                <p>
+                  Questions before ordering? <Link to="/contact">Reach out to support</Link>.
+                </p>
               </div>
             </details>
           </div>

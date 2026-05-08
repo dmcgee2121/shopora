@@ -20,6 +20,17 @@ const defaultForm = {
   cvc: '',
 };
 
+function formatMoney(value) {
+  const amount = Number(value);
+  return Number.isFinite(amount) ? `$${amount.toFixed(2)}` : '$0.00';
+}
+
+function getItemOptions(item) {
+  return [item?.size ? `Size ${item.size}` : '', item?.color ? `${item.color}` : '']
+    .filter(Boolean)
+    .join(' | ');
+}
+
 function isLocalDebugMode() {
   if (import.meta.env.DEV) {
     return true;
@@ -55,6 +66,7 @@ export default function CheckoutPage() {
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
   const isStripeCheckout = authSource === 'supabase';
+  const hasItems = items.length > 0;
 
   useEffect(() => {
     if (!currentUser) {
@@ -225,19 +237,45 @@ export default function CheckoutPage() {
 
   return (
     <section className="container checkout-page">
-      <div className="section-heading">
-        <div className="page-heading-brand-wrap">
-          <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
-          <div>
-            <h1>Checkout</h1>
-            <p>
-              {isStripeCheckout
-                ? 'Review your order, then continue to Stripe to enter payment details securely.'
-                : 'Demo mode only. No payment will be processed.'}
-            </p>
+      <div className="checkout-hero">
+        <div className="section-heading">
+          <div className="page-heading-brand-wrap">
+            <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
+            <div>
+              <h1>Checkout</h1>
+              <p>
+                {isStripeCheckout
+                  ? 'Review your order, then continue to Stripe for secure payment entry.'
+                  : 'Demo mode only. No payment will be processed.'}
+              </p>
+            </div>
+          </div>
+          <div className="checkout-hero-badges">
+            <span className="count-badge">{isStripeCheckout ? 'Secure Stripe checkout' : 'Demo order'}</span>
+            <span className="count-badge checkout-badge-muted">Shipping calculated at checkout</span>
           </div>
         </div>
-        <span className="count-badge">{isStripeCheckout ? 'Secure Stripe checkout' : 'Demo order'}</span>
+
+        <div className="checkout-confidence-strip">
+          <div className="checkout-confidence-item">
+            <strong>Secure checkout</strong>
+            <span>
+              {isStripeCheckout
+                ? 'Stripe handles payment on the next step.'
+                : 'Demo payments stay in the prototype and do not charge a card.'}
+            </span>
+          </div>
+          <div className="checkout-confidence-item">
+            <strong>Shipping</strong>
+            <span>Free over $75, otherwise a flat $7.95.</span>
+          </div>
+          <div className="checkout-confidence-item">
+            <strong>Support</strong>
+            <span>
+              Questions before placing the order? <Link to="/contact">Contact support</Link>.
+            </span>
+          </div>
+        </div>
       </div>
 
       {!isAuthenticated ? (
@@ -267,6 +305,7 @@ export default function CheckoutPage() {
 
           <div className="form-card">
             <h2>Contact information</h2>
+            <p className="checkout-card-note">We’ll use this for order updates and receipt emails.</p>
             <div className="form-grid">
               <label>
                 Email
@@ -301,6 +340,7 @@ export default function CheckoutPage() {
 
           <div className="form-card">
             <h2>Shipping address</h2>
+            <p className="checkout-card-note">Use the destination where you want this order delivered.</p>
             <div className="form-grid">
               <label>
                 First name
@@ -415,6 +455,11 @@ export default function CheckoutPage() {
 
           <div className="form-card">
             <h2>Payment</h2>
+            <p className="checkout-card-note">
+              {isStripeCheckout
+                ? 'You’ll complete payment securely on Stripe in the next step.'
+                : 'This checkout stays in demo mode and will not process a card.'}
+            </p>
             {isStripeCheckout ? (
               <div className="checkout-secure-payment-note">
                 <strong>Secure payment</strong>
@@ -430,47 +475,80 @@ export default function CheckoutPage() {
         </form>
 
         <aside className="cart-summary checkout-summary">
-          <h2>Order summary</h2>
+          <div className="checkout-summary-header">
+            <div>
+              <h2>Order summary</h2>
+              <p className="checkout-card-note">
+                {hasItems
+                  ? `${items.length} item${items.length === 1 ? '' : 's'} ready to review before placing the order.`
+                  : 'Your cart is empty. Add items before continuing to checkout.'}
+              </p>
+            </div>
+            <Link to="/cart" className="text-button">
+              Edit cart
+            </Link>
+          </div>
+
           <div className="checkout-items">
-            {items.length ? (
+            {hasItems ? (
               items.map((item) => (
-                <div key={item.key} className="checkout-item">
-                  <span>
-                    {item.name} x {item.quantity}
-                  </span>
-                  <strong>${(item.unitPrice * item.quantity).toFixed(2)}</strong>
-                </div>
+                <article key={item.key} className="checkout-item">
+                  <div className="checkout-item-copy">
+                    <strong>{item.name}</strong>
+                    <span>
+                      Qty {item.quantity}
+                      {getItemOptions(item) ? ` • ${getItemOptions(item)}` : ''}
+                    </span>
+                  </div>
+                  <strong>{formatMoney(item.unitPrice * item.quantity)}</strong>
+                </article>
               ))
             ) : (
-              <p className="muted">Your cart is empty.</p>
+              <div className="checkout-empty-state">
+                <p>Your cart is empty.</p>
+                <Link to="/cart" className="btn btn-dark full-width">
+                  Return to cart
+                </Link>
+              </div>
             )}
           </div>
-          <div className="summary-row">
-            <span>Subtotal</span>
-            <strong>${subtotal.toFixed(2)}</strong>
+
+          <div className="checkout-pricing">
+            <div className="summary-row">
+              <span>Subtotal</span>
+              <strong>{formatMoney(subtotal)}</strong>
+            </div>
+            <div className="summary-row">
+              <span>Estimated shipping</span>
+              <strong>{shipping === 0 ? 'Free' : formatMoney(shipping)}</strong>
+            </div>
+            <div className="summary-row">
+              <span>Estimated tax</span>
+              <strong>{formatMoney(tax)}</strong>
+            </div>
+            <div className="summary-row total">
+              <span>Total</span>
+              <strong>{formatMoney(total)}</strong>
+            </div>
           </div>
-          <div className="summary-row">
-            <span>Estimated shipping</span>
-            <strong>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</strong>
+
+          <div className="checkout-support-note">
+            <p>
+              {isStripeCheckout
+                ? 'Stripe handles secure card entry on the next step. You can return to your cart before confirming.'
+                : 'This is a frontend-only demo checkout flow. No payment will be processed.'}
+            </p>
+            <p>
+              Need help with shipping or returns? <Link to="/shipping">Shipping</Link> or{' '}
+              <Link to="/returns">Returns</Link>.
+            </p>
           </div>
-          <div className="summary-row">
-            <span>Estimated tax</span>
-            <strong>${tax.toFixed(2)}</strong>
-          </div>
-          <div className="summary-row total">
-            <span>Total</span>
-            <strong>${total.toFixed(2)}</strong>
-          </div>
-          <p className="checkout-demo-note">
-            {isStripeCheckout
-              ? 'You’ll review and enter payment details securely with Stripe before the order is completed.'
-              : 'This is a frontend-only demo checkout flow. No payment will be processed.'}
-          </p>
+
           <button
             type="button"
             className="btn btn-dark full-width"
             onClick={handlePlaceOrder}
-            disabled={!items.length}
+            disabled={!hasItems}
           >
             {isStripeCheckout ? 'Continue to Secure Payment' : 'Place Demo Order'}
           </button>

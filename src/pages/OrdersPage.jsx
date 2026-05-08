@@ -90,6 +90,10 @@ export default function OrdersPage() {
         </span>
       </div>
 
+      <p className="account-page-note">
+        Use this page to scan recent purchases, check fulfillment status, and jump into a receipt.
+      </p>
+
       {ordersError ? <div className="auth-message auth-message-error">{ordersError}</div> : null}
 
       {orders.length ? (
@@ -113,11 +117,16 @@ export default function OrdersPage() {
                 <div className="account-order-top">
                   <div>
                     <span className="account-order-number">{order.orderNumber}</span>
-                    <p>{orderDate || 'Order date unavailable'}</p>
+                    <p>
+                      {orderDate || 'Order date unavailable'} • {itemCount} item{itemCount === 1 ? '' : 's'}
+                    </p>
                   </div>
                   <div className="account-order-tags">
                     <span className={`status-badge ${orderStatusClass}`}>{orderStatusLabel || 'Pending'}</span>
                     <span className="status-badge">{paymentStatusLabel}</span>
+                    <Link to={`/account/orders/${order.id}`} className="text-button">
+                      View receipt
+                    </Link>
                   </div>
                 </div>
 
@@ -188,9 +197,14 @@ export default function OrdersPage() {
               ? 'Your orders will appear here after checkout.'
               : 'Demo orders on this device will appear here after checkout.'}
           </p>
-          <Link to="/women" className="btn btn-dark">
-            Start shopping
-          </Link>
+          <div className="empty-state-actions">
+            <Link to="/women" className="btn btn-dark">
+              Start shopping
+            </Link>
+            <Link to="/account/saved" className="btn btn-ghost">
+              View saved items
+            </Link>
+          </div>
         </div>
       )}
     </section>

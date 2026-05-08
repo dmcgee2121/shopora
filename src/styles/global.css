@@ -2939,6 +2939,106 @@ main {
   padding: 18px 0 44px;
 }
 
+.account-page-note {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.account-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.account-overview-card {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: rgba(255, 253, 250, 0.96);
+  box-shadow: var(--shadow-soft);
+}
+
+.account-overview-card h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.account-overview-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.account-overview-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.account-overview-note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.account-mini-order-list {
+  display: grid;
+  gap: 10px;
+}
+
+.account-mini-order {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(228, 217, 204, 0.8);
+  background: rgba(251, 247, 241, 0.8);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.account-mini-order:hover {
+  transform: translateY(-1px);
+  border-color: rgba(180, 138, 77, 0.25);
+}
+
+.account-mini-order strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.account-mini-order p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.account-mini-order .status-badges {
+  gap: 8px;
+}
+
+.account-mini-order .status-badge {
+  min-height: 26px;
+}
+
+.account-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
 .account-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2996,6 +3096,12 @@ main {
   margin: 0;
   font-family: 'Cormorant Garamond', serif;
   font-size: 2rem;
+}
+
+.account-summary-note {
+  margin: -2px 0 4px;
+  color: var(--muted);
+  line-height: 1.55;
 }
 
 .checkout-login-prompt {
@@ -3179,6 +3285,34 @@ main {
 }
 
 .order-receipt-meta strong {
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.order-receipt-overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.order-receipt-overview div {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 253, 250, 0.92);
+  border: 1px solid rgba(228, 217, 204, 0.72);
+}
+
+.order-receipt-overview span {
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.order-receipt-overview strong {
   font-size: 0.98rem;
   line-height: 1.5;
 }
@@ -3598,6 +3732,18 @@ body.modal-open {
   align-items: center;
 }
 
+.account-order-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.account-order-tags .text-button {
+  white-space: nowrap;
+}
+
 .account-order-summary > div {
   min-width: 120px;
   display: grid;
@@ -3693,7 +3839,12 @@ body.modal-open {
     grid-template-columns: 1fr;
   }
 
+  .account-overview-grid,
   .account-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .order-receipt-overview {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3707,8 +3858,14 @@ body.modal-open {
 }
 
 @media (max-width: 640px) {
+  .account-overview-grid,
   .account-grid {
     grid-template-columns: 1fr;
+  }
+
+  .account-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .auth-intro,
@@ -3728,6 +3885,10 @@ body.modal-open {
   .order-confirmation-brand {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .order-receipt-overview {
+    grid-template-columns: 1fr;
   }
 
   .order-confirmation-header,

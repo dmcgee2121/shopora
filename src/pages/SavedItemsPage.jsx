@@ -28,21 +28,50 @@ export default function SavedItemsPage() {
             </p>
           </div>
         </div>
+        <span className="count-badge">
+          {safeSavedProductIds.length} saved style{safeSavedProductIds.length === 1 ? '' : 's'}
+        </span>
       </div>
 
+      <p className="account-page-note">
+        Saved items help you compare looks, revisit favorites, and move faster when you are ready to buy.
+      </p>
+
       {savedProducts.length ? (
-        <div className="product-grid">
-          {savedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <>
+          <div className="account-toolbar">
+            <div className="catalog-context">
+              <span className="query-chip">
+                {savedProducts.length} favorite{savedProducts.length === 1 ? '' : 's'} ready to browse
+              </span>
+            </div>
+            <div className="empty-state-actions">
+              <Link to="/women" className="btn btn-dark btn-small">
+                Continue shopping
+              </Link>
+              <Link to="/account/orders" className="btn btn-ghost btn-small">
+                View orders
+              </Link>
+            </div>
+          </div>
+          <div className="product-grid">
+            {savedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </>
       ) : (
         <div className="empty-state account-empty">
           <h2>No saved items yet.</h2>
-          <p>Tap the heart icon on a product to save it for later.</p>
-          <Link to="/women" className="btn btn-dark">
-            Browse products
-          </Link>
+          <p>Tap the heart icon on a product to save it for later, then come back here to compare favorites.</p>
+          <div className="empty-state-actions">
+            <Link to="/women" className="btn btn-dark">
+              Browse products
+            </Link>
+            <Link to="/account/orders" className="btn btn-ghost">
+              View orders
+            </Link>
+          </div>
         </div>
       )}
     </section>

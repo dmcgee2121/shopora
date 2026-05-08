@@ -1,7 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
 import { useAuth } from '../context/AuthContext';
+import { useOrders } from '../context/OrdersContext';
+import {
+  getOrderStatusClass,
+  getOrderStatusLabel,
+  getPaymentStatusLabel,
+} from '../utils/statusUtils';
 
 const defaultAddress = {
   firstName: '',
@@ -14,6 +20,7 @@ const defaultAddress = {
 
 export default function AccountPage() {
   const { currentUser, logout, updateProfile, savedProductIds, authSource, authError } = useAuth();
+  const { getOrdersByUser } = useOrders();
   const safeSavedProductIds = Array.isArray(savedProductIds) ? savedProductIds : [];
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -24,6 +31,10 @@ export default function AccountPage() {
   });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const recentOrders = useMemo(() => {
+    if (!currentUser?.id) return [];
+    return getOrdersByUser(currentUser.id).slice(0, 3);
+  }, [currentUser?.id, getOrdersByUser]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -80,11 +91,18 @@ export default function AccountPage() {
     }
   };
 
-  const addressSummary = currentUser?.defaultShippingAddress
-    ? [currentUser.defaultShippingAddress.street, currentUser.defaultShippingAddress.city, currentUser.defaultShippingAddress.state]
-        .filter(Boolean)
-        .join(', ')
-    : 'Add a default shipping address for faster checkout.';
+  const profileName = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ') || 'Account profile';
+  const address = currentUser?.defaultShippingAddress ?? {};
+  const addressLines = [
+    [address.firstName, address.lastName].filter(Boolean).join(' '),
+    address.street,
+    [address.city, address.state, address.zip].filter(Boolean).join(', '),
+  ].filter(Boolean);
+  const addressSummary = addressLines.length ? addressLines.join(' • ') : 'Add a default shipping address for faster checkout.';
+  const memberSince = currentUser?.createdAt
+    ? new Date(currentUser.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
+    : 'Unavailable';
+  const recentOrderLabel = recentOrders.length ? `${recentOrders.length} recent order${recentOrders.length === 1 ? '' : 's'}` : 'No recent orders';
 
   return (
     <section className="container account-page">
@@ -94,7 +112,7 @@ export default function AccountPage() {
           <div>
             <p className="eyebrow">Account</p>
             <h1>Welcome{currentUser ? `, ${currentUser.firstName}` : ''}</h1>
-            <p>Manage your profile, saved styles, and shipping details.</p>
+            <p>Manage your profile, saved styles, order history, and shipping details.</p>
           </div>
         </div>
         <button type="button" className="btn btn-ghost" onClick={handleLogout}>
@@ -102,36 +120,87 @@ export default function AccountPage() {
         </button>
       </div>
 
-      <div className="account-grid">
-        <Link to="/account" className="account-card">
-          <span className="account-card-label">Profile</span>
-          <strong>
-            {currentUser?.firstName} {currentUser?.lastName}
-          </strong>
-          <p>{currentUser?.email}</p>
-        </Link>
-        <Link to="/account/orders" className="account-card">
-          <span className="account-card-label">Orders</span>
-          <strong>View order history</strong>
-          <p>Completed purchases will appear here.</p>
-        </Link>
-        <Link to="/account/saved" className="account-card">
-          <span className="account-card-label">Saved Items</span>
-          <strong>
+      <div className="account-overview-grid">
+        <article className="account-overview-card">
+          <span className="account-card-label">Profile summary</span>
+          <h2>{profileName}</h2>
+          <p>{currentUser?.email || 'Email unavailable'}</p>
+          <ul className="account-overview-list">
+            <li>{currentUser?.phone || 'No phone on file'}</li>
+            <li>Customer since {memberSince}</li>
+            <li>{recentOrderLabel}</li>
+          </ul>
+        </article>
+
+        <article className="account-overview-card">
+          <span className="account-card-label">Default shipping</span>
+          <h2>{addressSummary}</h2>
+          <p>Saved shipping information helps keep checkout fast.</p>
+          <Link to="/account" className="text-button">
+            Update profile
+          </Link>
+        </article>
+
+        <article className="account-overview-card">
+          <span className="account-card-label">Saved items</span>
+          <h2>
             {safeSavedProductIds.length} saved style{safeSavedProductIds.length === 1 ? '' : 's'}
-          </strong>
-          <p>Keep favorites in one place.</p>
-        </Link>
-        <div className="account-card">
-          <span className="account-card-label">Shipping Address</span>
-          <strong>{addressSummary}</strong>
-          <p>Use this address to speed up checkout.</p>
-        </div>
+          </h2>
+          <p>Favorites are ready whenever you want to come back to them.</p>
+          <Link to="/account/saved" className="text-button">
+            View wishlist
+          </Link>
+        </article>
+
+        <article className="account-overview-card">
+          <span className="account-card-label">Recent orders</span>
+          <h2>{recentOrderLabel}</h2>
+          {recentOrders.length ? (
+            <div className="account-mini-order-list">
+              {recentOrders.map((order) => {
+                const orderStatusLabel = getOrderStatusLabel(order.status);
+                const paymentStatusLabel = getPaymentStatusLabel(order.paymentStatus, {
+                  demoMode: Boolean(order.demoMode),
+                });
+                const orderStatusClass = getOrderStatusClass(order.status);
+                const orderDate = order.createdAt
+                  ? new Date(order.createdAt).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : 'Date unavailable';
+                const itemCount = Array.isArray(order.items) ? order.items.length : 0;
+
+                return (
+                  <Link key={order.id} to={`/account/orders/${order.id}`} className="account-mini-order">
+                    <div>
+                      <strong>{order.orderNumber}</strong>
+                      <p>
+                        {orderDate} • {itemCount} item{itemCount === 1 ? '' : 's'}
+                      </p>
+                    </div>
+                    <div className="status-badges">
+                      <span className={`status-badge ${orderStatusClass}`}>{orderStatusLabel || 'Pending'}</span>
+                      <span className="status-badge">{paymentStatusLabel}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="account-overview-note">Your latest orders will show here after checkout.</p>
+          )}
+          <Link to="/account/orders" className="text-button">
+            View all orders
+          </Link>
+        </article>
       </div>
 
       <div className="account-layout">
         <form className="form-card account-form" onSubmit={handleSubmit}>
-          <h2>Edit Profile</h2>
+          <h2>Edit profile</h2>
+          <p className="account-form-note">Keep your name, contact info, and default shipping address current.</p>
           {message ? <div className="auth-message auth-message-success">{message}</div> : null}
           {error ? <div className="auth-message auth-message-error">{error}</div> : null}
           {!message && !error && authError ? <div className="auth-message auth-message-error">{authError}</div> : null}
@@ -156,7 +225,7 @@ export default function AccountPage() {
             </label>
           </div>
 
-          <h3 className="account-section-title">Default Shipping Address</h3>
+          <h3 className="account-section-title">Default shipping address</h3>
           <div className="form-grid">
             <label>
               Shipping first name
@@ -215,13 +284,14 @@ export default function AccountPage() {
           </div>
 
           <button type="submit" className="btn btn-dark">
-            Save Changes
+            Save changes
           </button>
         </form>
 
         <aside className="account-sidebar">
           <div className="form-card account-summary-card">
-            <h2>Quick Actions</h2>
+            <h2>Quick actions</h2>
+            <p className="account-summary-note">Common account shortcuts for demo browsing.</p>
             <Link to="/account/orders" className="btn btn-ghost full-width">
               View Orders
             </Link>

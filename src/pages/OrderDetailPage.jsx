@@ -325,6 +325,27 @@ export default function OrderDetailPage() {
             </div>
           </div>
 
+          <div className="order-receipt-overview" aria-label="Order overview">
+            <div>
+              <span>Customer</span>
+              <strong>{order.customerName || order.customerEmail || 'Customer unavailable'}</strong>
+            </div>
+            <div>
+              <span>Items</span>
+              <strong>
+                {orderItems.length} item{orderItems.length === 1 ? '' : 's'}
+              </strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong>{orderStatusLabel || 'Pending'}</strong>
+            </div>
+            <div>
+              <span>Total</span>
+              <strong>{hasMoneyValue(order.total) ? formatMoney(order.total) : 'Unavailable'}</strong>
+            </div>
+          </div>
+
           <div className="order-receipt-grid">
             <section className="order-receipt-panel">
               <h3>Shipping info</h3>

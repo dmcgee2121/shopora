@@ -78,6 +78,8 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Local Stripe testing can still be cumbersome; deployed Netlify is the reliable Stripe QA path
 - Admin/demo auth is prototype-level and should not be treated as production security
 - Future production hardening should revisit admin auth, RLS, Stripe webhook confidence, and final policy/legal copy
+- Admin live order visibility now depends on the `get_admin_orders()` Supabase RPC plus an admin profile role in `public.profiles`
+- The demo checklist lives at `docs/SHOPORA_DEMO_QA_CHECKLIST.md`
 
 ## Recommended Next Milestones
 

@@ -1,18 +1,61 @@
+const statusOptions = [
+  { value: '', label: 'All' },
+  { value: 'sale', label: 'Sale' },
+  { value: 'new', label: 'New' },
+  { value: 'inStock', label: 'In stock' },
+  { value: 'lowStock', label: 'Low stock' },
+  { value: 'outOfStock', label: 'Out of stock' },
+];
+
+function filterGroupTitle(items = [], fallback) {
+  return items.length > 1 ? fallback : null;
+}
+
 export default function FilterSidebar({
-  availableCategories,
-  availableSizes,
+  availableCategories = [],
+  availableDepartments = [],
+  availableBrands = [],
+  availableSizes = [],
   category,
+  department,
+  brand,
   size,
   price,
   saleOnly,
+  status,
   onChange,
 }) {
   return (
     <aside className="filter-sidebar">
       <div className="filter-heading">
         <h2>Refine the edit</h2>
-        <p>Narrow the collection by category, price, size, or sale styles.</p>
+        <p>Narrow the collection by category, brand, price, size, or product status.</p>
       </div>
+
+      {filterGroupTitle(availableDepartments, 'Department') ? (
+        <div className="filter-block">
+          <h3>Department</h3>
+          <div className="pill-group">
+            <button
+              type="button"
+              className={!department ? 'pill active' : 'pill'}
+              onClick={() => onChange({ department: '' })}
+            >
+              All
+            </button>
+            {availableDepartments.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={department === item ? 'pill active' : 'pill'}
+                onClick={() => onChange({ department: item })}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="filter-block">
         <h3>Category</h3>
@@ -37,6 +80,27 @@ export default function FilterSidebar({
         </div>
       </div>
 
+      {availableBrands.length ? (
+        <div className="filter-block">
+          <h3>Brand</h3>
+          <div className="pill-group">
+            <button type="button" className={!brand ? 'pill active' : 'pill'} onClick={() => onChange({ brand: '' })}>
+              All
+            </button>
+            {availableBrands.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={brand === item ? 'pill active' : 'pill'}
+                onClick={() => onChange({ brand: item })}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       <div className="filter-block">
         <h3>Price</h3>
         <div className="select-wrap">
@@ -49,24 +113,38 @@ export default function FilterSidebar({
         </div>
       </div>
 
+      {availableSizes.length ? (
+        <div className="filter-block">
+          <h3>Size</h3>
+          <div className="pill-group">
+            <button type="button" className={!size ? 'pill active' : 'pill'} onClick={() => onChange({ size: '' })}>
+              All
+            </button>
+            {availableSizes.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={size === item ? 'pill active' : 'pill'}
+                onClick={() => onChange({ size: item })}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       <div className="filter-block">
-        <h3>Size</h3>
+        <h3>Status</h3>
         <div className="pill-group">
-          <button
-            type="button"
-            className={!size ? 'pill active' : 'pill'}
-            onClick={() => onChange({ size: '' })}
-          >
-            All
-          </button>
-          {availableSizes.map((item) => (
+          {statusOptions.map((item) => (
             <button
-              key={item}
+              key={item.value || 'all'}
               type="button"
-              className={size === item ? 'pill active' : 'pill'}
-              onClick={() => onChange({ size: item })}
+              className={status === item.value ? 'pill active' : 'pill'}
+              onClick={() => onChange({ status: item.value })}
             >
-              {item}
+              {item.label}
             </button>
           ))}
         </div>

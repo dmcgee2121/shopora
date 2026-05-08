@@ -39,6 +39,10 @@ function getFriendlyOrdersError(error, fallbackMessage) {
     return `ShopOra could not ${action} your orders because the live Supabase orders tables are missing the required permissions. Re-run supabase/schema.sql.`;
   }
 
+  if (lower.includes('admin access required')) {
+    return 'ShopOra could not load admin orders because the signed-in Supabase account is not marked as an admin in public.profiles.';
+  }
+
   return message;
 }
 
@@ -421,6 +425,18 @@ async function getOrdersWithItemsByUserId(userId, accessToken) {
   return orders.map((order) => normalizeOrder(order, itemsByOrderId.get(normalizeId(order.id)) ?? []));
 }
 
+async function getAdminOrdersWithItems() {
+  const client = ensureSupabaseOrdersReady();
+  const { data, error } = await client.rpc('get_admin_orders');
+
+  if (error) {
+    throw new Error(getFriendlyOrdersError(error, 'Unable to load admin orders right now.'));
+  }
+
+  const orders = Array.isArray(data) ? data : [];
+  return orders.map((order) => normalizeOrder(order, Array.isArray(order?.items) ? order.items : []));
+}
+
 async function getOrderWithItemsById(orderId, accessToken) {
   const cleanOrderId = normalizeId(orderId);
   if (!cleanOrderId) {
@@ -527,6 +543,14 @@ export async function getSupabaseOrders() {
     return await getOrdersWithItemsByUserId(session.userId, session.accessToken);
   } catch (error) {
     throw new Error(getFriendlyOrdersError(error, 'Unable to load your orders right now.'));
+  }
+}
+
+export async function getSupabaseAdminOrders() {
+  try {
+    return await getAdminOrdersWithItems();
+  } catch (error) {
+    throw new Error(getFriendlyOrdersError(error, 'Unable to load admin orders right now.'));
   }
 }
 

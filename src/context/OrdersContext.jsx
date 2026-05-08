@@ -3,12 +3,14 @@ import { isSupabaseConfigured } from '../lib/supabaseClient';
 import { useAuth } from './AuthContext';
 import {
   createSupabaseOrder,
+  getSupabaseAdminOrders,
   getSupabaseOrderById,
   getSupabaseOrderByStripeCheckoutSessionId,
   getSupabaseOrders,
 } from '../services/supabaseOrdersService';
 import { normalizeOrderItems } from '../utils/orderItemUtils';
 import { idsMatch, normalizeId } from '../utils/idUtils';
+import { normalizeOrderStatusValue } from '../utils/statusUtils';
 
 const OrdersContext = createContext(null);
 const STORAGE_KEY = 'shopora_orders';
@@ -48,8 +50,20 @@ function formatOrderNumber(date = new Date()) {
 }
 
 function normalizeStatus(status) {
-  const cleanStatus = typeof status === 'string' ? status.trim() : '';
-  return VALID_STATUSES.includes(cleanStatus) ? cleanStatus : 'Pending';
+  switch (normalizeOrderStatusValue(status)) {
+    case 'pending':
+      return 'Pending';
+    case 'processing':
+      return 'Processing';
+    case 'shipped':
+      return 'Shipped';
+    case 'delivered':
+      return 'Delivered';
+    case 'cancelled':
+      return 'Cancelled';
+    default:
+      return 'Pending';
+  }
 }
 
 function normalizePaymentStatus(status) {
@@ -179,17 +193,20 @@ export function OrdersProvider({ children }) {
   }, []);
 
   const loadSupabaseOrders = useCallback(async () => {
-    if (!currentUser?.id || currentUser.role === 'admin') {
+    if (!currentUser?.id) {
       return loadLocalOrders();
     }
 
     if (mountedRef.current) {
       setIsOrdersLoading(true);
+      setOrders([]);
       setOrdersError('');
+      setOrdersSource('supabase');
     }
 
     try {
-      const nextOrders = await getSupabaseOrders();
+      const nextOrders =
+        currentUser.role === 'admin' ? await getSupabaseAdminOrders() : await getSupabaseOrders();
       if (!mountedRef.current) {
         return nextOrders;
       }
@@ -217,7 +234,7 @@ export function OrdersProvider({ children }) {
       return undefined;
     }
 
-    if (authSource === 'supabase' && currentUser?.id && currentUser.role !== 'admin') {
+    if (authSource === 'supabase' && currentUser?.id) {
       void loadSupabaseOrders();
       return undefined;
     }

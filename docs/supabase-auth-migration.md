@@ -92,7 +92,8 @@ Current pattern:
 - RLS restricts access to the owning authenticated user.
 - Local fallback users and the seeded admin still keep their browser-local demo behavior.
 - Customer orders are stored in `public.orders` and `public.order_items` for authenticated Supabase users.
-- The demo/admin order management flow remains local/demo-only.
+- The seeded demo admin still remains local/demo-only.
+- A real Supabase admin profile can read all orders through the protected `get_admin_orders()` RPC added in `supabase/schema.sql`.
 
 Cart can stay local because checkout now branches by auth source:
 

@@ -2,6 +2,28 @@ export function normalizeStatusValue(value) {
   return typeof value === 'string' ? value.trim().toLowerCase() : '';
 }
 
+export function normalizeOrderStatusValue(value) {
+  switch (normalizeStatusValue(value)) {
+    case 'pending':
+      return 'pending';
+    case 'processing':
+      return 'processing';
+    case 'shipped':
+      return 'shipped';
+    case 'delivered':
+      return 'delivered';
+    case 'cancelled':
+    case 'canceled':
+      return 'cancelled';
+    case 'demo':
+      return 'demo';
+    case 'completed':
+      return 'completed';
+    default:
+      return normalizeStatusValue(value);
+  }
+}
+
 function toTitleCase(value) {
   if (!value) return '';
   return value
@@ -11,7 +33,7 @@ function toTitleCase(value) {
 }
 
 export function getOrderStatusClass(status) {
-  switch (normalizeStatusValue(status)) {
+  switch (normalizeOrderStatusValue(status)) {
     case 'pending':
       return 'order-status-pending';
     case 'processing':
@@ -29,7 +51,7 @@ export function getOrderStatusClass(status) {
 }
 
 export function getOrderStatusLabel(status) {
-  switch (normalizeStatusValue(status)) {
+  switch (normalizeOrderStatusValue(status)) {
     case 'pending':
       return 'Pending';
     case 'processing':

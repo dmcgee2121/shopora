@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import ShopOraImage from '../../components/ShopOraImage';
+import { useAuth } from '../../context/AuthContext';
 import { useOrders } from '../../context/OrdersContext';
 import { idsMatch } from '../../utils/idUtils';
 import { getOrderItemImage } from '../../utils/orderItemUtils';
@@ -9,6 +10,7 @@ import {
   getOrderStatusClass,
   getOrderStatusLabel,
   getPaymentStatusLabel,
+  normalizeOrderStatusValue,
 } from '../../utils/statusUtils';
 
 const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
@@ -113,10 +115,22 @@ function OrderItemRow({ item }) {
 }
 
 export default function AdminOrdersPage() {
-  const { orders, updateOrderStatus, isOrdersLoading, ordersError } = useOrders();
+  const { orders, ordersSource, updateOrderStatus, isOrdersLoading, ordersError } = useOrders();
+  const { currentUser } = useAuth();
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const orderSourceNote =
+    currentUser?.role === 'admin'
+      ? ordersSource === 'supabase'
+        ? 'This admin order list is reading live Supabase orders through the protected admin RPC. Status updates remain local-demo only for now.'
+        : 'This prototype admin order list is reading browser-local demo orders only. Supabase customer orders stay visible in customer accounts, but they are not exposed to this local admin login.'
+      : '';
+  const canUpdateOrderStatus = ordersSource === 'local';
+  const ordersSubtitle =
+    ordersSource === 'supabase'
+      ? 'Review live Supabase orders and open receipts without leaving the admin area.'
+      : 'Review completed orders, update status, and open receipts without leaving the admin area.';
 
   const ordered = useMemo(
     () =>
@@ -130,7 +144,7 @@ export default function AdminOrdersPage() {
     const term = query.trim().toLowerCase();
 
     return ordered.filter((order) => {
-      const statusMatches = statusFilter === 'all' || order.status === statusFilter;
+      const statusMatches = statusFilter === 'all' || normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(statusFilter);
       const searchable = [
         order.orderNumber,
         order.customerName,
@@ -148,7 +162,7 @@ export default function AdminOrdersPage() {
   const selectedOrder = ordered.find((order) => idsMatch(order.id, selectedOrderId)) ?? null;
 
   const counts = statusOptions.reduce((result, status) => {
-    result[status] = ordered.filter((order) => order.status === status).length;
+    result[status] = ordered.filter((order) => normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(status)).length;
     return result;
   }, {});
 
@@ -180,11 +194,17 @@ export default function AdminOrdersPage() {
       <AdminPageHeader
         eyebrow="Order operations"
         title="Orders"
-        subtitle="Review completed orders, update status, and open receipts without leaving the admin area."
+        subtitle={ordersSubtitle}
         actionLabel="View Checkout"
         actionTo="/checkout"
         actionClassName="btn btn-dark"
       />
+
+      {orderSourceNote ? (
+        <div className="admin-notice admin-catalog-error" role="note">
+          <p>{orderSourceNote}</p>
+        </div>
+      ) : null}
 
       <div className="admin-toolbar">
         <div className="admin-toolbar-left">
@@ -238,14 +258,20 @@ export default function AdminOrdersPage() {
 
       {ordersError ? (
         <div className="admin-catalog-error" role="alert">
-          Orders could not be loaded right now. Refresh the page and try again.
+          {ordersSource === 'supabase'
+            ? 'Supabase orders could not be loaded right now. Refresh the page and verify the admin RPC and permissions.'
+            : 'Orders could not be loaded right now. Refresh the page and try again.'}
         </div>
       ) : null}
 
       {shouldShowLoadingState ? (
         <div className="admin-empty-state" aria-live="polite">
           <h2>Loading orders...</h2>
-          <p>Retrieving the latest orders for this admin view.</p>
+          <p>
+            {ordersSource === 'supabase'
+              ? 'Retrieving the latest live Supabase orders for this admin view.'
+              : 'Retrieving the latest local demo orders for this admin view.'}
+          </p>
         </div>
       ) : hasOrders ? (
         hasFilteredOrders ? (
@@ -286,8 +312,9 @@ export default function AdminOrdersPage() {
                         <td>
                           <select
                             className="admin-status-select"
-                            value={order.status}
+                            value={getOrderStatusLabel(order.status)}
                             onChange={(event) => updateOrderStatus(order.id, event.target.value)}
+                            disabled={!canUpdateOrderStatus}
                             aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
                           >
                             {statusOptions.map((status) => (
@@ -296,7 +323,11 @@ export default function AdminOrdersPage() {
                               </option>
                             ))}
                           </select>
-                          <div className="admin-status-subtext">{orderStatusLabel || 'No status available'}</div>
+                          <div className="admin-status-subtext">
+                            {canUpdateOrderStatus
+                              ? orderStatusLabel || 'No status available'
+                              : 'Read-only for live Supabase orders.'}
+                          </div>
                         </td>
                         <td>
                           <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
@@ -354,8 +385,9 @@ export default function AdminOrdersPage() {
                       </div>
                       <select
                         className="admin-status-select"
-                        value={order.status}
+                        value={getOrderStatusLabel(order.status)}
                         onChange={(event) => updateOrderStatus(order.id, event.target.value)}
+                        disabled={!canUpdateOrderStatus}
                         aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
                       >
                         {statusOptions.map((status) => (
@@ -389,6 +421,9 @@ export default function AdminOrdersPage() {
 
                     <div className="admin-record-row">
                       <span className={`status-badge ${orderStatusClass}`.trim()}>{orderStatusLabel}</span>
+                      {!canUpdateOrderStatus ? (
+                        <span className="admin-status-subtext">Read-only for live Supabase orders.</span>
+                      ) : null}
                       <div className="admin-row-actions">
                         <button
                           type="button"
@@ -428,11 +463,15 @@ export default function AdminOrdersPage() {
       ) : (
         <div className="admin-empty-state">
           <h2>{hasFilters ? 'No matching orders.' : 'No orders yet.'}</h2>
-          <p>
-            {hasFilters
-              ? 'Try a different order number, customer name, email, or status filter.'
-              : 'Completed checkouts will appear here once a customer places an order.'}
-          </p>
+              <p>
+                {hasFilters
+                  ? 'Try a different order number, customer name, email, or status filter.'
+                  : ordersSource === 'supabase'
+                    ? 'Live Supabase customer orders appear here when the admin session is connected to the protected admin RPC.'
+                    : currentUser?.role === 'admin'
+                      ? 'This admin view only reflects browser-local demo orders. Supabase customer orders are not exposed here yet.'
+                      : 'Completed checkouts will appear here once a customer places an order.'}
+              </p>
           <div className="admin-empty-state-actions">
             {hasFilters ? (
               <button

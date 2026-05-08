@@ -348,3 +348,53 @@ $$;
 
 revoke all on function public.create_customer_order(jsonb, jsonb) from public;
 grant execute on function public.create_customer_order(jsonb, jsonb) to authenticated;
+
+create or replace function public.get_admin_orders()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  admin_orders jsonb;
+begin
+  if auth.uid() is null then
+    raise exception 'Not authenticated.';
+  end if;
+
+  if not exists (
+    select 1
+    from public.profiles
+    where id = auth.uid()
+      and role = 'admin'
+  ) then
+    raise exception 'Admin access required.';
+  end if;
+
+  select coalesce(
+    jsonb_agg(
+      to_jsonb(o)
+      || jsonb_build_object(
+        'items',
+        coalesce(
+          (
+            select jsonb_agg(to_jsonb(oi) order by oi.created_at asc)
+            from public.order_items oi
+            where oi.order_id = o.id
+          ),
+          '[]'::jsonb
+        )
+      )
+      order by o.created_at desc
+    ),
+    '[]'::jsonb
+  )
+  into admin_orders
+  from public.orders o;
+
+  return admin_orders;
+end;
+$$;
+
+revoke all on function public.get_admin_orders() from public;
+grant execute on function public.get_admin_orders() to authenticated;

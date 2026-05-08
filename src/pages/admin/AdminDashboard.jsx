@@ -6,7 +6,12 @@ import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import { useAuth } from '../../context/AuthContext';
 import { useOrders } from '../../context/OrdersContext';
 import { useProductCatalog } from '../../context/ProductCatalogContext';
-import { getOrderStatusClass, getOrderStatusLabel, getPaymentStatusLabel } from '../../utils/statusUtils';
+import {
+  getOrderStatusClass,
+  getOrderStatusLabel,
+  getPaymentStatusLabel,
+  normalizeOrderStatusValue,
+} from '../../utils/statusUtils';
 
 function safeText(value, fallback = '-') {
   const text = typeof value === 'string' ? value.trim() : '';
@@ -114,22 +119,35 @@ function QuickActionLink({ to, label, description, className = 'btn btn-ghost' }
 }
 
 export default function AdminDashboard() {
-  const { users } = useAuth();
-  const { orders } = useOrders();
+  const { users, currentUser } = useAuth();
+  const { orders, ordersSource, isOrdersLoading } = useOrders();
   const { products } = useProductCatalog();
+  const orderSourceNote =
+    currentUser?.role === 'admin'
+      ? ordersSource === 'supabase'
+        ? 'This admin session is reading live Supabase admin orders through the protected RPC.'
+        : 'This prototype admin session is reading browser-local demo orders only. Supabase customer orders stay visible in customer accounts, but they are not exposed to this local admin login.'
+      : '';
+  const dashboardSubtitle =
+    ordersSource === 'supabase'
+      ? 'A clean snapshot of live Supabase order activity and catalog health for the current admin session.'
+      : 'A clean snapshot of sales, catalog health, and recent order movement using local demo data.';
 
   const analytics = useMemo(() => {
     const orderedOrders = [...orders].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
-    const activeOrders = orderedOrders.filter((order) => ['Pending', 'Processing', 'Shipped'].includes(order.status));
-    const completedOrders = orderedOrders.filter((order) => order.status !== 'Cancelled');
-    const pendingOrders = orderedOrders.filter((order) => order.status === 'Pending').length;
-    const processingOrders = orderedOrders.filter((order) => order.status === 'Processing').length;
-    const shippedOrders = orderedOrders.filter((order) => order.status === 'Shipped').length;
-    const deliveredOrders = orderedOrders.filter((order) => order.status === 'Delivered').length;
-    const cancelledOrders = orderedOrders.filter((order) => order.status === 'Cancelled').length;
+    const normalizedStatus = (order) => normalizeOrderStatusValue(order.status);
+    const activeOrders = orderedOrders.filter((order) =>
+      ['pending', 'processing', 'shipped'].includes(normalizedStatus(order)),
+    );
+    const completedOrders = orderedOrders.filter((order) => normalizedStatus(order) !== 'cancelled');
+    const pendingOrders = orderedOrders.filter((order) => normalizedStatus(order) === 'pending').length;
+    const processingOrders = orderedOrders.filter((order) => normalizedStatus(order) === 'processing').length;
+    const shippedOrders = orderedOrders.filter((order) => normalizedStatus(order) === 'shipped').length;
+    const deliveredOrders = orderedOrders.filter((order) => normalizedStatus(order) === 'delivered').length;
+    const cancelledOrders = orderedOrders.filter((order) => normalizedStatus(order) === 'cancelled').length;
 
     const saleProducts = products.filter((product) => product.isSale).length;
     const newProducts = products.filter((product) => product.isNew).length;
@@ -195,7 +213,7 @@ export default function AdminDashboard() {
       <AdminPageHeader
         eyebrow="ShopOra Admin"
         title="Operations Dashboard"
-        subtitle="A clean snapshot of sales, catalog health, and recent order movement using local demo data."
+        subtitle={dashboardSubtitle}
         actions={
           <>
             <Link to="/admin/products/new" className="btn btn-dark">
@@ -213,11 +231,27 @@ export default function AdminDashboard() {
 
       <CatalogStatusNote variant="admin" className="admin-dashboard-status" />
 
+      {orderSourceNote ? (
+        <div className="admin-notice admin-catalog-error" role="note">
+          <p>{orderSourceNote}</p>
+        </div>
+      ) : null}
+
+      {isOrdersLoading && ordersSource === 'supabase' ? (
+        <div className="admin-notice" role="status" aria-live="polite">
+          <p>Loading live Supabase orders for this admin session.</p>
+        </div>
+      ) : null}
+
       <section className="admin-dashboard-overview">
         <div className="admin-dashboard-overview-main">
           <div className="admin-dashboard-section-heading">
             <span>Revenue and order activity</span>
-            <p>Core numbers and live demo signals pulled from the current local product and order state.</p>
+            <p>
+              {ordersSource === 'supabase'
+                ? 'Core numbers and order movement pulled from the current live Supabase admin session.'
+                : 'Core numbers and live demo signals pulled from the current local product and order state.'}
+            </p>
           </div>
 
           <div className="admin-dashboard-metric-grid">
@@ -362,9 +396,15 @@ export default function AdminDashboard() {
             </div>
 
             <p className="admin-dashboard-note">
-              This dashboard uses local demo data only. It is intentionally presentation-focused and
-              keeps checkout, auth, Stripe, and backend contracts untouched.
+              {ordersSource === 'supabase'
+                ? 'This dashboard is backed by live Supabase admin order reads for the current session. Checkout, auth, Stripe, and backend contracts remain untouched.'
+                : 'This dashboard uses local demo data only. It is intentionally presentation-focused and keeps checkout, auth, Stripe, and backend contracts untouched.'}
             </p>
+            {ordersSource === 'supabase' ? (
+              <p className="admin-catalog-helper">
+                Order data is sourced from live Supabase admin reads for this session.
+              </p>
+            ) : null}
           </section>
         </aside>
       </section>

@@ -4,6 +4,8 @@ Milestone: `v0.22-production-readiness-audit`
 
 Scope: documentation-first audit for launch readiness. This is a planning and risk document, not a behavior change.
 
+See also: [docs/SHOPORA_SUPABASE_SECURITY_HARDENING_PLAN.md](./SHOPORA_SUPABASE_SECURITY_HARDENING_PLAN.md)
+
 ## 1. Current Project State
 
 ### What is working

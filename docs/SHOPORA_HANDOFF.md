@@ -81,6 +81,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Admin live order visibility now depends on the `get_admin_orders()` Supabase RPC plus an admin profile role in `public.profiles`
 - The demo checklist lives at `docs/SHOPORA_DEMO_QA_CHECKLIST.md`
 - The production-readiness audit lives at `docs/SHOPORA_PRODUCTION_READINESS_AUDIT.md`
+- The Supabase security hardening plan lives at `docs/SHOPORA_SUPABASE_SECURITY_HARDENING_PLAN.md`
 
 ## Recommended Next Milestones
 

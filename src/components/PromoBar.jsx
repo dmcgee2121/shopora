@@ -1,6 +1,6 @@
 const items = [
   'Free shipping on orders over $75',
-  'New arrivals weekly',
+  'Secure checkout with Stripe',
   'Easy 30-day returns',
 ];
 

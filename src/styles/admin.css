@@ -846,6 +846,15 @@
   line-height: 1.45;
 }
 
+.admin-order-source-label {
+  color: var(--gold-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
 .admin-stock-cell {
   display: grid;
   gap: 6px;

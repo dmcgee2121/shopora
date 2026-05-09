@@ -23,6 +23,8 @@ const statusCopy = {
   Cancelled: 'Orders stopped before completion.',
 };
 
+const fulfillmentStatuses = new Set(['pending', 'processing', 'shipped']);
+
 function safeText(value, fallback = '-') {
   const text = typeof value === 'string' ? value.trim() : '';
   return text || fallback;
@@ -86,6 +88,15 @@ function getPaymentBadgeClass(paymentStatus, demoMode) {
   if (label.includes('pending')) return 'stock-low';
   if (label.includes('failed') || label.includes('expired') || label.includes('canceled')) return 'stock-out';
   return '';
+}
+
+function getOrderStatusOptionValue(status) {
+  const normalized = normalizeOrderStatusValue(status);
+  return statusOptions.find((option) => normalizeOrderStatusValue(option) === normalized) ?? 'Pending';
+}
+
+function getOrderSourceLabel(ordersSource) {
+  return ordersSource === 'supabase' ? 'Live Supabase order' : 'Local demo order';
 }
 
 function OrderItemRow({ item }) {
@@ -162,9 +173,22 @@ export default function AdminOrdersPage() {
   const selectedOrder = ordered.find((order) => idsMatch(order.id, selectedOrderId)) ?? null;
 
   const counts = statusOptions.reduce((result, status) => {
-    result[status] = ordered.filter((order) => normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(status)).length;
+    result[status] = ordered.filter(
+      (order) => normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(status),
+    ).length;
     return result;
   }, {});
+
+  const pendingOrders = counts.Pending;
+  const processingOrders = counts.Processing;
+  const shippedOrders = counts.Shipped;
+  const deliveredOrders = counts.Delivered;
+  const cancelledOrders = counts.Cancelled;
+  const activeFulfillmentOrders = ordered.filter((order) =>
+    fulfillmentStatuses.has(normalizeOrderStatusValue(order.status)),
+  ).length;
+  const totalRevenue = ordered.reduce((total, order) => total + Number(order.total ?? 0), 0);
+  const sourceLabel = ordersSource === 'supabase' ? 'Live Supabase orders' : 'Local demo orders';
 
   const hasOrders = ordered.length > 0;
   const hasFilters = Boolean(query.trim() || statusFilter !== 'all');
@@ -205,6 +229,44 @@ export default function AdminOrdersPage() {
           <p>{orderSourceNote}</p>
         </div>
       ) : null}
+
+      <div className="admin-status-grid">
+        <div className="admin-status-card">
+          <span>Total orders</span>
+          <strong>{ordered.length}</strong>
+          <p>{sourceLabel} currently visible in this session.</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Pending</span>
+          <strong>{pendingOrders}</strong>
+          <p>{statusCopy.Pending}</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Processing</span>
+          <strong>{processingOrders}</strong>
+          <p>{statusCopy.Processing}</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Fulfillment flow</span>
+          <strong>{activeFulfillmentOrders}</strong>
+          <p>
+            Pending, processing, and shipped orders in motion. {shippedOrders} shipped orders are currently
+            active.
+          </p>
+        </div>
+        <div className="admin-status-card">
+          <span>Delivered / Cancelled</span>
+          <strong>
+            {deliveredOrders}/{cancelledOrders}
+          </strong>
+          <p>Completed versus stopped orders.</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Total revenue</span>
+          <strong>{formatMoney(totalRevenue)}</strong>
+          <p>Gross order value across the current result set.</p>
+        </div>
+      </div>
 
       <div className="admin-toolbar">
         <div className="admin-toolbar-left">
@@ -300,10 +362,11 @@ export default function AdminOrdersPage() {
 
                     return (
                       <tr key={order.id}>
-                        <td>
-                          <strong>{safeText(order.orderNumber, 'Order')}</strong>
-                          <p>{safeText(order.id, 'No order id')}</p>
-                        </td>
+                    <td>
+                      <strong>{safeText(order.orderNumber, 'Order')}</strong>
+                      <p>{safeText(order.id, 'No order id')}</p>
+                      <p className="admin-order-source-label">{getOrderSourceLabel(ordersSource)}</p>
+                    </td>
                         <td>
                           <strong>{customer.name}</strong>
                           <p>{customer.email}</p>
@@ -312,7 +375,7 @@ export default function AdminOrdersPage() {
                         <td>
                           <select
                             className="admin-status-select"
-                            value={getOrderStatusLabel(order.status)}
+                            value={getOrderStatusOptionValue(order.status)}
                             onChange={(event) => updateOrderStatus(order.id, event.target.value)}
                             disabled={!canUpdateOrderStatus}
                             aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
@@ -341,7 +404,7 @@ export default function AdminOrdersPage() {
                               className="text-button"
                               onClick={() => setSelectedOrderId(order.id)}
                             >
-                              View order
+                              Quick view
                             </button>
                             <Link to={`/order-confirmation/${order.id}`} className="text-button">
                               Open receipt
@@ -371,6 +434,9 @@ export default function AdminOrdersPage() {
                         <strong>{safeText(order.orderNumber, 'Order')}</strong>
                         <span>{customer.name}</span>
                         <span>{customer.email}</span>
+                        <span className="admin-order-source-label">
+                          {getOrderSourceLabel(ordersSource)}
+                        </span>
                       </div>
                       <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
                     </div>
@@ -385,7 +451,7 @@ export default function AdminOrdersPage() {
                       </div>
                       <select
                         className="admin-status-select"
-                        value={getOrderStatusLabel(order.status)}
+                        value={getOrderStatusOptionValue(order.status)}
                         onChange={(event) => updateOrderStatus(order.id, event.target.value)}
                         disabled={!canUpdateOrderStatus}
                         aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
@@ -430,7 +496,7 @@ export default function AdminOrdersPage() {
                           className="btn btn-ghost btn-small"
                           onClick={() => setSelectedOrderId(order.id)}
                         >
-                          View order
+                          Quick view
                         </button>
                         <Link to={`/order-confirmation/${order.id}`} className="btn btn-outline btn-small">
                           Open receipt
@@ -552,6 +618,14 @@ export default function AdminOrdersPage() {
                 <p>
                   <strong>Items:</strong> {getOrderItemCount(selectedOrder)}
                 </p>
+                <p className="admin-order-source-label">
+                  {getOrderSourceLabel(ordersSource)}
+                </p>
+                <p className="admin-status-subtext">
+                  {ordersSource === 'supabase'
+                    ? 'Live Supabase orders are visible here. Status updates remain read-only until backend support is added.'
+                    : 'Local demo orders can be updated from this admin view.'}
+                </p>
               </section>
 
               <section className="admin-order-modal-panel">
@@ -575,6 +649,39 @@ export default function AdminOrdersPage() {
               </section>
 
               <section className="admin-order-modal-panel">
+                <h3>Fulfillment summary</h3>
+                <p>
+                  <strong>Current status:</strong>{' '}
+                  <span className={`status-badge ${getOrderStatusClass(selectedOrder.status)}`}>
+                    {getOrderStatusLabel(selectedOrder.status)}
+                  </span>
+                </p>
+                <p>
+                  <strong>Payment state:</strong>{' '}
+                  <span
+                    className={`status-badge ${getPaymentBadgeClass(
+                      selectedOrder.paymentStatus,
+                      selectedOrder.demoMode,
+                    )}`.trim()}
+                  >
+                    {getPaymentStatusLabel(selectedOrder.paymentStatus, { demoMode: selectedOrder.demoMode })}
+                  </span>
+                </p>
+                <p>
+                  <strong>Order source:</strong> {getOrderSourceLabel(ordersSource)}
+                </p>
+                <p>
+                  <strong>Receipt:</strong>{' '}
+                  <Link to={`/order-confirmation/${selectedOrder.id}`} className="text-button">
+                    Open receipt
+                  </Link>
+                </p>
+                <p className="admin-status-subtext">
+                  Use the status summary above to confirm what needs fulfillment attention next.
+                </p>
+              </section>
+
+              <section className="admin-order-modal-panel">
                 <h3>Totals</h3>
                 <div className="summary-row">
                   <span>Subtotal</span>
@@ -592,6 +699,31 @@ export default function AdminOrdersPage() {
                   <span>Total</span>
                   <strong>{formatMoney(selectedOrder.total)}</strong>
                 </div>
+              </section>
+
+              <section className="admin-order-modal-panel">
+                <h3>Support</h3>
+                <p>
+                  <strong>Customer help:</strong> Use the contact page for shipping, return, and order questions.
+                </p>
+                <p>
+                  <strong>Support link:</strong>{' '}
+                  <Link to="/contact" className="text-button">
+                    Open contact page
+                  </Link>
+                </p>
+                <p>
+                  <strong>Receipt link:</strong>{' '}
+                  <Link to={`/order-confirmation/${selectedOrder.id}`} className="text-button">
+                    Open receipt
+                  </Link>
+                </p>
+                <p>
+                  <strong>Storefront order number:</strong> {safeText(selectedOrder.orderNumber, 'Order')}
+                </p>
+                <p className="admin-status-subtext">
+                  Keep the order number handy when following up with support or fulfillment.
+                </p>
               </section>
             </div>
 

@@ -36,7 +36,7 @@ export default function HomeCampaign({ products = [] }) {
 
       <div className="campaign-visual" aria-hidden="true">
         <div className="campaign-image main">
-          <ShopOraImage src={getProductImage(heroProduct)} alt="" className="campaign-photo" />
+          <ShopOraImage src={getProductImage(heroProduct)} alt="" className="campaign-photo" loading="eager" />
         </div>
         <div className="campaign-stack">
           <div className="campaign-image">

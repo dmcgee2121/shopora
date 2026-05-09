@@ -39,6 +39,7 @@ export default function FilterSidebar({
             <button
               type="button"
               className={!department ? 'pill active' : 'pill'}
+              aria-pressed={!department}
               onClick={() => onChange({ department: '' })}
             >
               All
@@ -48,6 +49,7 @@ export default function FilterSidebar({
                 key={item}
                 type="button"
                 className={department === item ? 'pill active' : 'pill'}
+                aria-pressed={department === item}
                 onClick={() => onChange({ department: item })}
               >
                 {item}
@@ -63,6 +65,7 @@ export default function FilterSidebar({
           <button
             type="button"
             className={!category ? 'pill active' : 'pill'}
+            aria-pressed={!category}
             onClick={() => onChange({ category: '' })}
           >
             All
@@ -72,6 +75,7 @@ export default function FilterSidebar({
               key={item}
               type="button"
               className={category === item ? 'pill active' : 'pill'}
+              aria-pressed={category === item}
               onClick={() => onChange({ category: item })}
             >
               {item}
@@ -92,6 +96,7 @@ export default function FilterSidebar({
                 key={item}
                 type="button"
                 className={brand === item ? 'pill active' : 'pill'}
+                aria-pressed={brand === item}
                 onClick={() => onChange({ brand: item })}
               >
                 {item}
@@ -125,6 +130,7 @@ export default function FilterSidebar({
                 key={item}
                 type="button"
                 className={size === item ? 'pill active' : 'pill'}
+                aria-pressed={size === item}
                 onClick={() => onChange({ size: item })}
               >
                 {item}
@@ -142,6 +148,7 @@ export default function FilterSidebar({
               key={item.value || 'all'}
               type="button"
               className={status === item.value ? 'pill active' : 'pill'}
+              aria-pressed={status === item.value}
               onClick={() => onChange({ status: item.value })}
             >
               {item.label}

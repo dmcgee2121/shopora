@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { getProductImage } from '../data/products';
 import ShopOraImage from './ShopOraImage';
@@ -36,14 +37,18 @@ const departments = [
 ];
 
 export default function DepartmentTiles({ products }) {
-  const counts = departments.map((department) => {
-    const productCount =
-      department.key === 'sale'
-        ? products.filter((product) => product.isSale).length
-        : products.filter((product) => product.department === department.key).length;
+  const counts = useMemo(
+    () =>
+      departments.map((department) => {
+        const productCount =
+          department.key === 'sale'
+            ? products.filter((product) => product.isSale).length
+            : products.filter((product) => product.department === department.key).length;
 
-    return { ...department, count: productCount };
-  });
+        return { ...department, count: productCount };
+      }),
+    [products],
+  );
 
   return (
     <section className="section-block">

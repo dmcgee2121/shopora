@@ -6,7 +6,7 @@ export default function ShopOraImage({
   alt,
   className = '',
   fallbackText = 'Image coming soon',
-  loading = 'eager',
+  loading = 'lazy',
   decoding = 'async',
   onClick,
 }) {
@@ -18,7 +18,11 @@ export default function ShopOraImage({
 
   if (failed || !src) {
     return (
-      <div className={`shopora-image-fallback ${className}`.trim()} aria-label={alt || fallbackText}>
+      <div
+        className={`shopora-image-fallback ${className}`.trim()}
+        role="img"
+        aria-label={alt || fallbackText}
+      >
         <BrandLogo variant="bag" alt="ShopOra" className="shopora-image-brandmark" />
         <span className="shopora-image-note">{fallbackText}</span>
       </div>

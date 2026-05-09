@@ -38,7 +38,7 @@ const OrderConfirmationPage = lazy(() => import('./pages/OrderConfirmationPage')
 
 function RouteLoadingFallback() {
   return (
-    <div className="empty-state container" role="status" aria-live="polite">
+    <div className="empty-state container" role="status" aria-live="polite" aria-busy="true">
       <h2>Loading ShopOra...</h2>
       <p>Preparing the next page.</p>
     </div>

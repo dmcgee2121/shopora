@@ -170,6 +170,7 @@ export default function ProductCard({ product }) {
           type="button"
           className={isSaved ? 'save-button is-saved' : 'save-button'}
           aria-label={isSaved ? `Remove ${productName} from saved items` : `Save ${productName}`}
+          aria-pressed={isSaved}
           onClick={handleSave}
         >
           <HeartIcon filled={isSaved} />

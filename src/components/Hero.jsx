@@ -28,6 +28,7 @@ export default function Hero() {
             alt=""
             fallbackText="ShopOra"
             className="hero-image"
+            loading="eager"
           />
         </div>
         <div className="hero-panel hero-panel-secondary">

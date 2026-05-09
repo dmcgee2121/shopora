@@ -7,6 +7,7 @@ import ShopOraImage from '../components/ShopOraImage';
 import { useCart } from '../context/CartContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
 import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
+import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
 
 export default function CartPage() {
   const { products } = useProductCatalog();
@@ -18,6 +19,14 @@ export default function CartPage() {
         excludeIds: items.map((item) => item.productId),
         limit: 4,
       }),
+    [items, products],
+  );
+  const recentlyViewedProducts = useMemo(
+    () =>
+      filterRecentlyViewedProducts(
+        products,
+        readRecentlyViewedIds(8).filter((itemId) => !items.some((item) => item.productId === itemId)),
+      ).slice(0, 4),
     [items, products],
   );
 
@@ -104,6 +113,22 @@ export default function CartPage() {
               </div>
               <div className="product-grid">
                 {recommendedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          {recentlyViewedProducts.length ? (
+            <section className="related-section cart-recommendations">
+              <div className="section-heading">
+                <div>
+                  <h2>Recently viewed</h2>
+                  <p>Jump back to styles you checked out earlier.</p>
+                </div>
+              </div>
+              <div className="product-grid">
+                {recentlyViewedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>

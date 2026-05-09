@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import QuantitySelector from '../components/QuantitySelector';
@@ -9,34 +9,10 @@ import { useCart } from '../context/CartContext';
 import { useMiniCart } from '../context/MiniCartContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
 import { getProductImage } from '../data/products';
+import { idsMatch } from '../utils/idUtils';
 import { getProductMerchandisingBadges, getProductShelfLabel } from '../utils/merchandising';
-import { idsMatch, normalizeId } from '../utils/idUtils';
 import { getRecommendedProducts } from '../utils/recommendations';
-
-const RECENT_KEY = 'shopora-recently-viewed-v1';
-
-function readRecentlyViewed() {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = window.localStorage.getItem(RECENT_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.map(normalizeId).filter(Boolean) : [];
-  } catch {
-    return [];
-  }
-}
-
-function storeRecentlyViewed(id) {
-  if (typeof window === 'undefined') return;
-  try {
-    const productId = normalizeId(id);
-    const current = readRecentlyViewed().filter((item) => !idsMatch(item, productId));
-    current.unshift(productId);
-    window.localStorage.setItem(RECENT_KEY, JSON.stringify(current.slice(0, 6)));
-  } catch {
-    // Ignore storage errors for local-only browsing.
-  }
-}
+import { addRecentlyViewedId, filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
 
 function CloseIcon() {
   return (
@@ -184,7 +160,7 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
-  const [recentlyViewed, setRecentlyViewed] = useState(() => readRecentlyViewed());
+  const [recentlyViewed, setRecentlyViewed] = useState(() => readRecentlyViewedIds(8));
   const galleryImages = Array.isArray(product?.images) ? product.images : product?.image ? [product.image] : [];
   const sizes = Array.isArray(product?.sizes) ? product.sizes : [];
   const colors = Array.isArray(product?.colors) ? product.colors : [];
@@ -206,10 +182,9 @@ export default function ProductPage() {
     setActiveImage(0);
   }, [product?.id, sizes, colors]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!product) return;
-    storeRecentlyViewed(product.id);
-    setRecentlyViewed(readRecentlyViewed());
+    setRecentlyViewed(addRecentlyViewedId(product.id, 8));
   }, [product]);
 
   const relatedProducts = useMemo(() => {
@@ -222,8 +197,10 @@ export default function ProductPage() {
 
   const recentlyViewedProducts = useMemo(() => {
     if (!product) return [];
-    const ids = recentlyViewed.filter((itemId) => !idsMatch(itemId, product.id));
-    return ids.map((itemId) => products.find((item) => idsMatch(item.id, itemId))).filter(Boolean);
+    return filterRecentlyViewedProducts(
+      products,
+      recentlyViewed.filter((itemId) => itemId !== product.id),
+    );
   }, [product, recentlyViewed, products]);
 
   if (!product) {

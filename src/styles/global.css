@@ -2291,6 +2291,28 @@ main {
   font-weight: 700;
 }
 
+.footer-link-group {
+  display: grid;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.footer-link-group h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.footer-link-group a {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.footer-link-group a:hover {
+  color: var(--accent);
+}
+
 .empty-product {
   padding: 40px 0;
 }

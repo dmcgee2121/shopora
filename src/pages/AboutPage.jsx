@@ -4,14 +4,14 @@ export default function AboutPage() {
       <div className="content-split">
         <div>
           <p className="eyebrow">About ShopOra</p>
-          <h1>A polished storefront prototype for everyday clothing and lifestyle shopping.</h1>
+          <h1>A modern storefront built to feel calm, curated, and easy to trust.</h1>
           <p>
-            ShopOra is a client-ready storefront concept for a modern clothing and lifestyle brand.
+            ShopOra is a client-ready ecommerce concept for a modern clothing and lifestyle brand.
             It is designed to feel credible, calm, and easy to shop while staying honest about its
             prototype nature.
           </p>
           <p>
-            The experience focuses on clear merchandising, simple navigation, and a lightweight
+            The experience focuses on clear merchandising, trustworthy support copy, and a lightweight
             customer journey that can support a small business or a growing retail brand without
             overstating what the store can do today.
           </p>
@@ -22,7 +22,8 @@ export default function AboutPage() {
             <li>Responsive storefront navigation and category browsing</li>
             <li>Curated clothing, shoes, and accessories departments</li>
             <li>Saved carts, customer accounts, and order history</li>
-            <li>Secure checkout flow ready for real-world retail workflows</li>
+            <li>Secure Stripe checkout handoff with clear support messaging</li>
+            <li>Prototype-safe shipping, returns, and privacy pages</li>
           </ul>
         </div>
       </div>

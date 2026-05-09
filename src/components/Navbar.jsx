@@ -102,7 +102,7 @@ export default function Navbar() {
             <SearchIcon />
             <input
               type="search"
-              placeholder="Search products, brands & more"
+              placeholder="Search products or brands"
               aria-label="Search products"
               value={search}
               onChange={(event) => setSearch(event.target.value)}

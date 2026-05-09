@@ -4,7 +4,7 @@ export default function ReturnsPage() {
       <div className="content-split">
         <div>
           <p className="eyebrow">Returns</p>
-          <h1>Return guidance for the ShopOra demo store.</h1>
+          <h1>Easy return guidance that feels fair and transparent.</h1>
           <p>
             This page provides prototype-safe return language for a polished storefront experience.
             It is not a final operational policy and should be updated by the business before launch.
@@ -20,6 +20,7 @@ export default function ReturnsPage() {
             <li>Return requests should be reviewed by the store team.</li>
             <li>Eligibility depends on the final store policy.</li>
             <li>Refund timing should reflect the live payment and fulfillment setup.</li>
+            <li>Customers should be able to reach support easily with the order number in hand.</li>
           </ul>
         </div>
       </div>

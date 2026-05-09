@@ -4,7 +4,7 @@ export default function PrivacyPage() {
       <div className="content-split">
         <div>
           <p className="eyebrow">Privacy</p>
-          <h1>Privacy notes for the ShopOra storefront prototype.</h1>
+          <h1>Privacy notes for a modern storefront prototype.</h1>
           <p>
             This privacy page explains the kinds of information a shopper may provide while using
             the ShopOra demo. It is general prototype language and is not a substitute for a final
@@ -21,6 +21,7 @@ export default function PrivacyPage() {
             <li>Shopper information is used to support browsing, checkout, accounts, and orders.</li>
             <li>Payment entry is handled through Stripe during secure checkout.</li>
             <li>Final privacy terms should be reviewed before a live launch.</li>
+            <li>This prototype should not be treated as a final legal privacy policy.</li>
           </ul>
         </div>
       </div>

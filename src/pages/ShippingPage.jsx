@@ -4,10 +4,10 @@ export default function ShippingPage() {
       <div className="content-split">
         <div>
           <p className="eyebrow">Shipping</p>
-          <h1>Shipping information for the ShopOra prototype.</h1>
+          <h1>Shipping that feels clear, simple, and easy to understand.</h1>
           <p>
             This page outlines how shipping information is presented in the ShopOra demo storefront.
-            It is written as general shopper guidance for a prototype and can be adapted to match a
+            It is written as shopper-facing guidance for a prototype and can be adapted to match a
             real store&apos;s fulfillment process.
           </p>
           <p>
@@ -21,6 +21,7 @@ export default function ShippingPage() {
             <li>Orders collect shipping details during checkout.</li>
             <li>Shipping costs are shown in the order summary before payment.</li>
             <li>Order records are available from the customer account area.</li>
+            <li>Shipping is currently presented as prototype-safe guidance, not a final policy.</li>
           </ul>
         </div>
       </div>

@@ -4,10 +4,10 @@ export default function ContactPage() {
       <div className="content-split">
         <div>
           <p className="eyebrow">Contact</p>
-          <h1>Questions about an order or product? Reach out.</h1>
+          <h1>Questions about an order, product, or policy? Reach out.</h1>
           <p>
-            ShopOra is built for shoppers who want a straightforward way to ask about orders,
-            product details, sizing, shipping expectations, or general store questions.
+            ShopOra gives shoppers a straightforward way to ask about orders, product details,
+            sizing, shipping expectations, returns, or general store questions.
           </p>
           <p>
             This contact page keeps the storefront presentable for clients today and can be adapted
@@ -19,7 +19,11 @@ export default function ContactPage() {
           <p>Email support@shopora.example</p>
           <p>Phone (555) 555-0199</p>
           <p>Hours Monday to Friday, 9am to 6pm</p>
-          <p>Typical topics: orders, sizing, product questions, and account help.</p>
+          <p>Typical topics: orders, sizing, product questions, shipping help, and returns.</p>
+          <p>
+            Demo note: this is a local storefront prototype, so support details are presentation
+            copy unless the business replaces them with real contact channels.
+          </p>
         </div>
       </div>
     </section>

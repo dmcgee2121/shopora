@@ -13,10 +13,11 @@ export default function HomeCampaign({ products = [] }) {
     <section className="home-campaign">
       <div className="campaign-copy">
         <p className="campaign-kicker">Curated edit</p>
-        <h2>Fresh arrivals for polished everyday dressing.</h2>
+        <h2>Fresh arrivals with a calm, curated point of view.</h2>
         <p>
-          New pieces, polished essentials, and easy layers selected to make the store feel current
-          without making shopping feel crowded.
+          New pieces, polished essentials, and easy layers selected to keep the store current
+          without making shopping feel crowded. ShopOra is built to feel editorial, trustworthy,
+          and easy to shop from the first scroll.
         </p>
         <div className="campaign-actions">
           <Link className="btn btn-dark" to="/women">

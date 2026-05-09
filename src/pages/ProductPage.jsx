@@ -11,6 +11,7 @@ import { useProductCatalog } from '../context/ProductCatalogContext';
 import { getProductImage } from '../data/products';
 import { getProductMerchandisingBadges, getProductShelfLabel } from '../utils/merchandising';
 import { idsMatch, normalizeId } from '../utils/idUtils';
+import { getRecommendedProducts } from '../utils/recommendations';
 
 const RECENT_KEY = 'shopora-recently-viewed-v1';
 
@@ -213,9 +214,10 @@ export default function ProductPage() {
 
   const relatedProducts = useMemo(() => {
     if (!product) return [];
-    return products
-      .filter((item) => item.department === product.department && !idsMatch(item.id, product.id))
-      .slice(0, 4);
+    return getRecommendedProducts(products, [product], {
+      excludeIds: [product.id],
+      limit: 4,
+    });
   }, [product, products]);
 
   const recentlyViewedProducts = useMemo(() => {
@@ -513,8 +515,8 @@ export default function ProductPage() {
       <section className="related-section">
         <div className="section-heading">
           <div>
-            <h2>Related products</h2>
-            <p>More styles from the same department.</p>
+            <h2>Complete the look</h2>
+            <p>Recommended styles from the same department and category.</p>
           </div>
         </div>
         <div className="product-grid">

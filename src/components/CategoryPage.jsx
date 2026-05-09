@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import FilterSidebar from './FilterSidebar';
 import CatalogStatusNote from './CatalogStatusNote';
 import ProductCard from './ProductCard';
 import SectionHeading from './SectionHeading';
 import { useProductCatalog } from '../context/ProductCatalogContext';
+import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import {
   getCatalogPriceLabel,
   getCatalogSortLabel,
@@ -44,6 +45,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const q = searchParams.get('q') ?? '';
   const sort = searchParams.get('sort') ?? 'featured';
   const saleFilter = saleOnly || searchParams.get('saleOnly') === '1';
+  const departmentLinks = useMemo(() => getDepartmentLinks(), []);
 
   const scopedProducts = useMemo(() => {
     let list = products;
@@ -137,6 +139,23 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const emptyDescription = activeFilterCount
     ? 'Try removing brand, size, price, or status filters to widen the edit.'
     : 'The current catalog does not include styles for this section yet.';
+  const recommendationSeeds = useMemo(
+    () =>
+      [
+        department ? { department } : null,
+        category ? { category } : null,
+        brand ? { brand } : null,
+      ].filter(Boolean),
+    [brand, category, department],
+  );
+  const recommendedProducts = useMemo(
+    () =>
+      getRecommendedProducts(products, recommendationSeeds, {
+        excludeIds: filteredProducts.map((product) => product.id),
+        limit: 4,
+      }),
+    [filteredProducts, products, recommendationSeeds],
+  );
 
   return (
     <section className="catalog-page">
@@ -213,20 +232,44 @@ export default function CategoryPage({ title, description, department, saleOnly 
                 ))}
               </div>
             ) : (
-              <div className="empty-state">
-                <h3>{emptyTitle}</h3>
-                <p>{emptyDescription}</p>
-                <div className="empty-state-actions">
-                  <button type="button" className="btn btn-dark" onClick={resetFilters}>
-                    Reset filters
-                  </button>
-                  {q ? (
-                    <button type="button" className="btn btn-ghost" onClick={() => setSearchParams(new URLSearchParams())}>
-                      Clear search
+              <>
+                <div className="empty-state">
+                  <h3>{emptyTitle}</h3>
+                  <p>{emptyDescription}</p>
+                  <div className="empty-state-actions">
+                    <button type="button" className="btn btn-dark" onClick={resetFilters}>
+                      Reset filters
                     </button>
-                  ) : null}
+                    {q ? (
+                      <button type="button" className="btn btn-ghost" onClick={() => setSearchParams(new URLSearchParams())}>
+                        Clear search
+                      </button>
+                    ) : null}
+                  </div>
+                  <div className="recommendation-links" aria-label="Browse departments">
+                    {departmentLinks.map((link) => (
+                      <Link key={link.to} to={link.to} className="query-chip">
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
+                {recommendedProducts.length ? (
+                  <section className="related-section search-recommendations">
+                    <div className="section-heading">
+                      <div>
+                        <h2>Suggested styles</h2>
+                        <p>Popular picks that fit the same shopping lane.</p>
+                      </div>
+                    </div>
+                    <div className="product-grid">
+                      {recommendedProducts.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
+              </>
             )}
           </div>
         </div>

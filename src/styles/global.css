@@ -1179,6 +1179,22 @@ main {
   color: var(--muted);
 }
 
+.cart-empty {
+  display: grid;
+  gap: 18px;
+}
+
+.recommendation-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.recommendation-links .query-chip {
+  white-space: nowrap;
+}
+
 .search-page {
   padding: 10px 0 40px;
 }

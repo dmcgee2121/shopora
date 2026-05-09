@@ -5,6 +5,7 @@ import FilterSidebar from '../components/FilterSidebar';
 import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
 import { useProductCatalog } from '../context/ProductCatalogContext';
+import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import {
   getCatalogPriceLabel,
   getCatalogSortLabel,
@@ -45,6 +46,7 @@ export default function SearchResults() {
   const price = searchParams.get('price') ?? '';
   const status = searchParams.get('status') ?? '';
   const saleOnly = searchParams.get('saleOnly') === '1';
+  const departmentLinks = useMemo(() => getDepartmentLinks(), []);
 
   const searchMatches = useMemo(() => {
     if (!query) {
@@ -142,6 +144,23 @@ export default function SearchResults() {
   const emptyDescription = activeFilterCount
     ? 'Try removing one or more filters, or clear the search to widen the results.'
     : 'Try a broader keyword, or browse departments if you want to start from the collection.';
+  const recommendationSeeds = useMemo(
+    () =>
+      [
+        department ? { department } : null,
+        category ? { category } : null,
+        brand ? { brand } : null,
+      ].filter(Boolean),
+    [brand, category, department],
+  );
+  const recommendedProducts = useMemo(
+    () =>
+      getRecommendedProducts(products, recommendationSeeds, {
+        excludeIds: filteredResults.map((product) => product.id),
+        limit: 4,
+      }),
+    [filteredResults, products, recommendationSeeds],
+  );
 
   return (
     <section className="search-page">
@@ -250,8 +269,30 @@ export default function SearchResults() {
                         Clear search
                       </button>
                     </div>
+                    <div className="recommendation-links" aria-label="Browse departments">
+                      {departmentLinks.map((link) => (
+                        <Link key={link.to} to={link.to} className="query-chip">
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
+                {!filteredResults.length && recommendedProducts.length ? (
+                  <section className="related-section search-recommendations">
+                    <div className="section-heading">
+                      <div>
+                        <h2>Recommended styles</h2>
+                        <p>Popular products that shoppers often compare with this search.</p>
+                      </div>
+                    </div>
+                    <div className="product-grid">
+                      {recommendedProducts.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
               </div>
             </div>
           </>

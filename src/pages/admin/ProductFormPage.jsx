@@ -42,6 +42,11 @@ function splitCsv(value) {
     .filter(Boolean);
 }
 
+function formatMoney(value) {
+  const amount = Number(value);
+  return Number.isFinite(amount) ? `$${amount.toFixed(2)}` : '-';
+}
+
 function isValidColor(value) {
   if (typeof window === 'undefined' || typeof window.CSS?.supports !== 'function') {
     return false;
@@ -224,6 +229,23 @@ export default function ProductFormPage({ mode }) {
   const galleryImages = useMemo(() => splitCsv(form.images), [form.images]);
   const colorValues = useMemo(() => splitCsv(form.colors), [form.colors]);
   const sizeValues = useMemo(() => splitCsv(form.sizes), [form.sizes]);
+  const merchandisingSummary = useMemo(() => {
+    const stockCount = Number(form.stockCount);
+    const stockLabel =
+      !Number.isFinite(stockCount) || stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? 'Low stock' : 'In stock';
+    const priceLabel = form.salePrice
+      ? `${formatMoney(form.salePrice)} on sale from ${formatMoney(form.price)}`
+      : formatMoney(form.price);
+    const assetLabel = `${galleryImages.length} images / ${sizeValues.length} sizes / ${colorValues.length} colors`;
+
+    return {
+      productLabel: `${form.name || 'Untitled product'}${form.brand ? ` - ${form.brand}` : ''}`,
+      priceLabel,
+      stockLabel,
+      stockCount: Number.isFinite(stockCount) ? stockCount : 0,
+      assetLabel,
+    };
+  }, [colorValues.length, form.brand, form.name, form.price, form.salePrice, form.stockCount, galleryImages.length, sizeValues.length]);
 
   return (
     <section className="admin-form-page">
@@ -235,6 +257,33 @@ export default function ProductFormPage({ mode }) {
         actionTo="/admin/products"
         actionClassName="btn btn-ghost"
       />
+
+      <div className="admin-status-grid">
+        <div className="admin-status-card">
+          <span>Storefront preview</span>
+          <strong>{merchandisingSummary.productLabel}</strong>
+          <p>
+            {form.department || 'Unassigned department'}
+            {form.category ? ` / ${form.category}` : ''}{' '}
+            {form.sku ? ` - SKU ${form.sku}` : ' - SKU not assigned'}
+          </p>
+        </div>
+        <div className="admin-status-card">
+          <span>Pricing</span>
+          <strong>{merchandisingSummary.priceLabel}</strong>
+          <p>Sale price, if set, renders as compare-at pricing in the storefront.</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Inventory</span>
+          <strong>{merchandisingSummary.stockLabel}</strong>
+          <p>{Number.isFinite(merchandisingSummary.stockCount) ? `${merchandisingSummary.stockCount} units` : 'Stock count not set'}</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Merchandising assets</span>
+          <strong>{galleryImages.length} images</strong>
+          <p>{merchandisingSummary.assetLabel}</p>
+        </div>
+      </div>
 
       {mode === 'edit' && !existingProduct ? (
         <div className="admin-empty-state">
@@ -255,7 +304,9 @@ export default function ProductFormPage({ mode }) {
             <div className="admin-form-section-header">
               <h2>Product Basics</h2>
               <p>Core merchandising fields that define the product in the storefront.</p>
-              <p className="field-help">Required: name, brand, department, category, primary image, and base price.</p>
+              <p className="field-help">
+                Required fields keep the listing usable in the catalog and product detail pages.
+              </p>
             </div>
             <div className="admin-form-grid">
               <label>
@@ -312,7 +363,9 @@ export default function ProductFormPage({ mode }) {
             <div className="admin-form-section-header">
               <h2>Pricing &amp; Merchandising</h2>
               <p>Keep the base price and optional sale price aligned with the catalog presentation.</p>
-              <p className="field-help">Sale price must stay lower than the base price. Ratings and reviews are display-only metadata.</p>
+              <p className="field-help">
+                Ratings and reviews are display-only metadata. Sale price should stay lower than the base price.
+              </p>
             </div>
             <div className="admin-form-grid">
               <label>
@@ -352,7 +405,9 @@ export default function ProductFormPage({ mode }) {
             <div className="admin-form-section-header">
               <h2>Images</h2>
               <p>Use one clean hero image and, when possible, a small gallery of fallback views.</p>
-              <p className="field-help">Paste hosted image URLs only. File uploads are not part of this editor yet.</p>
+              <p className="field-help">
+                Paste hosted image URLs only. File uploads are not part of this editor yet.
+              </p>
             </div>
             <div className="admin-preview-layout">
               <div className="admin-image-preview-panel">

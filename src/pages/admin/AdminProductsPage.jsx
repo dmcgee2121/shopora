@@ -88,6 +88,21 @@ export default function AdminProductsPage() {
   const resetAvailable = catalogSource !== 'supabase';
   const hasProducts = products.length > 0;
   const hasFilters = Boolean(query.trim() || departmentFilter !== 'all' || categoryFilter !== 'all' || stockFilter !== 'all');
+  const summary = useMemo(() => {
+    const lowStock = products.filter((product) => {
+      const stockCount = Number(product.stockCount ?? 0);
+      return stockCount > 0 && stockCount <= 7;
+    }).length;
+    const outOfStock = products.filter((product) => Number(product.stockCount ?? 0) <= 0).length;
+    const saleItems = products.filter((product) => product.isSale || Number(product.salePrice ?? 0) > 0).length;
+
+    return {
+      totalProducts: products.length,
+      saleItems,
+      lowStock,
+      outOfStock,
+    };
+  }, [products]);
 
   const departments = useMemo(() => {
     return Array.from(new Set(products.map((product) => product.department).filter(Boolean)));
@@ -186,6 +201,29 @@ export default function AdminProductsPage() {
         <p className="admin-catalog-helper">Reset catalog is available for local demo mode only.</p>
       ) : null}
 
+      <div className="admin-status-grid">
+        <div className="admin-status-card">
+          <span>Total products</span>
+          <strong>{summary.totalProducts}</strong>
+          <p>Everything currently available in the catalog.</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Sale items</span>
+          <strong>{summary.saleItems}</strong>
+          <p>Products with a sale badge or sale price.</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Low stock</span>
+          <strong>{summary.lowStock}</strong>
+          <p>Items that need restock attention soon.</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Out of stock</span>
+          <strong>{summary.outOfStock}</strong>
+          <p>Items currently hidden from purchase flow.</p>
+        </div>
+      </div>
+
       <div className="admin-toolbar">
         <div className="admin-toolbar-left">
           <input
@@ -261,16 +299,16 @@ export default function AdminProductsPage() {
               <thead>
                 <tr>
                   <th>Product</th>
-            <th>Brand</th>
-            <th>Department</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th>Stock</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
+                  <th>Brand</th>
+                  <th>Department</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Stock</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
                 {filtered.map((product) => (
                   <tr key={product.id}>
                     <td>
@@ -284,6 +322,12 @@ export default function AdminProductsPage() {
                         <div className="admin-product-cell-copy">
                           <strong>{safeText(product.name, 'Untitled product')}</strong>
                           <p>{safeText(product.sku, 'No SKU assigned')}</p>
+                          <div className="status-badges">
+                            {product.isNew ? <span className="status-badge status-badge-muted">New</span> : null}
+                            {product.isSale || Number(product.salePrice ?? 0) > 0 ? (
+                              <span className="status-badge status-badge-sale">Sale</span>
+                            ) : null}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -335,7 +379,7 @@ export default function AdminProductsPage() {
                             }
                           }}
                         >
-                          Edit product
+                          Quick edit
                         </Link>
                         <button
                           type="button"
@@ -367,6 +411,9 @@ export default function AdminProductsPage() {
                     <h3>{safeText(product.name, 'Untitled product')}</h3>
                     <p>{safeText(product.brand, 'Unbranded')}</p>
                     <p>
+                      {safeText(product.sku, 'No SKU assigned')}
+                    </p>
+                    <p>
                       {safeText(product.department, 'Unassigned')} / {safeText(product.category, 'Unassigned')}
                     </p>
                     <div className="status-badges">
@@ -374,7 +421,9 @@ export default function AdminProductsPage() {
                         {getProductVisibility(product).label}
                       </span>
                       {product.isNew ? <span className="status-badge status-badge-muted">New</span> : null}
-                      {product.isSale ? <span className="status-badge status-badge-sale">Sale</span> : null}
+                      {product.isSale || Number(product.salePrice ?? 0) > 0 ? (
+                        <span className="status-badge status-badge-sale">Sale</span>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -416,7 +465,7 @@ export default function AdminProductsPage() {
                         }
                       }}
                     >
-                      Edit product
+                      Quick edit
                     </Link>
                     <button
                       type="button"

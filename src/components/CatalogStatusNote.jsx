@@ -7,12 +7,12 @@ function getCatalogLabel(catalogSource, catalogLoadState) {
     case 'loaded-supabase':
       return 'Live catalog loaded';
     case 'fallback-after-error':
-      return 'Demo catalog shown';
+      return 'Catalog preview shown';
     case 'empty':
       return 'No catalog products';
     case 'loaded-fallback':
     default:
-      return catalogSource === 'local' ? 'Local demo catalog' : 'Demo catalog shown';
+      return catalogSource === 'local' ? 'Local catalog preview' : 'Catalog preview shown';
   }
 }
 

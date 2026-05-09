@@ -173,7 +173,7 @@ export default function AdminCustomersPage() {
       <AdminPageHeader
         eyebrow="Customer directory"
         title="Customers"
-        subtitle="Browse demo accounts, saved-item activity, and order history summaries in a read-only directory."
+        subtitle="Browse customer accounts, saved-item activity, and order history summaries in a read-only directory."
       />
 
       <div className="admin-card-grid">

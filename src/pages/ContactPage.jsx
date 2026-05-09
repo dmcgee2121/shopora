@@ -21,7 +21,7 @@ export default function ContactPage() {
           <p>Hours Monday to Friday, 9am to 6pm</p>
           <p>Typical topics: orders, sizing, product questions, shipping help, and returns.</p>
           <p>
-            Demo note: this is a local storefront prototype, so support details are presentation
+            ShopOra note: this is a local storefront prototype, so support details are presentation
             copy unless the business replaces them with real contact channels.
           </p>
         </div>

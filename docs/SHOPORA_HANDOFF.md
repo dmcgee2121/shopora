@@ -82,6 +82,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - The demo checklist lives at `docs/SHOPORA_DEMO_QA_CHECKLIST.md`
 - The production-readiness audit lives at `docs/SHOPORA_PRODUCTION_READINESS_AUDIT.md`
 - The Supabase security hardening plan lives at `docs/SHOPORA_SUPABASE_SECURITY_HARDENING_PLAN.md`
+- The demo and screenshot guide lives at `docs/SHOPORA_DEMO_SCREENSHOT_GUIDE.md`
 
 ## Recommended Next Milestones
 

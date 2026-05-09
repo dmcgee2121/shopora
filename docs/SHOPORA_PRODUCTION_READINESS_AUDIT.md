@@ -5,6 +5,7 @@ Milestone: `v0.22-production-readiness-audit`
 Scope: documentation-first audit for launch readiness. This is a planning and risk document, not a behavior change.
 
 See also: [docs/SHOPORA_SUPABASE_SECURITY_HARDENING_PLAN.md](./SHOPORA_SUPABASE_SECURITY_HARDENING_PLAN.md)
+See also: [docs/SHOPORA_DEMO_SCREENSHOT_GUIDE.md](./SHOPORA_DEMO_SCREENSHOT_GUIDE.md)
 
 ## 1. Current Project State
 
@@ -182,7 +183,7 @@ See also: [docs/SHOPORA_SUPABASE_SECURITY_HARDENING_PLAN.md](./SHOPORA_SUPABASE_
   - orders
   - order_items
   - any admin-only read paths
-- The review should confirm that the client cannot read or mutate another user’s records.
+- The review should confirm that the client cannot read or mutate another user's records.
 - Any current UI role flag should be assumed untrusted until backed by server policy.
 
 ### Admin role setup
@@ -382,3 +383,4 @@ See also: [docs/SHOPORA_SUPABASE_SECURITY_HARDENING_PLAN.md](./SHOPORA_SUPABASE_
 ## Bottom Line
 
 ShopOra is in a credible demo-ready state with several production-adjacent pieces already in place, especially the storefront, admin presentation, and Supabase customer flows. The remaining launch blockers are mostly around server-trusted authorization, RLS, live admin write support, deployment-context payment verification, and final content/legal/mobile review.
+

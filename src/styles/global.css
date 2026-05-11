@@ -1254,6 +1254,135 @@ main {
   justify-content: flex-start;
 }
 
+.discovery-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 22px;
+  padding: 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(228, 217, 204, 0.9);
+  background:
+    linear-gradient(135deg, rgba(255, 253, 250, 0.98), rgba(244, 236, 225, 0.9)),
+    radial-gradient(circle at top right, rgba(180, 138, 77, 0.12), transparent 34%);
+  box-shadow: var(--shadow-soft);
+}
+
+.discovery-hero-copy {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+}
+
+.discovery-hero-copy h2 {
+  margin: 0;
+  max-width: 13ch;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  line-height: 0.94;
+}
+
+.discovery-hero-copy p {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.discovery-stat-card {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(228, 217, 204, 0.88);
+  background: rgba(255, 253, 250, 0.82);
+}
+
+.discovery-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.discovery-stat-grid div {
+  padding: 14px 12px;
+  border-radius: 18px;
+  background: rgba(247, 242, 233, 0.88);
+}
+
+.discovery-stat-grid strong,
+.discovery-stat-grid span {
+  display: block;
+}
+
+.discovery-stat-grid strong {
+  font-size: 1.05rem;
+}
+
+.discovery-stat-grid span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.discovery-section {
+  margin-bottom: 24px;
+  padding: 22px;
+  border-radius: 30px;
+  border: 1px solid rgba(228, 217, 204, 0.86);
+  background: rgba(255, 253, 250, 0.9);
+  box-shadow: var(--shadow-soft);
+}
+
+.discovery-section .section-heading {
+  margin-bottom: 18px;
+}
+
+.discovery-shortcut-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.discovery-shortcut-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 116px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: rgba(255, 253, 250, 0.92);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.discovery-shortcut-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(180, 138, 77, 0.32);
+  box-shadow: var(--shadow);
+}
+
+.discovery-shortcut-card span {
+  font-weight: 800;
+}
+
+.discovery-shortcut-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
 .search-page {
   padding: 10px 0 40px;
 }
@@ -1265,6 +1394,55 @@ main {
 .search-empty {
   max-width: 760px;
   margin: 0 auto;
+}
+
+.search-landing {
+  display: grid;
+  gap: 24px;
+}
+
+.search-landing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.search-landing-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 24px;
+  border-radius: 28px;
+  border: 1px solid rgba(228, 217, 204, 0.9);
+  background: rgba(255, 253, 250, 0.92);
+  box-shadow: var(--shadow-soft);
+}
+
+.search-landing-panel-soft {
+  background:
+    linear-gradient(180deg, rgba(255, 253, 250, 0.96), rgba(244, 236, 225, 0.9)),
+    rgba(255, 253, 250, 0.92);
+}
+
+.search-landing-panel h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 0.98;
+}
+
+.search-landing-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.search-suggestion-list {
+  justify-content: flex-start;
+}
+
+.search-landing-products {
+  margin-bottom: 0;
 }
 
 .product-detail {
@@ -2781,6 +2959,8 @@ main {
 @media (max-width: 1100px) {
   .hero,
   .sale-banner,
+  .discovery-hero,
+  .search-landing-grid,
   .product-detail,
   .cart-layout,
   .checkout-layout,
@@ -2804,6 +2984,10 @@ main {
 
   .catalog-layout {
     grid-template-columns: 1fr;
+  }
+
+  .discovery-shortcut-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .filter-sidebar {
@@ -2994,6 +3178,21 @@ main {
 
   .home-discovery {
     padding: 18px;
+  }
+
+  .discovery-hero,
+  .discovery-section,
+  .search-landing-panel {
+    padding: 18px;
+  }
+
+  .discovery-hero-copy h2 {
+    max-width: none;
+  }
+
+  .discovery-stat-grid,
+  .discovery-shortcut-strip {
+    grid-template-columns: 1fr;
   }
 
   .campaign-actions {

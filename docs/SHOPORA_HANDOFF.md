@@ -126,6 +126,17 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - No checkout submission, order creation, Stripe, Netlify, RLS, push, deploy, or merge changes were performed.
 - `npm run build` passed for this polish pass.
 
+## v0.34 Product Discovery Experience Polish
+
+- Polished product discovery locally on `v0.34-product-discovery-experience-polish`.
+- Added reusable discovery helpers for department profiles, shortcut links, category discovery picks, search suggestions, and search landing products.
+- Added department discovery panels, top-pick product sections, and compact shortcut cards to category routes including women, men, shoes, accessories, and sale.
+- Improved the no-query search landing state with suggested searches, department CTAs, and recommended starting products.
+- Improved search no-results support with clearer actions, department links, suggested searches, and recommendation fallback products.
+- Kept existing catalog filters, sorting, product cards, product links, and saved-item behavior intact.
+- No checkout submission, order creation, Stripe, Netlify, RLS, push, deploy, or merge changes were performed.
+- `npm run build` passed for this discovery polish pass.
+
 ## QA Checklist for Tomorrow
 
 - Run `git status`

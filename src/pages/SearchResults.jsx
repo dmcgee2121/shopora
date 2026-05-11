@@ -5,7 +5,12 @@ import FilterSidebar from '../components/FilterSidebar';
 import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
 import { useProductCatalog } from '../context/ProductCatalogContext';
-import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
+import { getRecommendedProducts } from '../utils/recommendations';
+import {
+  getDiscoveryDepartmentLinks,
+  getSearchLandingProducts,
+  getSearchSuggestionLinks,
+} from '../utils/discovery';
 import {
   getCatalogPriceLabel,
   getCatalogSortLabel,
@@ -46,7 +51,12 @@ export default function SearchResults() {
   const price = searchParams.get('price') ?? '';
   const status = searchParams.get('status') ?? '';
   const saleOnly = searchParams.get('saleOnly') === '1';
-  const departmentLinks = useMemo(() => getDepartmentLinks(), []);
+  const departmentLinks = useMemo(() => getDiscoveryDepartmentLinks(), []);
+  const searchSuggestionLinks = useMemo(() => getSearchSuggestionLinks(), []);
+  const searchLandingProducts = useMemo(
+    () => getSearchLandingProducts(products, { limit: 4 }),
+    [products],
+  );
 
   const searchMatches = useMemo(() => {
     if (!query) {
@@ -177,12 +187,56 @@ export default function SearchResults() {
         />
 
         {!query ? (
-          <div className="empty-state search-empty">
-            <h2>Search the catalog.</h2>
-            <p>Try names like blazer, sneakers, tote, or a color such as black or ivory.</p>
-            <Link to="/" className="btn btn-dark">
-              Start Shopping
-            </Link>
+          <div className="search-landing">
+            <div className="search-landing-grid">
+              <section className="search-landing-panel" aria-labelledby="search-start-title">
+                <p className="eyebrow">Search guide</p>
+                <h2 id="search-start-title">Start with a product, category, brand, or color.</h2>
+                <p>
+                  Try a focused search, then use filters to narrow by department, size, price, product status, or sale.
+                </p>
+                <div className="recommendation-links search-suggestion-list" aria-label="Suggested searches">
+                  {searchSuggestionLinks.map((link) => (
+                    <Link key={link.to} to={link.to} className="query-chip">
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+
+              <section className="search-landing-panel search-landing-panel-soft" aria-labelledby="search-browse-title">
+                <p className="eyebrow">Browse instead</p>
+                <h2 id="search-browse-title">Move through the store by department.</h2>
+                <p>Use a department shortcut when you want a curated lane before narrowing the catalog.</p>
+                <div className="recommendation-links search-suggestion-list" aria-label="Browse departments">
+                  {departmentLinks.map((link) => (
+                    <Link key={link.to} to={link.to} className="query-chip">
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            {isInitialCatalogLoading ? (
+              <div className="empty-state search-empty">
+                <h2>Loading discovery picks.</h2>
+                <p>We are getting the latest catalog ready before showing suggested products.</p>
+              </div>
+            ) : searchLandingProducts.length ? (
+              <section className="discovery-section search-landing-products">
+                <SectionHeading
+                  title="Recommended starting points"
+                  description="A few strong products to begin browsing before you search."
+                  action={<span className="count-badge">{searchLandingProducts.length} picks</span>}
+                />
+                <div className="product-grid discovery-product-grid">
+                  {searchLandingProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
           </div>
         ) : isInitialCatalogLoading ? (
           <div className="empty-state search-empty">
@@ -262,15 +316,28 @@ export default function SearchResults() {
                     <h2>{emptyTitle}</h2>
                     <p>{emptyDescription}</p>
                     <div className="empty-state-actions">
-                      <button type="button" className="btn btn-dark" onClick={resetFilters}>
-                        Reset filters
-                      </button>
-                      <button type="button" className="btn btn-ghost" onClick={clearSearch}>
-                        Clear search
-                      </button>
+                      {activeFilterCount ? (
+                        <button type="button" className="btn btn-dark" onClick={resetFilters}>
+                          Reset filters
+                        </button>
+                      ) : (
+                        <button type="button" className="btn btn-dark" onClick={clearSearch}>
+                          Clear search
+                        </button>
+                      )}
+                      <Link to="/women" className="btn btn-ghost">
+                        Browse women
+                      </Link>
                     </div>
                     <div className="recommendation-links" aria-label="Browse departments">
                       {departmentLinks.map((link) => (
+                        <Link key={link.to} to={link.to} className="query-chip">
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="recommendation-links search-suggestion-list" aria-label="Try suggested searches">
+                      {searchSuggestionLinks.map((link) => (
                         <Link key={link.to} to={link.to} className="query-chip">
                           {link.label}
                         </Link>

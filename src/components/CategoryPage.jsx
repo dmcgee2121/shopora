@@ -5,7 +5,13 @@ import CatalogStatusNote from './CatalogStatusNote';
 import ProductCard from './ProductCard';
 import SectionHeading from './SectionHeading';
 import { useProductCatalog } from '../context/ProductCatalogContext';
-import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
+import { getRecommendedProducts } from '../utils/recommendations';
+import {
+  getCategoryDiscovery,
+  getCategoryDiscoveryProfile,
+  getCategoryShortcutLinks,
+  getDiscoveryDepartmentLinks,
+} from '../utils/discovery';
 import {
   getCatalogPriceLabel,
   getCatalogSortLabel,
@@ -45,7 +51,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const q = searchParams.get('q') ?? '';
   const sort = searchParams.get('sort') ?? 'featured';
   const saleFilter = saleOnly || searchParams.get('saleOnly') === '1';
-  const departmentLinks = useMemo(() => getDepartmentLinks(), []);
+  const departmentLinks = useMemo(() => getDiscoveryDepartmentLinks(), []);
 
   const scopedProducts = useMemo(() => {
     let list = products;
@@ -124,6 +130,18 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const resetFilters = () => setSearchParams(q ? { q } : new URLSearchParams());
   const activeFilterCount = [category, brand, size, price, status, saleFilter && !saleOnly].filter(Boolean).length;
   const browsingLabel = saleOnly ? 'Sale collection' : department ? `${title} edit` : 'All departments';
+  const discovery = useMemo(
+    () => getCategoryDiscovery(products, { department, saleOnly, limit: 4 }),
+    [department, products, saleOnly],
+  );
+  const discoveryProfile = useMemo(
+    () => getCategoryDiscoveryProfile({ title, department, saleOnly }),
+    [department, saleOnly, title],
+  );
+  const shortcutLinks = useMemo(
+    () => getCategoryShortcutLinks({ department, saleOnly, categories: availableCategories }),
+    [availableCategories, department, saleOnly],
+  );
   const filterSummary = [
     category ? `Category: ${category}` : '',
     brand ? `Brand: ${brand}` : '',
@@ -156,6 +174,11 @@ export default function CategoryPage({ title, description, department, saleOnly 
       }),
     [filteredProducts, products, recommendationSeeds],
   );
+  const discoveryTitle = saleOnly ? 'Sale picks worth a closer look' : `${title} top picks`;
+  const discoveryDescription = saleOnly
+    ? 'A compact edit of markdowns with strong value, ratings, and styling range.'
+    : 'A quick department edit to help shoppers start with the strongest products before refining.';
+  const discoveryHeadingId = `category-discovery-${saleOnly ? 'sale' : department || 'all'}`;
 
   return (
     <section className="catalog-page">
@@ -166,6 +189,57 @@ export default function CategoryPage({ title, description, department, saleOnly 
           description={`${description} You are browsing the ${browsingLabel.toLowerCase()}. Use the filters to narrow the edit by category, brand, price, size, and product status.`}
           action={<span className="count-badge">{countLabel}</span>}
         />
+
+        <section className="discovery-hero" aria-labelledby={discoveryHeadingId}>
+          <div className="discovery-hero-copy">
+            <p className="eyebrow">{discoveryProfile.eyebrow}</p>
+            <h2 id={discoveryHeadingId}>{discoveryProfile.title}</h2>
+            <p>{discoveryProfile.description}</p>
+          </div>
+          <div className="discovery-stat-card" aria-label={`${title} discovery summary`}>
+            <span className="account-card-label">Department snapshot</span>
+            <div className="discovery-stat-grid">
+              <div>
+                <strong>{isInitialCatalogLoading ? 'Loading' : discovery.stats.total}</strong>
+                <span>Styles</span>
+              </div>
+              <div>
+                <strong>{isInitialCatalogLoading ? 'Loading' : discovery.stats.newCount}</strong>
+                <span>New</span>
+              </div>
+              <div>
+                <strong>{isInitialCatalogLoading ? 'Loading' : discovery.stats.saleCount}</strong>
+                <span>Sale</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {!isInitialCatalogLoading && discovery.topPicks.length ? (
+          <section className="discovery-section">
+            <SectionHeading
+              title={discoveryTitle}
+              description={discoveryDescription}
+              action={<span className="count-badge">{discovery.topPicks.length} picks</span>}
+            />
+            <div className="product-grid discovery-product-grid">
+              {discovery.topPicks.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {shortcutLinks.length ? (
+          <nav className="discovery-shortcut-strip" aria-label={`${title} discovery shortcuts`}>
+            {shortcutLinks.map((link) => (
+              <Link key={`${link.label}-${link.to}`} to={link.to} className="discovery-shortcut-card">
+                <span>{link.label}</span>
+                <p>{link.description}</p>
+              </Link>
+            ))}
+          </nav>
+        ) : null}
 
         <div className="catalog-toolbar">
           <div className="toolbar-group">

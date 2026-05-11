@@ -105,3 +105,13 @@ export function getDepartmentLinks() {
     to: `/${department.id}`,
   }));
 }
+
+export function getHomepageDepartmentLinks() {
+  return [
+    { label: 'Women', to: '/women' },
+    { label: 'Men', to: '/men' },
+    { label: 'Shoes', to: '/shoes' },
+    { label: 'Accessories', to: '/accessories' },
+    { label: 'Sale', to: '/sale' },
+  ];
+}

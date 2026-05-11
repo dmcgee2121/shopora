@@ -12,6 +12,8 @@ import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
 import CatalogStatusNote from '../components/CatalogStatusNote';
 import { useProductCatalog } from '../context/ProductCatalogContext';
+import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
+import { getHomepageDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import {
   scoreEssentialsProduct,
   scoreNewArrivalProduct,
@@ -45,10 +47,47 @@ function MerchSection({ id, title, description, action, products, loading = fals
   );
 }
 
+function HomeDiscoverySection({ title, description, products, action, links, loading = false }) {
+  return (
+    <section className="section-block home-discovery">
+      <SectionHeading title={title} description={description} action={action} />
+      {loading ? (
+        <div className="empty-state home-discovery-loading">
+          <h3>Loading personalized picks.</h3>
+          <p>We are preparing a few styles and shortcuts for your next stop.</p>
+        </div>
+      ) : (
+        <>
+          <div className="product-grid home-discovery-grid">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          <div className="home-continue-strip">
+            <div className="home-continue-copy">
+              <p className="home-continue-kicker">Continue exploring</p>
+              <h3>Keep moving through the store.</h3>
+              <p>Use these department shortcuts to jump back into the edits shoppers visit most.</p>
+            </div>
+            <div className="recommendation-links home-continue-links" aria-label="Continue shopping by department">
+              {links.map((link) => (
+                <Link key={link.to} to={link.to} className="query-chip">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
 export default function HomePage() {
   const { products, isCatalogLoading } = useProductCatalog();
   const isInitialCatalogLoading = isCatalogLoading && products.length === 0;
   const catalogProducts = useMemo(() => uniqueProducts(products), [products]);
+  const homepageDepartmentLinks = useMemo(() => getHomepageDepartmentLinks(), []);
   const trendingProducts = useMemo(
     () =>
       [...catalogProducts]
@@ -83,6 +122,28 @@ export default function HomePage() {
         .slice(0, 8),
     [catalogProducts],
   );
+  const recentlyViewedProducts = useMemo(
+    () => filterRecentlyViewedProducts(catalogProducts, readRecentlyViewedIds(8)).slice(0, 4),
+    [catalogProducts],
+  );
+  const firstLookProducts = useMemo(
+    () => getRecommendedProducts(catalogProducts, [], { limit: 4 }),
+    [catalogProducts],
+  );
+  const discoveryProducts = recentlyViewedProducts.length ? recentlyViewedProducts : firstLookProducts;
+  const discoveryTitle = isInitialCatalogLoading
+    ? 'ShopOra picks'
+    : recentlyViewedProducts.length
+      ? 'Recently viewed'
+      : 'Recommended for your first look';
+  const discoveryDescription = isInitialCatalogLoading
+    ? 'Loading a few styles for your next stop.'
+    : recentlyViewedProducts.length
+      ? 'Pick up where you left off.'
+      : 'Start with a few ShopOra favorites.';
+  const discoveryAction = (
+    <span className="count-badge">{isInitialCatalogLoading ? 'Loading' : `${discoveryProducts.length} picks`}</span>
+  );
 
   return (
     <div className="home-page">
@@ -96,6 +157,15 @@ export default function HomePage() {
         <TrustStrip />
 
         <HomeCampaign products={catalogProducts} />
+
+        <HomeDiscoverySection
+          title={discoveryTitle}
+          description={discoveryDescription}
+          products={discoveryProducts}
+          action={discoveryAction}
+          links={homepageDepartmentLinks}
+          loading={isInitialCatalogLoading}
+        />
 
         <MerchSection
           id="new-arrivals"

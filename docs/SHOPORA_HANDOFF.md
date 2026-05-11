@@ -116,6 +116,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - `npm run build` passed for this prep pass.
 - Next recommended step: intentionally merge and deploy only when ready, after recording the current production commit and verifying the Supabase admin requirements.
 
+## v0.33 Customer Account Dashboard Polish
+
+- Polished the local-only customer account landing page on `v0.33-customer-account-dashboard-polish`.
+- Added a dashboard-style account overview with profile readiness, order count, saved item count, member-since details, and department shopping shortcuts.
+- Added polished order and saved-item preview states, including useful empty-state CTAs for accounts with no orders or saved items.
+- Added a compact continue-shopping section that uses recently viewed products when available and recommendation fallback products otherwise.
+- Checked the customer account routes `/account`, `/orders`, and `/saved` during local QA.
+- No checkout submission, order creation, Stripe, Netlify, RLS, push, deploy, or merge changes were performed.
+- `npm run build` passed for this polish pass.
+
 ## QA Checklist for Tomorrow
 
 - Run `git status`

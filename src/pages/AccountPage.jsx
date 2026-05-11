@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
+import ShopOraImage from '../components/ShopOraImage';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import { useProductCatalog } from '../context/ProductCatalogContext';
+import { getProductImage } from '../data/products';
+import { idsMatch } from '../utils/idUtils';
+import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
+import { getRecommendedProducts } from '../utils/recommendations';
 import {
   getOrderStatusClass,
   getOrderStatusLabel,
@@ -18,10 +24,96 @@ const defaultAddress = {
   zip: '',
 };
 
+const shoppingLinks = [
+  { to: '/women', label: 'Women' },
+  { to: '/men', label: 'Men' },
+  { to: '/shoes', label: 'Shoes' },
+  { to: '/accessories', label: 'Accessories' },
+  { to: '/sale', label: 'Sale' },
+];
+
+function safeNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function formatMoney(value) {
+  return `$${safeNumber(value).toFixed(2)}`;
+}
+
+function formatDate(value) {
+  if (!value) return 'Date unavailable';
+
+  try {
+    return new Date(value).toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  } catch {
+    return 'Date unavailable';
+  }
+}
+
+function getItemCount(order) {
+  return Array.isArray(order?.items) ? order.items.length : 0;
+}
+
+function ProductPreviewList({ products = [] }) {
+  return (
+    <div className="account-product-preview-list">
+      {products.map((product) => {
+        const price = product.salePrice ?? product.price ?? 0;
+
+        return (
+          <Link key={product.id} to={`/product/${product.id}`} className="account-product-preview">
+            <ShopOraImage
+              src={getProductImage(product)}
+              alt={product.name}
+              className="account-product-preview-image"
+              fallbackText="ShopOra"
+            />
+            <div>
+              <span>{product.brand || 'ShopOra'}</span>
+              <strong>{product.name || 'ShopOra style'}</strong>
+              <p>
+                {product.department || 'ShopOra'} / {product.category || 'Style'} / {formatMoney(price)}
+              </p>
+            </div>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function EmptyAccountCard({ title, text, primaryLink, primaryLabel, secondaryLink, secondaryLabel }) {
+  return (
+    <div className="account-empty-card">
+      <h3>{title}</h3>
+      <p>{text}</p>
+      <div className="empty-state-actions">
+        <Link to={primaryLink} className="btn btn-dark btn-small">
+          {primaryLabel}
+        </Link>
+        {secondaryLink && secondaryLabel ? (
+          <Link to={secondaryLink} className="btn btn-ghost btn-small">
+            {secondaryLabel}
+          </Link>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function AccountPage() {
   const { currentUser, logout, updateProfile, savedProductIds, authSource, authError } = useAuth();
   const { getOrdersByUser } = useOrders();
-  const safeSavedProductIds = Array.isArray(savedProductIds) ? savedProductIds : [];
+  const { products } = useProductCatalog();
+  const safeSavedProductIds = useMemo(
+    () => (Array.isArray(savedProductIds) ? savedProductIds : []),
+    [savedProductIds],
+  );
   const navigate = useNavigate();
   const [form, setForm] = useState({
     firstName: '',
@@ -35,6 +127,25 @@ export default function AccountPage() {
     if (!currentUser?.id) return [];
     return getOrdersByUser(currentUser.id).slice(0, 3);
   }, [currentUser?.id, getOrdersByUser]);
+  const savedProducts = useMemo(
+    () =>
+      products
+        .filter((product) => safeSavedProductIds.some((id) => idsMatch(id, product.id)))
+        .slice(0, 3),
+    [products, safeSavedProductIds],
+  );
+  const recentlyViewedProducts = useMemo(
+    () => filterRecentlyViewedProducts(products, readRecentlyViewedIds(8)).slice(0, 3),
+    [products],
+  );
+  const accountPickProducts = useMemo(() => {
+    if (recentlyViewedProducts.length) return recentlyViewedProducts;
+
+    return getRecommendedProducts(products, savedProducts, {
+      excludeIds: safeSavedProductIds,
+      limit: 3,
+    });
+  }, [products, recentlyViewedProducts, safeSavedProductIds, savedProducts]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -98,11 +209,21 @@ export default function AccountPage() {
     address.street,
     [address.city, address.state, address.zip].filter(Boolean).join(', '),
   ].filter(Boolean);
-  const addressSummary = addressLines.length ? addressLines.join(' • ') : 'Add a default shipping address for faster checkout.';
+  const addressSummary = addressLines.length ? addressLines.join(' / ') : 'Add a default shipping address for faster checkout.';
   const memberSince = currentUser?.createdAt
     ? new Date(currentUser.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
     : 'Unavailable';
   const recentOrderLabel = recentOrders.length ? `${recentOrders.length} recent order${recentOrders.length === 1 ? '' : 's'}` : 'No recent orders';
+  const latestOrder = recentOrders[0];
+  const profileDetails = [
+    currentUser?.email ? 'Email saved' : 'Add email',
+    currentUser?.phone ? 'Phone saved' : 'Add phone',
+    addressLines.length ? 'Shipping saved' : 'Add shipping',
+  ];
+  const accountPickTitle = recentlyViewedProducts.length ? 'Recently viewed' : 'Recommended for you';
+  const accountPickDescription = recentlyViewedProducts.length
+    ? 'Jump back into styles you checked out earlier.'
+    : 'A small edit based on saved styles and popular ShopOra favorites.';
 
   return (
     <section className="container account-page">
@@ -119,6 +240,42 @@ export default function AccountPage() {
           Logout
         </button>
       </div>
+
+      <section className="account-dashboard-hero" aria-labelledby="account-dashboard-title">
+        <div className="account-dashboard-copy">
+          <p className="eyebrow">Account dashboard</p>
+          <h2 id="account-dashboard-title">Your ShopOra snapshot</h2>
+          <p>
+            Keep orders, saved styles, profile details, and shopping shortcuts together in one polished account view.
+          </p>
+          <div className="account-dashboard-stats" aria-label="Account summary">
+            <div>
+              <span>Orders</span>
+              <strong>{recentOrders.length}</strong>
+            </div>
+            <div>
+              <span>Saved</span>
+              <strong>{safeSavedProductIds.length}</strong>
+            </div>
+            <div>
+              <span>Member since</span>
+              <strong>{memberSince}</strong>
+            </div>
+          </div>
+        </div>
+        <div className="account-dashboard-panel">
+          <span className="account-card-label">Profile readiness</span>
+          <h3>{profileName}</h3>
+          <p>{addressSummary}</p>
+          <div className="account-profile-chips" aria-label="Profile readiness details">
+            {profileDetails.map((detail) => (
+              <span key={detail} className="query-chip">
+                {detail}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <div className="account-overview-grid">
         <article className="account-overview-card">
@@ -142,14 +299,16 @@ export default function AccountPage() {
         </article>
 
         <article className="account-overview-card">
-          <span className="account-card-label">Saved items</span>
-          <h2>
-            {safeSavedProductIds.length} saved style{safeSavedProductIds.length === 1 ? '' : 's'}
-          </h2>
-          <p>Favorites are ready whenever you want to come back to them.</p>
-          <Link to="/account/saved" className="text-button">
-            View wishlist
-          </Link>
+          <span className="account-card-label">Continue shopping</span>
+          <h2>Browse by department</h2>
+          <p>Jump back into a focused edit whenever you are ready to shop.</p>
+          <div className="recommendation-links account-overview-links" aria-label="Browse departments">
+            {shoppingLinks.map((link) => (
+              <Link key={link.to} to={link.to} className="query-chip">
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </article>
 
         <article className="account-overview-card">
@@ -177,7 +336,7 @@ export default function AccountPage() {
                     <div>
                       <strong>{order.orderNumber}</strong>
                       <p>
-                        {orderDate} • {itemCount} item{itemCount === 1 ? '' : 's'}
+                        {orderDate} / {itemCount} item{itemCount === 1 ? '' : 's'}
                       </p>
                     </div>
                     <div className="status-badges">
@@ -196,6 +355,94 @@ export default function AccountPage() {
           </Link>
         </article>
       </div>
+
+      <div className="account-dashboard-grid">
+        <section className="account-dashboard-section" aria-labelledby="account-order-preview-title">
+          <div className="account-dashboard-section-head">
+            <div>
+              <span className="account-card-label">Orders</span>
+              <h2 id="account-order-preview-title">Latest purchase</h2>
+            </div>
+            <Link to="/account/orders" className="text-button">
+              View orders
+            </Link>
+          </div>
+          {latestOrder ? (
+            <Link to={`/account/orders/${latestOrder.id}`} className="account-featured-order">
+              <div>
+                <span className="account-order-number">{latestOrder.orderNumber}</span>
+                <p>
+                  {formatDate(latestOrder.createdAt)} / {getItemCount(latestOrder)} item
+                  {getItemCount(latestOrder) === 1 ? '' : 's'}
+                </p>
+              </div>
+              <strong>{formatMoney(latestOrder.total)}</strong>
+            </Link>
+          ) : (
+            <EmptyAccountCard
+              title="No orders yet."
+              text="Start with a current edit, then your order history and receipts will collect here."
+              primaryLink="/women"
+              primaryLabel="Shop new arrivals"
+              secondaryLink="/sale"
+              secondaryLabel="View sale"
+            />
+          )}
+        </section>
+
+        <section className="account-dashboard-section" aria-labelledby="account-saved-preview-title">
+          <div className="account-dashboard-section-head">
+            <div>
+              <span className="account-card-label">Saved items</span>
+              <h2 id="account-saved-preview-title">Wishlist preview</h2>
+            </div>
+            <Link to="/account/saved" className="text-button">
+              View saved
+            </Link>
+          </div>
+          {savedProducts.length ? (
+            <ProductPreviewList products={savedProducts} />
+          ) : (
+            <EmptyAccountCard
+              title="No saved styles yet."
+              text="Use the heart on product cards to build a shortlist before you buy."
+              primaryLink="/shoes"
+              primaryLabel="Browse shoes"
+              secondaryLink="/accessories"
+              secondaryLabel="Browse accessories"
+            />
+          )}
+        </section>
+      </div>
+
+      <section className="account-dashboard-section account-shopping-section" aria-labelledby="account-shopping-title">
+        <div className="account-dashboard-section-head">
+          <div>
+            <span className="account-card-label">Continue shopping</span>
+            <h2 id="account-shopping-title">{accountPickTitle}</h2>
+            <p>{accountPickDescription}</p>
+          </div>
+          <div className="recommendation-links account-shopping-links" aria-label="Browse departments">
+            {shoppingLinks.map((link) => (
+              <Link key={link.to} to={link.to} className="query-chip">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+        {accountPickProducts.length ? (
+          <ProductPreviewList products={accountPickProducts} />
+        ) : (
+          <EmptyAccountCard
+            title="Start a fresh browse."
+            text="A few account recommendations will appear here as you save and view products."
+            primaryLink="/women"
+            primaryLabel="Shop women"
+            secondaryLink="/men"
+            secondaryLabel="Shop men"
+          />
+        )}
+      </section>
 
       <div className="account-layout">
         <form className="form-card account-form" onSubmit={handleSubmit}>
@@ -300,6 +547,9 @@ export default function AccountPage() {
             </Link>
             <Link to="/women" className="btn btn-dark full-width">
               Continue Shopping
+            </Link>
+            <Link to="/sale" className="btn btn-ghost full-width">
+              View Sale
             </Link>
           </div>
         </aside>

@@ -106,6 +106,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Kept the work local-only: no push, no deploy, no Netlify changes, no checkout/order/Stripe logic changes, and no env-file changes.
 - `npm run build` passed as part of the pass.
 
+## v0.32 Merge / Deploy Prep
+
+- Completed a local-only merge/deploy readiness pass on `v0.32-merge-prep-for-intentional-deploy`.
+- Compared the branch against `main` without merging or pushing.
+- Created `docs/SHOPORA_DEPLOY_PREP_CHECKLIST.md` with pre-deploy checks, route sweep items, Supabase admin requirements, Netlify deploy warnings, and rollback notes.
+- Confirmed `.env.local` is ignored and the only tracked env-related file found was `.env.example`.
+- No push, deploy, Netlify action, or merge to `main` was performed.
+- `npm run build` passed for this prep pass.
+- Next recommended step: intentionally merge and deploy only when ready, after recording the current production commit and verifying the Supabase admin requirements.
+
 ## QA Checklist for Tomorrow
 
 - Run `git status`

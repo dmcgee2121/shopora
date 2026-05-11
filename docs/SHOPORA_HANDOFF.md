@@ -95,6 +95,17 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Client demo checklist
 - Portfolio case study / screenshots
 
+## v0.31 Final Screenshot / Demo Pass
+
+- Completed a local screenshot/demo readiness sweep across the public storefront, account area, saved/orders aliases, and admin entry routes.
+- Verified homepage personalization in both states:
+  - fallback merchandising shows when there are no recently viewed products
+  - recently viewed products appear after visiting real product detail pages
+- Verified recently viewed behavior on product detail pages and the cart flow using real catalog product IDs from the current local session.
+- Added small route polish so `/orders` and `/saved` now resolve to the real account routes instead of landing on the 404 page.
+- Kept the work local-only: no push, no deploy, no Netlify changes, no checkout/order/Stripe logic changes, and no env-file changes.
+- `npm run build` passed as part of the pass.
+
 ## QA Checklist for Tomorrow
 
 - Run `git status`

@@ -139,6 +139,8 @@ export default function App() {
                       <Route path="/search" element={<SearchResults />} />
                       <Route path="/cart" element={<CartPage />} />
                       <Route path="/checkout" element={<CheckoutPage />} />
+                      <Route path="/orders" element={<Navigate to="/account/orders" replace />} />
+                      <Route path="/saved" element={<Navigate to="/account/saved" replace />} />
                       <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/contact" element={<ContactPage />} />

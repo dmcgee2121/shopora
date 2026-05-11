@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useMiniCart } from '../context/MiniCartContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
-import { getProductImage } from '../data/products';
+import { getProductImage, products as fallbackProducts } from '../data/products';
 import { idsMatch } from '../utils/idUtils';
 import { getProductMerchandisingBadges, getProductShelfLabel } from '../utils/merchandising';
 import { getRecommendedProducts } from '../utils/recommendations';
@@ -149,7 +149,8 @@ function SizeGuideModal({ isOpen, onClose }) {
 export default function ProductPage() {
   const { products } = useProductCatalog();
   const { id } = useParams();
-  const product = products.find((item) => idsMatch(item.id, id));
+  const catalogProducts = products.length ? products : fallbackProducts;
+  const product = catalogProducts.find((item) => idsMatch(item.id, id));
   const { addItem } = useCart();
   const { isAuthenticated, isSavedItem, toggleSavedItem } = useAuth();
   const { openMiniCart } = useMiniCart();
@@ -189,19 +190,19 @@ export default function ProductPage() {
 
   const relatedProducts = useMemo(() => {
     if (!product) return [];
-    return getRecommendedProducts(products, [product], {
+    return getRecommendedProducts(catalogProducts, [product], {
       excludeIds: [product.id],
       limit: 4,
     });
-  }, [product, products]);
+  }, [catalogProducts, product]);
 
   const recentlyViewedProducts = useMemo(() => {
     if (!product) return [];
     return filterRecentlyViewedProducts(
-      products,
+      catalogProducts,
       recentlyViewed.filter((itemId) => itemId !== product.id),
     );
-  }, [product, recentlyViewed, products]);
+  }, [catalogProducts, product, recentlyViewed]);
 
   if (!product) {
     return (

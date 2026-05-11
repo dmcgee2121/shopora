@@ -126,3 +126,12 @@ Before trusting live admin orders in a real Supabase environment:
 ## Final Read
 
 ShopOra is in a strong local demo state with route coverage, responsive fixes, accessibility cleanup, and Supabase admin guidance already documented. The remaining work before a real deployment is mostly verification: route sweep, build check, admin-role validation, and a final pass on any copy that still intentionally uses demo language.
+
+## v0.31 Addendum
+
+- Status: final screenshot/demo readiness pass completed locally.
+- Homepage personalization: verified both fallback merchandising and recently viewed states.
+- Recently viewed: verified on product detail pages and on the cart flow after viewing real catalog products.
+- Route sweep: confirmed the main storefront, account, policy, search, cart, checkout, and admin entry routes render cleanly; `/orders` and `/saved` now redirect to the real account routes.
+- Build: `npm run build` passed during the pass.
+- Scope: still local-only; no push, no deploy, no Netlify changes, no checkout/order/Stripe changes, and no env-file changes.

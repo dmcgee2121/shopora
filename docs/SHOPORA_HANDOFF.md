@@ -41,6 +41,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Storefront merchandising polish was added
 - README was improved
 
+## v0.42 Local Merge Prep After Admin Polish
+
+- Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.
+- Compared the current local branch against deployed `main` without merging or pushing.
+- Added a dedicated merge-prep note that records the branch chain, sensitive-file check, build result, route sweep checklist, and Netlify/Supabase reminders.
+- Kept checkout submission, order creation, Stripe functions, Netlify behavior, Supabase RLS, and auth behavior untouched.
+- Verified with `npm run build` locally on branch-only work.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.41 Storefront Post-Admin Polish Pass
 
 - Completed a local-only storefront and customer QA sweep after the admin-focused milestone work.

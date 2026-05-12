@@ -29,6 +29,23 @@ function hasDetails(product) {
   return false;
 }
 
+function hasMerchandisingDetails(product) {
+  return Boolean(
+    safeText(product?.material) ||
+      safeText(product?.care) ||
+      safeText(product?.fit) ||
+      hasDetails(product),
+  );
+}
+
+function countGalleryImages(product) {
+  if (!Array.isArray(product?.images)) {
+    return 0;
+  }
+
+  return product.images.filter((image) => safeText(image)).length;
+}
+
 export function getProductVisibilityInfo(product = {}) {
   const explicitStatus = safeText(product.status) || safeText(product.visibility);
   const normalizedStatus = explicitStatus.toLowerCase();
@@ -185,6 +202,133 @@ export function getProductReadinessIssues(product = {}) {
   }
 
   return issues.sort((left, right) => right.severity - left.severity);
+}
+
+export function getProductEditorReadinessChecklist(product = {}) {
+  const visibility = getProductVisibilityInfo(product);
+  const name = safeText(product.name);
+  const brand = safeText(product.brand);
+  const sku = safeText(product.sku);
+  const department = safeText(product.department);
+  const category = safeText(product.category);
+  const description = safeText(product.description);
+  const image = safeText(product.image);
+  const material = safeText(product.material);
+  const care = safeText(product.care);
+  const fit = safeText(product.fit);
+  const galleryCount = countGalleryImages(product);
+  const price = safeNumber(product.price);
+  const salePrice = safeNumber(product.salePrice);
+  const stockCount = safeNumber(product.stockCount);
+  const saleConfigured = Boolean(product.isSale || salePrice !== null);
+  const hasDetailsBlock = hasDetails(product);
+  const hasMerchandisingCopy = hasMerchandisingDetails(product);
+
+  return [
+    {
+      key: 'visibility',
+      label: 'Visibility',
+      ready: visibility.state === 'active',
+      note:
+        visibility.state === 'active'
+          ? visibility.helper
+          : `${visibility.label} products stay hidden from shoppers until they are activated.`,
+    },
+    {
+      key: 'name',
+      label: 'Product name',
+      ready: Boolean(name),
+      note: Boolean(name) ? 'Set and visible in the editor preview.' : 'Add the shopper-facing product title.',
+    },
+    {
+      key: 'brand',
+      label: 'Brand',
+      ready: Boolean(brand),
+      note: Boolean(brand) ? 'Brand copy is present.' : 'Add the published brand name.',
+    },
+    {
+      key: 'sku',
+      label: 'SKU',
+      ready: Boolean(sku),
+      note: Boolean(sku) ? 'SKU available for catalog tracking.' : 'Add or generate an internal SKU.',
+    },
+    {
+      key: 'taxonomy',
+      label: 'Category / department',
+      ready: Boolean(category && department),
+      note:
+        category && department
+          ? `${department} / ${category}`
+          : 'Assign both department and category so filters work cleanly.',
+    },
+    {
+      key: 'pricing',
+      label: 'Base price',
+      ready: price !== null && price > 0,
+      note:
+        price !== null && price > 0
+          ? `Base price set to $${price.toFixed(2)}.`
+          : 'Enter a base price greater than zero.',
+    },
+    {
+      key: 'sale',
+      label: 'Sale price',
+      ready: !saleConfigured || (salePrice !== null && price !== null && salePrice > 0 && salePrice < price),
+      note:
+        !saleConfigured
+          ? 'No sale price set.'
+          : salePrice !== null && price !== null && salePrice > 0 && salePrice < price
+            ? `Sale price set to $${salePrice.toFixed(2)}.`
+            : 'Sale price must stay below the base price.',
+    },
+    {
+      key: 'stock',
+      label: 'Stock count',
+      ready: stockCount !== null && stockCount > 0,
+      note:
+        stockCount === null
+          ? 'Add a stock count.'
+          : stockCount <= 0
+            ? 'Out of stock right now.'
+            : stockCount <= 7
+              ? `Low stock at ${stockCount} units.`
+              : `${stockCount} units available.`,
+    },
+    {
+      key: 'description',
+      label: 'Description',
+      ready: Boolean(description),
+      note: Boolean(description) ? 'Shopper-facing description is set.' : 'Add a concise product description.',
+    },
+    {
+      key: 'image',
+      label: 'Primary image',
+      ready: Boolean(image),
+      note: Boolean(image) ? 'Hero image available for the storefront.' : 'Add a primary image URL.',
+    },
+    {
+      key: 'gallery',
+      label: 'Gallery images',
+      ready: galleryCount > 0,
+      note: galleryCount > 0 ? `${galleryCount} gallery image${galleryCount === 1 ? '' : 's'} added.` : 'Optional, but useful for demos.',
+    },
+    {
+      key: 'merchandising',
+      label: 'Merchandising details',
+      ready: hasMerchandisingCopy,
+      note:
+        hasMerchandisingCopy
+          ? [
+              material ? 'Material' : null,
+              care ? 'Care' : null,
+              fit ? 'Fit' : null,
+              hasDetailsBlock ? 'Details' : null,
+            ]
+              .filter(Boolean)
+              .join(', ')
+          : 'Add material, care, fit, or detail bullets.',
+    },
+  ];
 }
 
 export function getCatalogReadinessSummary(products = []) {

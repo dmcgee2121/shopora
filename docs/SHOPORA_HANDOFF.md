@@ -41,6 +41,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Storefront merchandising polish was added
 - README was improved
 
+## v0.35 Admin Catalog Readiness Polish
+
+- Added a compact admin catalog readiness summary on the products page with totals for active products, draft/inactive records, low stock, out of stock, catalog gaps, and sale/featured merchandising signals.
+- Added a defensive "Catalog readiness" panel that highlights products needing attention for missing images, brands, SKUs, prices, stock counts, descriptions, details, or inactive status.
+- Tightened the admin product table and mobile card copy so incomplete stock data is labeled clearly instead of being treated as a normal zero-inventory item.
+- Kept checkout submission, order creation, Stripe functions, Netlify behavior, Supabase RLS, and env handling untouched.
+- Verified with `npm run build` locally on `main`-derived branch work only.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## GitHub / Netlify Workflow
 
 - Use GitHub branches for milestone work

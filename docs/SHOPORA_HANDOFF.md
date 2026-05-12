@@ -41,6 +41,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Storefront merchandising polish was added
 - README was improved
 
+## v0.39 Admin Customers Relationship Polish
+
+- Added a clearer customer relationship summary on the admin customers page with totals for customers, customers with orders, saved-item activity, returning customers, recent activity, total spend, and average order value.
+- Added a compact relationship snapshot that previews active storefront accounts and highlights new, returning, high-value, and recently active customers using existing order and saved-item data.
+- Refined customer table and mobile card labels so relationship status, activity, spend, and saved-item signals are easier to scan without changing auth, order, or customer data behavior.
+- Kept checkout submission, order creation, Stripe functions, Netlify behavior, Supabase RLS, and auth behavior untouched.
+- Verified with `npm run build` locally on branch-only work.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.38 Admin Orders Operations Polish
 
 - Added a clearer admin orders operations summary with paid, payment-pending, processing, shipped/fulfilled, cancelled/refunded, needs-attention, and recent-activity signals.

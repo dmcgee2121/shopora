@@ -4,6 +4,7 @@ import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import ShopOraImage from '../../components/ShopOraImage';
 import { useAuth } from '../../context/AuthContext';
 import { useOrders } from '../../context/OrdersContext';
+import { getOrderAttentionInfo, getOrderOperationsSummary } from '../../utils/catalogReadiness';
 import { idsMatch } from '../../utils/idUtils';
 import { getOrderItemImage } from '../../utils/orderItemUtils';
 import {
@@ -22,8 +23,6 @@ const statusCopy = {
   Delivered: 'Orders completed.',
   Cancelled: 'Orders stopped before completion.',
 };
-
-const fulfillmentStatuses = new Set(['pending', 'processing', 'shipped']);
 
 function safeText(value, fallback = '-') {
   const text = typeof value === 'string' ? value.trim() : '';
@@ -134,13 +133,13 @@ export default function AdminOrdersPage() {
   const orderSourceNote =
     currentUser?.role === 'admin'
       ? ordersSource === 'supabase'
-        ? 'This admin order list is reading live Supabase orders through the protected admin RPC. Status updates remain local-demo only for now.'
-        : 'This prototype admin order list is reading browser-local demo orders only. Supabase customer orders stay visible in customer accounts, but they are not exposed to this local admin login.'
+        ? 'Live Supabase orders are visible here. Status updates stay read-only in this prototype until admin write support is added.'
+        : 'This prototype admin order list is reading browser-local demo orders only. Those local demo orders can still be adjusted from this admin view.'
       : '';
   const canUpdateOrderStatus = ordersSource === 'local';
   const ordersSubtitle =
     ordersSource === 'supabase'
-      ? 'Review live Supabase orders and open receipts without leaving the admin area.'
+      ? 'Review live Supabase orders, spot fulfillment gaps, and open receipts without leaving the admin area.'
       : 'Review completed orders, update status, and open receipts without leaving the admin area.';
 
   const ordered = useMemo(
@@ -150,6 +149,8 @@ export default function AdminOrdersPage() {
       ),
     [orders],
   );
+  const operationsSummary = useMemo(() => getOrderOperationsSummary(ordered), [ordered]);
+  const attentionPreviewOrders = operationsSummary.attentionOrders.slice(0, 3);
 
   const filteredOrders = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -179,16 +180,13 @@ export default function AdminOrdersPage() {
     return result;
   }, {});
 
-  const pendingOrders = counts.Pending;
-  const processingOrders = counts.Processing;
-  const shippedOrders = counts.Shipped;
-  const deliveredOrders = counts.Delivered;
-  const cancelledOrders = counts.Cancelled;
-  const activeFulfillmentOrders = ordered.filter((order) =>
-    fulfillmentStatuses.has(normalizeOrderStatusValue(order.status)),
-  ).length;
+  const processingOrders = operationsSummary.processingOrders;
+  const shippedOrders = operationsSummary.shippedOrders;
+  const cancelledOrders = operationsSummary.cancelledOrders;
+  const refundedOrders = operationsSummary.refundedOrders;
   const totalRevenue = ordered.reduce((total, order) => total + Number(order.total ?? 0), 0);
   const sourceLabel = ordersSource === 'supabase' ? 'Live Supabase orders' : 'Local demo orders';
+  const closedOrders = cancelledOrders + refundedOrders;
 
   const hasOrders = ordered.length > 0;
   const hasFilters = Boolean(query.trim() || statusFilter !== 'all');
@@ -219,8 +217,8 @@ export default function AdminOrdersPage() {
         eyebrow="Order operations"
         title="Orders"
         subtitle={ordersSubtitle}
-        actionLabel="View Checkout"
-        actionTo="/checkout"
+        actionLabel="Open dashboard"
+        actionTo="/admin"
         actionClassName="btn btn-dark"
       />
 
@@ -233,13 +231,15 @@ export default function AdminOrdersPage() {
       <div className="admin-status-grid">
         <div className="admin-status-card">
           <span>Total orders</span>
-          <strong>{ordered.length}</strong>
+          <strong>{operationsSummary.totalOrders}</strong>
           <p>{sourceLabel} currently visible in this session.</p>
         </div>
         <div className="admin-status-card">
-          <span>Pending</span>
-          <strong>{pendingOrders}</strong>
-          <p>{statusCopy.Pending}</p>
+          <span>Paid / payment pending</span>
+          <strong>
+            {operationsSummary.paidOrders}/{operationsSummary.paymentPendingOrders}
+          </strong>
+          <p>Orders that have cleared payment versus orders still waiting.</p>
         </div>
         <div className="admin-status-card">
           <span>Processing</span>
@@ -247,19 +247,26 @@ export default function AdminOrdersPage() {
           <p>{statusCopy.Processing}</p>
         </div>
         <div className="admin-status-card">
-          <span>Fulfillment flow</span>
-          <strong>{activeFulfillmentOrders}</strong>
+          <span>Shipped / fulfilled</span>
+          <strong>{shippedOrders}</strong>
+          <p>Orders that have moved out of the packing queue.</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Cancelled / refunded</span>
+          <strong>{closedOrders}</strong>
           <p>
-            Pending, processing, and shipped orders in motion. {shippedOrders} shipped orders are currently
-            active.
+            {cancelledOrders} cancelled and {refundedOrders} refunded orders.
           </p>
         </div>
         <div className="admin-status-card">
-          <span>Delivered / Cancelled</span>
-          <strong>
-            {deliveredOrders}/{cancelledOrders}
-          </strong>
-          <p>Completed versus stopped orders.</p>
+          <span>Needs attention</span>
+          <strong>{operationsSummary.ordersNeedingAttention}</strong>
+          <p>Orders with missing customer, payment, or fulfillment details.</p>
+        </div>
+        <div className="admin-status-card">
+          <span>Recent activity</span>
+          <strong>{operationsSummary.recentlyPlacedOrders}</strong>
+          <p>Orders placed in the last 24 hours.</p>
         </div>
         <div className="admin-status-card">
           <span>Total revenue</span>
@@ -307,6 +314,70 @@ export default function AdminOrdersPage() {
           </button>
         </div>
       </div>
+
+      <section className="admin-order-ops-panel">
+        <div className="admin-dashboard-section-heading compact">
+          <span>Store readiness</span>
+          <p>
+            A quick snapshot of the current order queue, with the items that need a closer look first.
+          </p>
+        </div>
+        <div className="admin-order-attention-list">
+          {attentionPreviewOrders.length ? (
+            attentionPreviewOrders.map(({ order, attention }) => {
+              const customer = getCustomerSummary(order);
+
+              return (
+                <article key={order.id} className="admin-order-attention-item">
+                  <div className="admin-order-attention-copy">
+                    <div className="admin-order-attention-row">
+                      <strong>{safeText(order.orderNumber, 'Order')}</strong>
+                      <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
+                    </div>
+                    <p>{attention.detail}</p>
+                    <span>
+                      {customer.name} - {customer.email}
+                    </span>
+                    <span className="admin-status-caption">
+                      Placed {formatDate(order.createdAt)} | {getOrderSourceLabel(ordersSource)}
+                    </span>
+                  </div>
+                  <div className="admin-order-attention-actions">
+                    <button
+                      type="button"
+                      className="text-button"
+                      onClick={() => setSelectedOrderId(order.id)}
+                    >
+                      Quick view
+                    </button>
+                    <Link to={`/order-confirmation/${order.id}`} className="text-button">
+                      Open receipt
+                    </Link>
+                  </div>
+                </article>
+              );
+            })
+          ) : (
+            <div className="admin-empty-state-tight admin-readiness-empty">
+              <h3>Storefront queue looks healthy.</h3>
+              <p>
+                No order issues are being flagged right now. New checkouts will still appear here as they come
+                in.
+              </p>
+            </div>
+          )}
+        </div>
+        <div className="admin-panel-footer">
+          <div className="admin-quick-actions">
+            <Link to="/admin/orders" className="text-button">
+              Review all orders
+            </Link>
+            <Link to="/admin" className="text-button">
+              Open dashboard
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <div className="admin-status-grid">
         {statusOptions.map((status) => (
@@ -359,14 +430,15 @@ export default function AdminOrdersPage() {
                     const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
                     const orderStatusClass = getOrderStatusClass(order.status);
                     const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
+                    const attention = getOrderAttentionInfo(order);
 
                     return (
                       <tr key={order.id}>
-                    <td>
-                      <strong>{safeText(order.orderNumber, 'Order')}</strong>
-                      <p>{safeText(order.id, 'No order id')}</p>
-                      <p className="admin-order-source-label">{getOrderSourceLabel(ordersSource)}</p>
-                    </td>
+                        <td>
+                          <strong>{safeText(order.orderNumber, 'Order')}</strong>
+                          <p>{safeText(order.id, 'No order id')}</p>
+                          <p className="admin-order-source-label">{getOrderSourceLabel(ordersSource)}</p>
+                        </td>
                         <td>
                           <strong>{customer.name}</strong>
                           <p>{customer.email}</p>
@@ -386,6 +458,7 @@ export default function AdminOrdersPage() {
                               </option>
                             ))}
                           </select>
+                          <div className={`status-badge ${attention.tone}`.trim()}>{attention.label}</div>
                           <div className="admin-status-subtext">
                             {canUpdateOrderStatus
                               ? orderStatusLabel || 'No status available'
@@ -425,6 +498,7 @@ export default function AdminOrdersPage() {
                 const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
                 const orderStatusClass = getOrderStatusClass(order.status);
                 const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
+                const attention = getOrderAttentionInfo(order);
                 const items = Array.isArray(order.items) ? order.items : [];
 
                 return (
@@ -438,7 +512,10 @@ export default function AdminOrdersPage() {
                           {getOrderSourceLabel(ordersSource)}
                         </span>
                       </div>
-                      <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
+                      <div className="admin-status-stack">
+                        <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
+                        <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
+                      </div>
                     </div>
 
                     <div className="admin-record-row">
@@ -529,15 +606,15 @@ export default function AdminOrdersPage() {
       ) : (
         <div className="admin-empty-state">
           <h2>{hasFilters ? 'No matching orders.' : 'No orders yet.'}</h2>
-              <p>
-                {hasFilters
-                  ? 'Try a different order number, customer name, email, or status filter.'
-                  : ordersSource === 'supabase'
-                    ? 'Live Supabase customer orders appear here when the admin session is connected to the protected admin RPC.'
-                    : currentUser?.role === 'admin'
-                      ? 'This admin view only reflects browser-local demo orders. Supabase customer orders are not exposed here yet.'
-                      : 'Completed checkouts will appear here once a customer places an order.'}
-              </p>
+          <p>
+            {hasFilters
+              ? 'Try a different order number, customer name, email, or status filter.'
+              : ordersSource === 'supabase'
+                ? 'Live Supabase customer orders appear here when the admin session is connected to the protected admin RPC.'
+                : currentUser?.role === 'admin'
+                  ? 'Orders will appear here after checkout. This admin view is showing browser-local demo orders in this prototype.'
+                  : 'Orders will appear here after checkout.'}
+          </p>
           <div className="admin-empty-state-actions">
             {hasFilters ? (
               <button
@@ -551,6 +628,12 @@ export default function AdminOrdersPage() {
                 Clear Filters
               </button>
             ) : null}
+            <Link to="/" className="btn btn-ghost">
+              Open storefront
+            </Link>
+            <Link to="/admin" className="btn btn-ghost">
+              Open dashboard
+            </Link>
             <Link to="/checkout" className="btn btn-dark">
               View checkout
             </Link>
@@ -629,7 +712,7 @@ export default function AdminOrdersPage() {
               </section>
 
               <section className="admin-order-modal-panel">
-                <h3>Customer</h3>
+                <h3>Customer details</h3>
                 <p>{safeText(selectedOrder.customerName, 'Guest customer')}</p>
                 <p>{safeText(selectedOrder.customerEmail, 'No email provided')}</p>
                 {selectedOrder.customerPhone ? (
@@ -640,7 +723,7 @@ export default function AdminOrdersPage() {
               </section>
 
               <section className="admin-order-modal-panel">
-                <h3>Shipping address</h3>
+                <h3>Shipping details</h3>
                 {formatAddress(selectedOrder.shippingAddress).length ? (
                   formatAddress(selectedOrder.shippingAddress).map((line) => <p key={line}>{line}</p>)
                 ) : (
@@ -649,7 +732,7 @@ export default function AdminOrdersPage() {
               </section>
 
               <section className="admin-order-modal-panel">
-                <h3>Fulfillment summary</h3>
+                <h3>Payment &amp; fulfillment</h3>
                 <p>
                   <strong>Current status:</strong>{' '}
                   <span className={`status-badge ${getOrderStatusClass(selectedOrder.status)}`}>
@@ -665,6 +748,12 @@ export default function AdminOrdersPage() {
                     )}`.trim()}
                   >
                     {getPaymentStatusLabel(selectedOrder.paymentStatus, { demoMode: selectedOrder.demoMode })}
+                  </span>
+                </p>
+                <p>
+                  <strong>Attention:</strong>{' '}
+                  <span className={`status-badge ${getOrderAttentionInfo(selectedOrder).tone}`.trim()}>
+                    {getOrderAttentionInfo(selectedOrder).label}
                   </span>
                 </p>
                 <p>

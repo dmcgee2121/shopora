@@ -1,3 +1,5 @@
+import { normalizeOrderStatusValue } from './statusUtils';
+
 function safeText(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -44,6 +46,67 @@ function countGalleryImages(product) {
   }
 
   return product.images.filter((image) => safeText(image)).length;
+}
+
+function normalizeOrderPaymentStatus(value) {
+  return safeText(value).toLowerCase();
+}
+
+function safeDate(value) {
+  if (!value) return null;
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function hasOrderContactInfo(order = {}) {
+  const shippingAddress = order.shippingAddress && typeof order.shippingAddress === 'object' ? order.shippingAddress : {};
+
+  return Boolean(
+    safeText(order.customerEmail) ||
+      safeText(order.customerPhone) ||
+      safeText(order.customerName) ||
+      safeText(shippingAddress.firstName) ||
+      safeText(shippingAddress.lastName) ||
+      safeText(shippingAddress.street) ||
+      safeText(shippingAddress.city) ||
+      safeText(shippingAddress.state) ||
+      safeText(shippingAddress.zip),
+  );
+}
+
+function hasShippingAddress(order = {}) {
+  const shippingAddress = order.shippingAddress && typeof order.shippingAddress === 'object' ? order.shippingAddress : {};
+
+  return Boolean(
+    safeText(shippingAddress.firstName) ||
+      safeText(shippingAddress.lastName) ||
+      safeText(shippingAddress.street) ||
+      safeText(shippingAddress.city) ||
+      safeText(shippingAddress.state) ||
+      safeText(shippingAddress.zip),
+  );
+}
+
+function isPaymentPending(order = {}) {
+  return normalizeOrderPaymentStatus(order.paymentStatus).includes('pending');
+}
+
+function isPaymentComplete(order = {}) {
+  const status = normalizeOrderPaymentStatus(order.paymentStatus);
+  return status.includes('paid') || status.includes('completed') || status === 'demo';
+}
+
+function isOrderRefunded(order = {}) {
+  return normalizeOrderPaymentStatus(order.paymentStatus).includes('refunded');
+}
+
+function isRecentlyPlaced(order = {}, hours = 24) {
+  const createdAt = safeDate(order.createdAt);
+  if (!createdAt) return false;
+
+  const ageMs = Date.now() - createdAt.getTime();
+  return Number.isFinite(ageMs) && ageMs <= hours * 60 * 60 * 1000;
 }
 
 export function getProductVisibilityInfo(product = {}) {
@@ -410,4 +473,153 @@ export function getCatalogAttentionProducts(products = [], { limit = 5 } = {}) {
       return leftName.localeCompare(rightName);
     })
     .slice(0, limit);
+}
+
+export function getOrderAttentionInfo(order = {}) {
+  const status = normalizeOrderStatusValue(order.status);
+  const paymentStatus = normalizeOrderPaymentStatus(order.paymentStatus);
+  const recentlyPlaced = isRecentlyPlaced(order);
+  const hasContact = hasOrderContactInfo(order);
+  const hasShipping = hasShippingAddress(order);
+
+  if (!hasContact || !safeText(order.customerEmail) || !hasShipping) {
+    return {
+      key: 'customer-info',
+      label: 'Review customer info',
+      detail: 'Missing shipping or contact data should be checked before fulfillment.',
+      tone: 'admin-issue-missing',
+      priority: 100,
+      needsAction: true,
+      state: 'needs-info',
+    };
+  }
+
+  if (isPaymentPending(order)) {
+    return {
+      key: 'payment-pending',
+      label: 'Payment pending',
+      detail: 'Payment is still waiting to clear before this order can move forward.',
+      tone: 'stock-low',
+      priority: 92,
+      needsAction: true,
+      state: 'awaiting-payment',
+    };
+  }
+
+  if (status === 'pending' && isPaymentComplete(order)) {
+    return {
+      key: 'ready-to-process',
+      label: 'Ready to process',
+      detail: 'Payment is complete and fulfillment can start.',
+      tone: 'status-active',
+      priority: 84,
+      needsAction: true,
+      state: 'ready',
+    };
+  }
+
+  if (status === 'processing') {
+    return {
+      key: 'needs-fulfillment',
+      label: 'Needs fulfillment',
+      detail: 'This order is being prepared and should stay on the packing list.',
+      tone: 'stock-low',
+      priority: 80,
+      needsAction: true,
+      state: 'in-progress',
+    };
+  }
+
+  if (status === 'shipped' || status === 'delivered') {
+    return {
+      key: 'shipped-complete',
+      label: 'Shipped / complete',
+      detail: 'The order is on the way or already completed.',
+      tone: 'stock-in',
+      priority: 46,
+      needsAction: false,
+      state: 'complete',
+    };
+  }
+
+  if (status === 'cancelled' || isOrderRefunded(order)) {
+    return {
+      key: 'cancelled-refunded',
+      label: 'Cancelled / refunded',
+      detail: 'The order was stopped before fulfillment finished.',
+      tone: 'stock-out',
+      priority: 40,
+      needsAction: false,
+      state: 'stopped',
+    };
+  }
+
+  if (recentlyPlaced) {
+    return {
+      key: 'recently-placed',
+      label: 'Recently placed',
+      detail: 'New order recently entered the queue.',
+      tone: 'status-badge-muted',
+      priority: 34,
+      needsAction: false,
+      state: 'recent',
+    };
+  }
+
+  return {
+    key: 'awaiting-review',
+    label: 'Awaiting review',
+    detail: 'This order has not moved far enough into fulfillment to need a special label yet.',
+    tone: 'status-badge-muted',
+    priority: 28,
+    needsAction: true,
+    state: 'review',
+  };
+}
+
+export function getOrderOperationsSummary(orders = []) {
+  const safeOrders = Array.isArray(orders) ? orders.filter(Boolean) : [];
+  const recentOrders = [...safeOrders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  return recentOrders.reduce(
+    (summary, order) => {
+      const status = normalizeOrderStatusValue(order.status);
+      const paymentStatus = normalizeOrderPaymentStatus(order.paymentStatus);
+      const attention = getOrderAttentionInfo(order);
+
+      summary.totalOrders += 1;
+      summary.paymentPendingOrders += isPaymentPending(order) ? 1 : 0;
+      summary.paidOrders += isPaymentComplete(order) ? 1 : 0;
+      summary.processingOrders += status === 'processing' ? 1 : 0;
+      summary.shippedOrders += status === 'shipped' || status === 'delivered' ? 1 : 0;
+      summary.cancelledOrders += status === 'cancelled' ? 1 : 0;
+      summary.refundedOrders += isOrderRefunded(order) ? 1 : 0;
+      summary.recentlyPlacedOrders += attention.state === 'recent' ? 1 : 0;
+      summary.ordersNeedingAttention += attention.needsAction ? 1 : 0;
+
+      if (attention.needsAction) {
+        summary.attentionOrders.push({ order, attention });
+      }
+
+      if (!summary.paymentStatuses.has(paymentStatus)) {
+        summary.paymentStatuses.add(paymentStatus);
+      }
+
+      return summary;
+    },
+    {
+      totalOrders: 0,
+      paidOrders: 0,
+      paymentPendingOrders: 0,
+      processingOrders: 0,
+      shippedOrders: 0,
+      cancelledOrders: 0,
+      refundedOrders: 0,
+      recentlyPlacedOrders: 0,
+      ordersNeedingAttention: 0,
+      attentionOrders: [],
+      paymentStatuses: new Set(),
+      recentOrders: recentOrders.slice(0, 4),
+    },
+  );
 }

@@ -1086,6 +1086,68 @@
   display: none;
 }
 
+.admin-order-ops-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(221, 213, 203, 0.84);
+  background: rgba(255, 253, 250, 0.98);
+  box-shadow: 0 16px 34px rgba(43, 33, 20, 0.06);
+}
+
+.admin-order-attention-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-order-attention-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(228, 217, 204, 0.66);
+}
+
+.admin-order-attention-item:first-of-type {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.admin-order-attention-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.admin-order-attention-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-order-attention-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.admin-order-attention-copy span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.admin-order-attention-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex: none;
+}
+
 .admin-order-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1947,6 +2009,16 @@
     width: 100%;
   }
 
+  .admin-order-attention-item,
+  .admin-record-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-order-attention-actions {
+    justify-content: flex-start;
+  }
+
   .admin-search,
   .admin-filter {
     width: 100%;
@@ -2000,6 +2072,15 @@
   .admin-dashboard-overview,
   .admin-dashboard-panel {
     padding: 15px;
+  }
+
+  .admin-order-ops-panel,
+  .admin-order-modal {
+    padding: 16px;
+  }
+
+  .admin-order-modal-grid {
+    grid-template-columns: 1fr;
   }
 
   .admin-catalog-readiness-panel {

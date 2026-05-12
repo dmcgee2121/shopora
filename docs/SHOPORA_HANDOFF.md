@@ -41,6 +41,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Storefront merchandising polish was added
 - README was improved
 
+## v0.38 Admin Orders Operations Polish
+
+- Added a clearer admin orders operations summary with paid, payment-pending, processing, shipped/fulfilled, cancelled/refunded, needs-attention, and recent-activity signals.
+- Added a compact order attention preview that reuses the catalog-readiness helper so order issue labels stay consistent across the admin area.
+- Improved live Supabase versus local-demo messaging so the page is honest about read-only live order behavior while still being useful for prototype review.
+- Refined the order detail modal, empty states, and mobile order cards for easier scanning without changing checkout, order creation, Stripe, Supabase RLS, Netlify, or env behavior.
+- Verified with `npm run build` locally on branch-only work.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.37 Admin Dashboard Store Readiness Polish
 
 - Added a compact admin dashboard store-readiness section that summarizes total products, active products, low stock, out of stock, products needing attention, and missing merchandising information.

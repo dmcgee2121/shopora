@@ -41,6 +41,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Storefront merchandising polish was added
 - README was improved
 
+## v0.40 Admin Local QA and Handoff
+
+- Completed a local-only QA sweep across the admin surface to verify the v0.35 through v0.39 polish passes work together cleanly.
+- Checked the admin routes `/admin/login`, `/admin`, `/admin/products`, `/admin/products/new`, `/admin/products/:id/edit`, `/admin/orders`, and `/admin/customers` locally.
+- Verified the admin readiness flow still reads coherently across dashboard, products, product editor, orders, and customers.
+- Kept checkout submission, order creation, Stripe functions, Netlify behavior, Supabase RLS, auth behavior, and env handling untouched.
+- Verified with `npm run build` locally on branch-only work.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.39 Admin Customers Relationship Polish
 
 - Added a clearer customer relationship summary on the admin customers page with totals for customers, customers with orders, saved-item activity, returning customers, recent activity, total spend, and average order value.

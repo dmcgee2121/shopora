@@ -41,6 +41,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Storefront merchandising polish was added
 - README was improved
 
+## v0.37 Admin Dashboard Store Readiness Polish
+
+- Added a compact admin dashboard store-readiness section that summarizes total products, active products, low stock, out of stock, products needing attention, and missing merchandising information.
+- Added a dashboard "Needs attention" preview that reuses the catalog-readiness helper so product issues stay consistent with the admin products and editor guidance work.
+- Refined dashboard quick actions to better support the operational flow: add product, review catalog, review orders, view customers, and check storefront readiness.
+- Kept checkout submission, order creation, Stripe functions, Netlify behavior, Supabase RLS, and env handling untouched.
+- Verified with `npm run build` locally on branch-only work.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.36 Product Editor Guidance Polish
 
 - Added editor guidance to the admin product create/edit page for name, brand, SKU, price, sale pricing, stock count, category, department, description, images, and merchandising detail fields.

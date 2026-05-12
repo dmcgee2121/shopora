@@ -7,6 +7,10 @@ import { useAuth } from '../../context/AuthContext';
 import { useOrders } from '../../context/OrdersContext';
 import { useProductCatalog } from '../../context/ProductCatalogContext';
 import {
+  getCatalogAttentionProducts,
+  getCatalogReadinessSummary,
+} from '../../utils/catalogReadiness';
+import {
   getOrderStatusClass,
   getOrderStatusLabel,
   getPaymentStatusLabel,
@@ -52,6 +56,20 @@ function DashboardMetric({ label, value, note }) {
       <strong>{value}</strong>
       {note ? <p>{note}</p> : null}
     </article>
+  );
+}
+
+function SummaryRow({ label, value, note, toneClass = '' }) {
+  return (
+    <div className="admin-summary-row">
+      <div className="admin-summary-copy">
+        <strong>{label}</strong>
+        <span>{note}</span>
+      </div>
+      <div className={`admin-summary-value ${toneClass}`.trim()}>
+        <strong>{value}</strong>
+      </div>
+    </div>
   );
 }
 
@@ -132,6 +150,9 @@ export default function AdminDashboard() {
     ordersSource === 'supabase'
       ? 'A clean snapshot of live Supabase order activity and catalog health for the current admin session.'
       : 'A clean snapshot of sales, catalog health, and recent order movement using local demo data.';
+  const catalogReadiness = useMemo(() => getCatalogReadinessSummary(products), [products]);
+  const attentionProducts = useMemo(() => getCatalogAttentionProducts(products, { limit: 4 }), [products]);
+  const storefrontReady = catalogReadiness.totalProducts > 0 && catalogReadiness.productsNeedingAttention === 0;
 
   const analytics = useMemo(() => {
     const orderedOrders = [...orders].sort(
@@ -277,6 +298,65 @@ export default function AdminDashboard() {
             />
           </div>
 
+          <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-store-readiness-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Store readiness</span>
+              <p>
+                {catalogReadiness.totalProducts
+                  ? 'A compact view of catalog health before demos, screenshots, or future launches.'
+                  : 'No products are in the catalog yet, so readiness signals will populate after the first item is added.'}
+              </p>
+            </div>
+
+            <div className="admin-store-readiness-grid">
+              <SummaryRow
+                label="Total products"
+                value={catalogReadiness.totalProducts}
+                note="All products currently in the catalog."
+              />
+              <SummaryRow
+                label="Active products"
+                value={catalogReadiness.activeProducts}
+                note="Visible on the storefront."
+              />
+              <SummaryRow
+                label="Low stock"
+                value={catalogReadiness.lowStockProducts}
+                note="Items that should be replenished soon."
+                toneClass="stock-low"
+              />
+              <SummaryRow
+                label="Out of stock"
+                value={catalogReadiness.outOfStockProducts}
+                note="Unavailable until inventory returns."
+                toneClass="stock-out"
+              />
+              <SummaryRow
+                label="Needs attention"
+                value={catalogReadiness.productsNeedingAttention}
+                note="Products with issues to fix before demos."
+                toneClass="admin-issue-missing"
+              />
+              <SummaryRow
+                label="Missing merchandising info"
+                value={catalogReadiness.missingMerchandisingInfo}
+                note="Missing images, copy, SKU, price, or stock details."
+                toneClass="status-badge-muted"
+              />
+            </div>
+
+            <div className="admin-store-readiness-footer">
+              <span className={`status-badge ${storefrontReady ? 'status-active' : 'status-draft'}`}>
+                {storefrontReady ? 'Catalog looks ready' : 'Catalog needs attention'}
+              </span>
+              <p>
+                {storefrontReady
+                  ? 'Storefront-facing data is in good shape.'
+                  : `${catalogReadiness.productsNeedingAttention} product${catalogReadiness.productsNeedingAttention === 1 ? '' : 's'} still need work before the catalog feels demo-ready.`}
+              </p>
+            </div>
+          </section>
+
           <div className="admin-dashboard-mini-grid">
             <div className="admin-dashboard-panel admin-dashboard-panel-soft">
               <div className="admin-dashboard-section-heading compact">
@@ -317,25 +397,32 @@ export default function AdminDashboard() {
 
               <div className="admin-progress-list">
                 <ProgressRow
-                  label="Healthy stock"
-                  value={analytics.inStockProducts}
+                  label="Active products"
+                  value={catalogReadiness.activeProducts}
                   total={products.length}
-                  note="Safe for shoppers to discover and buy."
+                  note="Visible and shopping-ready."
                   toneClass="stock-in"
                 />
                 <ProgressRow
                   label="Low stock"
-                  value={analytics.lowStockItems.length}
+                  value={catalogReadiness.lowStockProducts}
                   total={products.length}
                   note="Worth replenishing soon."
                   toneClass="stock-low"
                 />
                 <ProgressRow
                   label="Out of stock"
-                  value={analytics.outOfStockItems.length}
+                  value={catalogReadiness.outOfStockProducts}
                   total={products.length}
                   note="Unavailable until replenished."
                   toneClass="stock-out"
+                />
+                <ProgressRow
+                  label="Needs attention"
+                  value={catalogReadiness.productsNeedingAttention}
+                  total={products.length}
+                  note="Products with missing or incomplete merchandising data."
+                  toneClass="admin-issue-missing"
                 />
               </div>
             </div>
@@ -346,7 +433,7 @@ export default function AdminDashboard() {
           <section className="admin-dashboard-panel admin-dashboard-panel-dark">
             <div className="admin-dashboard-section-heading compact dark">
               <span>Quick actions</span>
-              <p>Fast jumps to the common admin tasks on this prototype.</p>
+              <p>Fast jumps to the common operational tasks for this storefront.</p>
             </div>
 
             <div className="admin-quick-action-grid">
@@ -358,16 +445,96 @@ export default function AdminDashboard() {
               />
               <QuickActionLink
                 to="/admin/products"
-                label="Manage Products"
-                description="Edit, restock, or remove items."
+                label="Review Catalog"
+                description="Check product readiness and issue details."
               />
               <QuickActionLink
                 to="/admin/orders"
-                label="View Orders"
+                label="Review Orders"
                 description="Review recent order activity."
+              />
+              <QuickActionLink
+                to="/admin/customers"
+                label="View Customers"
+                description="Open customer records and saved-item signals."
+              />
+              <QuickActionLink
+                to="/admin/products"
+                label="Check Storefront Readiness"
+                description="Review catalog health and attention items."
               />
               <QuickActionLink to="/" label="View Storefront" description="See the public shop experience." />
             </div>
+          </section>
+
+          <section className="admin-dashboard-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Needs attention</span>
+              <p>
+                {attentionProducts.length
+                  ? 'A short list of product fixes to handle before screenshots, demos, or future launch prep.'
+                  : storefrontReady
+                    ? 'Storefront is in good shape. No immediate catalog issues are flagged right now.'
+                    : 'No products were matched for issues yet, but the catalog still has readiness gaps.'}
+              </p>
+            </div>
+
+            {attentionProducts.length ? (
+              <div className="admin-attention-list">
+                {attentionProducts.map(({ product, issues, issueCount }) => (
+                  <article key={product.id} className="admin-attention-item">
+                    <div className="admin-attention-item-header">
+                      <div>
+                        <strong>{safeText(product.name, 'Untitled product')}</strong>
+                        <p>
+                          {safeText(product.brand, 'Unbranded')}
+                          {' • '}
+                          {safeText(product.sku, 'No SKU assigned')}
+                        </p>
+                      </div>
+                      <span className="admin-attention-count">
+                        {issueCount} issue{issueCount === 1 ? '' : 's'}
+                      </span>
+                    </div>
+
+                    <div className="status-badges admin-issue-badges">
+                      {issues.slice(0, 3).map((issue) => (
+                        <span key={issue.key} className={`status-badge ${issue.tone}`}>
+                          {issue.label}
+                        </span>
+                      ))}
+                      {issues.length > 3 ? (
+                        <span className="status-badge status-badge-muted">+{issues.length - 3} more</span>
+                      ) : null}
+                    </div>
+
+                    <p className="admin-attention-detail">{issues[0]?.detail ?? 'Review the product record for missing catalog data.'}</p>
+
+                    <div className="admin-attention-actions">
+                      <Link to="/admin/products" className="text-button">
+                        Review catalog
+                      </Link>
+                      <Link to={`/admin/products/${product.id}/edit`} className="text-button">
+                        Edit product
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="admin-readiness-empty">
+                <h3>Storefront is in good shape.</h3>
+                <p>Catalog-ready products are already covering the basics for screenshots and demos.</p>
+                <div className="admin-empty-state-actions">
+                  <Link to="/admin/products" className="btn btn-ghost btn-small">
+                    Review catalog
+                  </Link>
+                  <Link to="/admin/products/new" className="btn btn-dark btn-small">
+                    Add Product
+                  </Link>
+                </div>
+              </div>
+            )}
           </section>
 
           <section className="admin-dashboard-panel">

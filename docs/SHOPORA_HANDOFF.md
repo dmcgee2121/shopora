@@ -41,6 +41,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Storefront merchandising polish was added
 - README was improved
 
+## v0.41 Storefront Post-Admin Polish Pass
+
+- Completed a local-only storefront and customer QA sweep after the admin-focused milestone work.
+- Fixed a small account order-history copy artifact so the order date and item count separator renders cleanly.
+- Verified the storefront, discovery, cart, checkout, account, orders, and saved routes still fit together cleanly.
+- Kept checkout submission, order creation, Stripe functions, Netlify behavior, Supabase RLS, and auth behavior untouched.
+- Verified with `npm run build` locally on branch-only work.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.40 Admin Local QA and Handoff
 
 - Completed a local-only QA sweep across the admin surface to verify the v0.35 through v0.39 polish passes work together cleanly.

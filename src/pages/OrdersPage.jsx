@@ -4,11 +4,7 @@ import ShopOraImage from '../components/ShopOraImage';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
 import { getOrderItemImage } from '../utils/orderItemUtils';
-import {
-  getOrderStatusClass,
-  getOrderStatusLabel,
-  getPaymentStatusLabel,
-} from '../utils/statusUtils';
+import { getOrderStatusClass, getOrderStatusLabel, getPaymentStatusLabel } from '../utils/statusUtils';
 
 function formatDate(value) {
   if (!value) return '';
@@ -73,18 +69,18 @@ export default function OrdersPage() {
   return (
     <section className="container account-page">
       <div className="section-heading">
-          <div className="page-heading-brand-wrap">
-            <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
-            <div>
-              <p className="eyebrow">Account</p>
-              <h1>Orders</h1>
-              <p>
-                {currentUser
-                  ? `Order history for ${currentUser.firstName || 'your account'}.`
-                  : 'Completed orders will appear here.'}
-              </p>
-            </div>
+        <div className="page-heading-brand-wrap">
+          <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
+          <div>
+            <p className="eyebrow">Account</p>
+            <h1>Orders</h1>
+            <p>
+              {currentUser
+                ? `Order history for ${currentUser.firstName || 'your account'}.`
+                : 'Completed orders will appear here.'}
+            </p>
           </div>
+        </div>
         <span className="count-badge">
           {orders.length} order{orders.length === 1 ? '' : 's'}
         </span>
@@ -118,7 +114,7 @@ export default function OrdersPage() {
                   <div>
                     <span className="account-order-number">{order.orderNumber}</span>
                     <p>
-                      {orderDate || 'Order date unavailable'} • {itemCount} item{itemCount === 1 ? '' : 's'}
+                      {orderDate || 'Order date unavailable'} / {itemCount} item{itemCount === 1 ? '' : 's'}
                     </p>
                   </div>
                   <div className="account-order-tags">

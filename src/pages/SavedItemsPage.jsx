@@ -12,6 +12,7 @@ export default function SavedItemsPage() {
   const savedProducts = products.filter((product) =>
     safeSavedProductIds.some((id) => idsMatch(id, product.id)),
   );
+  const accountCta = currentUser ? { to: '/account', label: 'View account' } : { to: '/login', label: 'Sign in' };
 
   return (
     <section className="container account-page">
@@ -23,8 +24,8 @@ export default function SavedItemsPage() {
             <h1>Saved Items</h1>
             <p>
               {currentUser
-                ? `Favorites saved for ${currentUser.firstName}.`
-                : 'Products saved for later will appear here.'}
+                ? `Favorites saved for ${currentUser.firstName}. Keep them in one place for quicker comparison and easier repeat visits.`
+                : 'Products saved for later will appear here. Sign in to keep a wishlist tied to your account.'}
             </p>
           </div>
         </div>
@@ -34,7 +35,8 @@ export default function SavedItemsPage() {
       </div>
 
       <p className="account-page-note">
-        Saved items help you compare looks, revisit favorites, and move faster when you are ready to buy.
+        Saved items work like a simple wishlist. Compare favorite finds, revisit styles later, and keep a lightweight
+        member trail without any points or rewards balance.
       </p>
 
       {savedProducts.length ? (
@@ -63,13 +65,19 @@ export default function SavedItemsPage() {
       ) : (
         <div className="empty-state account-empty">
           <h2>No saved items yet.</h2>
-          <p>Tap the heart icon on a product to save it for later, then come back here to compare favorites.</p>
+          <p>
+            Tap the heart icon on a product to build a wishlist, then come back here to compare favorites and repeat
+            looks.
+          </p>
           <div className="empty-state-actions">
             <Link to="/women" className="btn btn-dark">
               Browse products
             </Link>
             <Link to="/account/orders" className="btn btn-ghost">
               View orders
+            </Link>
+            <Link to={accountCta.to} className="btn btn-ghost">
+              {accountCta.label}
             </Link>
           </div>
         </div>

@@ -41,6 +41,10 @@ function formatMoney(value) {
   return `$${safeNumber(value).toFixed(2)}`;
 }
 
+function pluralize(count, singular, plural = `${singular}s`) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
 function formatDate(value) {
   if (!value) return 'Date unavailable';
 
@@ -224,6 +228,86 @@ export default function AccountPage() {
   const accountPickDescription = recentlyViewedProducts.length
     ? 'Jump back into styles you checked out earlier.'
     : 'A small edit based on saved styles and popular ShopOra favorites.';
+  const memberJourneySteps = [
+    {
+      label: 'Profile ready',
+      detail: currentUser?.email
+        ? 'Your contact details are saved for a faster return visit.'
+        : 'Add your profile details so repeat visits feel smoother.',
+      done: Boolean(currentUser?.firstName && currentUser?.lastName && currentUser?.email),
+    },
+    {
+      label: 'Shipping ready',
+      detail: addressLines.length
+        ? 'A default shipping address is ready for checkout.'
+        : 'Add a shipping address to reduce checkout friction.',
+      done: addressLines.length > 0,
+    },
+    {
+      label: 'Saved favorites',
+      detail: safeSavedProductIds.length
+        ? `You have ${pluralize(safeSavedProductIds.length, 'saved style')} in your wishlist.`
+        : 'Save a favorite to start building a shortlist.',
+      done: safeSavedProductIds.length > 0,
+    },
+    {
+      label: 'Recently viewed',
+      detail: recentlyViewedProducts.length
+        ? `You have ${pluralize(recentlyViewedProducts.length, 'recently viewed style')} ready to revisit.`
+        : 'Browse a few products to build a personal trail.',
+      done: recentlyViewedProducts.length > 0,
+    },
+    {
+      label: 'Order history',
+      detail: recentOrders.length
+        ? `You have ${pluralize(recentOrders.length, 'recent order')} on file.`
+        : 'Your order history will appear after checkout.',
+      done: recentOrders.length > 0,
+    },
+  ];
+  const memberJourneyReadyCount = memberJourneySteps.filter((step) => step.done).length;
+  const memberJourneyProgressLabel =
+    memberJourneyReadyCount === memberJourneySteps.length
+      ? 'Your account is ready for fast repeat shopping.'
+      : 'A few small details will make this account feel more complete.';
+  const memberBenefits = [
+    {
+      label: 'Saved favorites',
+      headline: 'Build your wishlist',
+      text: safeSavedProductIds.length
+        ? `${pluralize(safeSavedProductIds.length, 'saved style')} are ready to revisit.`
+        : 'Save favorites to keep a simple wishlist in one place.',
+      action: 'View saved items',
+      to: '/account/saved',
+    },
+    {
+      label: 'Faster checkout setup',
+      headline: 'Profile-ready checkout',
+      text: addressLines.length
+        ? 'Profile and shipping details are ready for a quicker checkout flow.'
+        : 'Add shipping info now so checkout feels easier later.',
+      action: 'Update profile',
+      to: '/account',
+    },
+    {
+      label: 'Order history',
+      headline: 'Receipts at a glance',
+      text: recentOrders.length
+        ? `${pluralize(recentOrders.length, 'recent order')} are stored for easy review.`
+        : 'Your receipts and order history will appear after checkout.',
+      action: 'View orders',
+      to: '/account/orders',
+    },
+    {
+      label: 'Discovery and help',
+      headline: 'Member shortcuts',
+      text: recentlyViewedProducts.length
+        ? 'Recently viewed products and recommendations keep browsing moving.'
+        : 'Use department shortcuts, then return for a more personal next visit.',
+      action: 'Browse shipping',
+      to: '/shipping',
+    },
+  ];
 
   return (
     <section className="container account-page">
@@ -272,6 +356,76 @@ export default function AccountPage() {
               <span key={detail} className="query-chip">
                 {detail}
               </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="account-dashboard-section account-member-section" aria-labelledby="account-member-title">
+        <div className="account-dashboard-section-head">
+          <div>
+            <span className="account-card-label">Member benefits</span>
+            <h2 id="account-member-title">Your ShopOra perks</h2>
+            <p>
+              Frontend-only member cues that make the account feel more personal. There are no points, store credit, or
+              redemption balances here.
+            </p>
+          </div>
+          <div className="recommendation-links account-member-links" aria-label="Member shortcuts">
+            <Link to="/account/saved" className="query-chip">
+              Saved items
+            </Link>
+            <Link to="/account/orders" className="query-chip">
+              Orders
+            </Link>
+            <Link to="/shipping" className="query-chip">
+              Shipping
+            </Link>
+            <Link to="/returns" className="query-chip">
+              Returns
+            </Link>
+          </div>
+        </div>
+
+        <div className="account-member-benefits-grid">
+          {memberBenefits.map((benefit) => (
+            <article key={benefit.label} className="account-member-benefit-card">
+              <span className="account-card-label">{benefit.label}</span>
+              <h3>{benefit.headline}</h3>
+              <p>{benefit.text}</p>
+              <Link to={benefit.to} className="text-button">
+                {benefit.action}
+              </Link>
+            </article>
+          ))}
+        </div>
+
+        <div className="account-member-journey">
+          <div className="account-member-journey-copy">
+            <span className="account-card-label">Member journey</span>
+            <h3>Readiness snapshot</h3>
+            <p>{memberJourneyProgressLabel}</p>
+            <div className="account-member-journey-progress" aria-label="Member readiness progress">
+              <strong>
+                {memberJourneyReadyCount}/{memberJourneySteps.length}
+              </strong>
+              <span>readiness steps complete</span>
+            </div>
+          </div>
+          <div className="account-member-journey-steps">
+            {memberJourneySteps.map((step) => (
+              <article
+                key={step.label}
+                className={`account-member-journey-step ${step.done ? 'is-ready' : 'needs-attention'}`}
+              >
+                <div className="account-member-journey-step-row">
+                  <strong>{step.label}</strong>
+                  <span className={`status-badge ${step.done ? 'status-active' : 'status-badge-muted'}`}>
+                    {step.done ? 'Ready' : 'Next'}
+                  </span>
+                </div>
+                <p>{step.detail}</p>
+              </article>
             ))}
           </div>
         </div>

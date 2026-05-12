@@ -5,14 +5,18 @@ import ProductCard from '../components/ProductCard';
 import QuantitySelector from '../components/QuantitySelector';
 import ShopOraImage from '../components/ShopOraImage';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
 import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
 
 export default function CartPage() {
   const { products } = useProductCatalog();
+  const { currentUser } = useAuth();
   const { items, subtotal, increaseItem, decreaseItem, removeItem, clearCart } = useCart();
   const departmentLinks = useMemo(() => getDepartmentLinks(), []);
+  const accountLink = currentUser ? '/account' : '/login';
+  const accountLabel = currentUser ? 'View account' : 'Sign in';
   const recommendedProducts = useMemo(
     () =>
       getRecommendedProducts(products, items, {
@@ -139,10 +143,16 @@ export default function CartPage() {
         <>
           <div className="empty-state cart-empty">
             <h2>Your cart is empty.</h2>
-            <p>Browse the latest styles, then return here to review your full order.</p>
+            <p>
+              Browse the latest styles, then return here to review your full order. Sign in to keep favorites and
+              recent orders together in one account view.
+            </p>
             <div className="empty-state-actions">
               <Link to="/" className="btn btn-dark">
                 Continue shopping
+              </Link>
+              <Link to={accountLink} className="btn btn-ghost">
+                {accountLabel}
               </Link>
             </div>
             <div className="recommendation-links" aria-label="Shop by department">

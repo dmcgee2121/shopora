@@ -209,6 +209,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - No checkout submission, order creation, Stripe, Netlify, RLS, push, deploy, or merge changes were performed.
 - `npm run build` passed for this discovery polish pass.
 
+## v0.43 Customer Loyalty Lite Polish
+
+- Added a frontend-only customer loyalty-lite polish layer on `v0.43-customer-loyalty-lite-polish`.
+- Added a ShopOra member benefits section and a small member-journey readiness card to the account page using only existing profile, saved-item, order, and recently viewed data.
+- Refined saved-items and cart empty-state copy so the customer experience feels more like a polished department-store wishlist and account workflow without implying real rewards or redemption balances.
+- Kept the work honest and display-only: no loyalty backend, no points table, no discounts, no store credit, and no checkout or order behavior changes.
+- Created `docs/SHOPORA_CUSTOMER_LOYALTY_LITE_NOTES.md` to capture the frontend-only scope and future upgrade ideas.
+- `npm run build` passed for this loyalty-lite pass.
+- Still local-only: no push, no deploy, no merge, and no Netlify changes.
+
 ## QA Checklist for Tomorrow
 
 - Run `git status`

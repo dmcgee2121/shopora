@@ -3686,6 +3686,136 @@ main {
   max-width: 48ch;
 }
 
+.account-member-links {
+  justify-content: flex-end;
+}
+
+.account-member-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.account-member-benefit-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(228, 217, 204, 0.82);
+  background: rgba(251, 247, 241, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+}
+
+.account-member-benefit-card h3 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.account-member-benefit-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.account-member-benefit-card .text-button {
+  justify-self: start;
+}
+
+.account-member-journey {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(228, 217, 204, 0.82);
+  background: rgba(251, 247, 241, 0.78);
+}
+
+.account-member-journey-copy {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.account-member-journey-copy h3 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.account-member-journey-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.account-member-journey-progress {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(228, 217, 204, 0.76);
+  background: rgba(255, 253, 250, 0.78);
+}
+
+.account-member-journey-progress strong {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  line-height: 0.95;
+}
+
+.account-member-journey-progress span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.account-member-journey-steps {
+  display: grid;
+  gap: 10px;
+}
+
+.account-member-journey-step {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(228, 217, 204, 0.82);
+  background: rgba(255, 253, 250, 0.82);
+}
+
+.account-member-journey-step.is-ready {
+  border-color: rgba(87, 126, 94, 0.18);
+  background: rgba(87, 126, 94, 0.06);
+}
+
+.account-member-journey-step.needs-attention {
+  border-color: rgba(180, 138, 77, 0.18);
+  background: rgba(180, 138, 77, 0.08);
+}
+
+.account-member-journey-step-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.account-member-journey-step-row strong {
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.account-member-journey-step p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
 .account-shopping-links {
   justify-content: flex-end;
 }
@@ -4616,6 +4746,20 @@ body.modal-open {
 
   .account-dashboard-section-head,
   .account-featured-order {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .account-member-links {
+    justify-content: flex-start;
+  }
+
+  .account-member-benefits-grid,
+  .account-member-journey {
+    grid-template-columns: 1fr;
+  }
+
+  .account-member-journey-step-row {
     align-items: flex-start;
     flex-direction: column;
   }

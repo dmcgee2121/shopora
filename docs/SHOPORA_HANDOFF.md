@@ -80,6 +80,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build verification still passes locally.
 - Still local-only: no push, deploy, or merge was performed.
 
+## v0.48 Post-Customer Local Merge Prep
+
+- Created a local-only merge/deploy readiness checkpoint on `v0.48-post-customer-polish-local-merge-prep`.
+- Compared the current local branch against deployed `main` and documented the work that would be included in a future merge.
+- Completed a sensitive-file check and confirmed `.env` / `.env.local` are not tracked.
+- Added `docs/SHOPORA_POST_CUSTOMER_LOCAL_MERGE_PREP.md` with the branch chain, diff summary, sensitive-file check, build result, and future deploy reminders.
+- Build verification still passes locally.
+- Still local-only: no push, deploy, or merge was performed.
+- Next recommended step: decide later whether to keep building locally or intentionally merge/deploy after a deliberate review.
+
 ## v0.42 Local Merge Prep After Admin Polish
 
 - Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.

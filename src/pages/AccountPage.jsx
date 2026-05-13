@@ -66,6 +66,52 @@ function getItemCount(order) {
   return Array.isArray(order?.items) ? order.items.length : 0;
 }
 
+function toDisplayLabel(value) {
+  const text = typeof value === 'string' ? value.trim() : '';
+  if (!text) return '';
+
+  return text
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ');
+}
+
+function buildPreferenceBuckets(products = []) {
+  const departmentCounts = new Map();
+  const categoryCounts = new Map();
+  const brandCounts = new Map();
+
+  products.forEach((product) => {
+    const department = toDisplayLabel(product?.department);
+    const category = toDisplayLabel(product?.category);
+    const brand = toDisplayLabel(product?.brand);
+
+    if (department) {
+      departmentCounts.set(department, (departmentCounts.get(department) ?? 0) + 1);
+    }
+
+    if (category) {
+      categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
+    }
+
+    if (brand) {
+      brandCounts.set(brand, (brandCounts.get(brand) ?? 0) + 1);
+    }
+  });
+
+  const sortEntries = (map) =>
+    [...map.entries()]
+      .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+      .map(([label, count]) => ({ label, count }));
+
+  return {
+    departments: sortEntries(departmentCounts).slice(0, 3),
+    categories: sortEntries(categoryCounts).slice(0, 3),
+    brands: sortEntries(brandCounts).slice(0, 2),
+  };
+}
+
 function ProductPreviewList({ products = [] }) {
   return (
     <div className="account-product-preview-list">
@@ -153,6 +199,10 @@ export default function AccountPage() {
       limit: 3,
     });
   }, [products, recentlyViewedProducts, safeSavedProductIds, savedProducts]);
+  const preferenceBuckets = useMemo(
+    () => buildPreferenceBuckets([...savedProducts, ...recentlyViewedProducts]),
+    [recentlyViewedProducts, savedProducts],
+  );
   const retentionLinks = getCustomerRetentionLinks(currentUser);
   const supportLinks = getSupportLinks(currentUser);
 
@@ -233,6 +283,15 @@ export default function AccountPage() {
   const accountPickDescription = recentlyViewedProducts.length
     ? 'Jump back into styles you checked out earlier.'
     : 'A small edit based on saved styles and popular ShopOra favorites.';
+  const preferredDepartmentsLabel = preferenceBuckets.departments.length
+    ? preferenceBuckets.departments.map((item) => item.label).join(' · ')
+    : 'Browse a few products to shape this preview.';
+  const preferredCategoriesLabel = preferenceBuckets.categories.length
+    ? preferenceBuckets.categories.map((item) => item.label).join(' · ')
+    : 'Saved items and recent views will surface style hints here.';
+  const preferredBrandsLabel = preferenceBuckets.brands.length
+    ? preferenceBuckets.brands.map((item) => item.label).join(' · ')
+    : 'No brand pattern has been formed yet.';
   const nextBestAction = getCustomerNextBestAction({
     currentUser,
     savedCount: safeSavedProductIds.length,
@@ -328,7 +387,7 @@ export default function AccountPage() {
           <div>
             <p className="eyebrow">Account</p>
             <h1>Welcome{currentUser ? `, ${currentUser.firstName}` : ''}</h1>
-            <p>Manage your profile, saved styles, order history, and shipping details.</p>
+            <p>Manage your profile, saved styles, order history, shopping preferences, and shipping details.</p>
           </div>
         </div>
         <button type="button" className="btn btn-ghost" onClick={handleLogout}>
@@ -382,6 +441,85 @@ export default function AccountPage() {
               </span>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="account-dashboard-section account-preferences-section" aria-labelledby="account-preferences-title">
+        <div className="account-dashboard-section-head">
+          <div>
+            <span className="account-card-label">Shopping preferences</span>
+            <h2 id="account-preferences-title">Your preference preview</h2>
+            <p>
+              This preview is built from saved items and recently viewed products only. No backend preference record
+              is stored here.
+            </p>
+          </div>
+          <div className="recommendation-links account-preferences-links" aria-label="Preference shortcuts">
+            <Link to="/account/saved" className="query-chip">
+              Saved items
+            </Link>
+            <Link to="/account/orders" className="query-chip">
+              Orders
+            </Link>
+            <Link to="/women" className="query-chip">
+              Women
+            </Link>
+            <Link to="/sale" className="query-chip">
+              Sale
+            </Link>
+          </div>
+        </div>
+
+        <div className="account-preferences-grid">
+          <article className="account-preference-card">
+            <span className="account-card-label">Preferred departments</span>
+            <h3>{preferredDepartmentsLabel}</h3>
+            <div className="account-preference-chips" aria-label="Preferred departments">
+              {preferenceBuckets.departments.length ? (
+                preferenceBuckets.departments.map((item) => (
+                  <span key={item.label} className="query-chip">
+                    {item.label}
+                  </span>
+                ))
+              ) : (
+                <span className="query-chip">Saved locally for this demo</span>
+              )}
+            </div>
+          </article>
+
+          <article className="account-preference-card">
+            <span className="account-card-label">Style hints</span>
+            <h3>{preferredCategoriesLabel}</h3>
+            <p>
+              {preferenceBuckets.categories.length
+                ? `${preferredBrandsLabel}. Common categories and saved brands shape this account preview without creating a backend profile.`
+                : 'Browse and save a few styles to surface more useful hints here.'}
+            </p>
+            <div className="account-preference-chips" aria-label="Preferred brands">
+              {preferenceBuckets.brands.length ? (
+                preferenceBuckets.brands.map((item) => (
+                  <span key={item.label} className="query-chip">
+                    {item.label}
+                  </span>
+                ))
+              ) : (
+                <span className="query-chip">No brand pattern yet</span>
+              )}
+            </div>
+          </article>
+
+          <article className="account-preference-card account-preference-card-soft">
+            <span className="account-card-label">Communication note</span>
+            <h3>Keep account updates concise and practical.</h3>
+            <p>
+              This is a frontend note only. ShopOra does not store an email preference center or automated messaging
+              workflow in this demo.
+            </p>
+            <div className="account-preference-note">
+              <strong>Current status</strong>
+              <span>{currentUser?.email ? 'Profile details are saved for this demo account.' : 'Sign in to keep a profile trail together.'}</span>
+            </div>
+          </article>
         </div>
       </section>
 

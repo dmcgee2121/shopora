@@ -795,10 +795,20 @@ main {
 }
 
 .product-meta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
   margin: 0 0 10px;
-  color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.45;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(228, 217, 204, 0.92);
+  background: rgba(247, 242, 233, 0.82);
+  color: var(--gold-dark);
+  font-size: 0.8rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .price-row {
@@ -1487,6 +1497,10 @@ main {
   border: 1px solid rgba(228, 217, 204, 0.9);
   background: rgba(255, 253, 250, 0.92);
   box-shadow: var(--shadow-soft);
+}
+
+.search-landing-panel .recommendation-links {
+  margin-top: 4px;
 }
 
 .search-landing-panel-soft {
@@ -2305,6 +2319,12 @@ main {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 20px;
+}
+
+.campaign-tags .query-chip {
+  background: rgba(247, 242, 233, 0.98);
+  color: var(--text);
+  border-color: rgba(180, 138, 77, 0.22);
 }
 
 .campaign-visual {

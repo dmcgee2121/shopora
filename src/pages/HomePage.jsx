@@ -170,7 +170,7 @@ export default function HomePage() {
         <MerchSection
           id="new-arrivals"
           title="New Arrivals"
-          description="Freshly added styles selected to balance wardrobe staples with a few sharper seasonal pieces."
+          description="Freshly added styles selected to balance wardrobe staples with sharper seasonal pieces and easy outfit builders."
           action={<Link to="/women">Browse Women's Edit</Link>}
           products={newArrivals}
           loading={isInitialCatalogLoading}
@@ -181,7 +181,7 @@ export default function HomePage() {
         <MerchSection
           id="sale-picks"
           title="Sale Picks"
-          description="Marked-down styles with the clearest value, strongest savings, and easiest reasons to shop now."
+          description="Marked-down styles with the clearest value, strongest savings, and easiest reasons to shop before they move on."
           action={<Link to="/sale">Shop Sale</Link>}
           products={salePicks}
           loading={isInitialCatalogLoading}
@@ -196,7 +196,7 @@ export default function HomePage() {
         <MerchSection
           id="trending-now"
           title="Trending Now"
-          description="Best-reviewed styles and current favorites that are earning the most attention across the store."
+          description="Best-reviewed styles and current favorites earning the most attention across the store right now."
           products={trendingProducts}
           loading={isInitialCatalogLoading}
           emptyTitle="Trending styles are loading."
@@ -206,7 +206,7 @@ export default function HomePage() {
         <MerchSection
           id="everyday-essentials"
           title="Everyday Essentials"
-          description="Polished basics, easy layers, and wardrobe pieces built for repeat wear."
+          description="Polished basics, easy layers, and wardrobe pieces built for repeat wear across the week."
           action={<Link to="/men">Browse Men's Edit</Link>}
           products={everydayEssentials}
           loading={isInitialCatalogLoading}

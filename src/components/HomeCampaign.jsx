@@ -12,12 +12,12 @@ export default function HomeCampaign({ products = [] }) {
   return (
     <section className="home-campaign">
       <div className="campaign-copy">
-        <p className="campaign-kicker">Curated edit</p>
-        <h2>Fresh arrivals with a calm, curated point of view.</h2>
+        <p className="campaign-kicker">Seasonal edit</p>
+        <h2>Fresh arrivals, trending finds, and easy staples in one calm edit.</h2>
         <p>
-          New pieces, polished essentials, and easy layers selected to keep the store current
-          without making shopping feel crowded. ShopOra is built to feel editorial, trustworthy,
-          and easy to shop from the first scroll.
+          ShopOra is arranged like a modern department floor: new statements up front, trending
+          pieces in the middle, and dependable essentials close at hand. The result feels
+          editorial, useful, and easy to browse from the first scroll.
         </p>
         <div className="campaign-actions">
           <Link className="btn btn-dark" to="/women">
@@ -28,9 +28,9 @@ export default function HomeCampaign({ products = [] }) {
           </Link>
         </div>
         <div className="campaign-tags" aria-label="Merchandising highlights">
-          <span className="query-chip">New styles</span>
-          <span className="query-chip">Best sellers</span>
-          <span className="query-chip">Limited markdowns</span>
+          <span className="query-chip">New arrivals</span>
+          <span className="query-chip">Trending now</span>
+          <span className="query-chip">Weekend refresh</span>
         </div>
       </div>
 

@@ -10,23 +10,23 @@ import {
 const discoveryProfiles = {
   women: {
     eyebrow: "Women's department",
-    title: 'Polished layers, soft structure, and everyday ease.',
-    description: 'Start with tailored staples, texture, and pieces that move easily from weekday plans to dinner.',
+    title: 'Curated styles with polish, softness, and everyday ease.',
+    description: 'Start with tailored staples, textured layers, and versatile pieces that move easily from weekday plans to dinner.',
   },
   men: {
     eyebrow: "Men's department",
     title: 'Refined essentials with a smart-casual point of view.',
-    description: 'Build from crisp layers, clean knits, and dependable pieces that make daily dressing easier.',
+    description: 'Build from crisp layers, clean knits, and dependable pieces that make daily dressing feel effortless.',
   },
   shoes: {
     eyebrow: 'Shoe department',
     title: 'Finish the outfit from the ground up.',
-    description: 'Browse sneakers, boots, loafers, heels, and easy pairs chosen for polish and repeat wear.',
+    description: 'Browse sneakers, boots, loafers, heels, and easy pairs chosen for polish, comfort, and repeat wear.',
   },
   accessories: {
     eyebrow: 'Accessories department',
     title: 'Small details that make the whole look feel finished.',
-    description: 'Find bags, belts, jewelry, and finishing pieces that sharpen a simple outfit fast.',
+    description: 'Find bags, belts, jewelry, and finishing pieces that sharpen a simple outfit without overcomplicating it.',
   },
   sale: {
     eyebrow: 'Sale department',
@@ -90,8 +90,8 @@ export function getCategoryDiscoveryProfile({ title, department, saleOnly = fals
 
   return {
     eyebrow: 'ShopOra discovery',
-    title: `${title || 'The edit'} with smarter ways to browse.`,
-    description: 'Use curated picks, shortcuts, filters, and sorting to move through the catalog with more intention.',
+    title: `${title || 'The edit'} with more curated ways to browse.`,
+    description: 'Use featured picks, shortcuts, filters, and sorting to move through the catalog with more intention.',
   };
 }
 
@@ -102,17 +102,17 @@ export function getCategoryShortcutLinks({ department, saleOnly = false, categor
   const shortcutLinks = [
     {
       label: 'Top rated',
-      description: 'Best-reviewed styles in this edit.',
+      description: 'The strongest-reviewed styles in this edit.',
       to: `${path}${toQueryString({ sort: 'rating' })}`,
     },
     {
       label: 'New arrivals',
-      description: 'Fresh pieces to check first.',
+      description: 'The freshest pieces to check first.',
       to: `${path}${toQueryString({ status: 'new' })}`,
     },
     {
       label: 'Sale picks',
-      description: 'Markdowns worth a closer look.',
+      description: 'Markdowns with the clearest value.',
       to: saleOnly ? `${path}${toQueryString({ sort: 'priceAsc' })}` : `${path}${toQueryString({ saleOnly: true })}`,
     },
   ];

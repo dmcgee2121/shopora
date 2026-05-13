@@ -156,7 +156,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No styles found.';
   const emptyDescription = activeFilterCount
     ? 'Try removing brand, size, price, or status filters to widen the edit.'
-    : 'The current catalog does not include styles for this section yet.';
+    : 'This lane is still being merchandised, so browse the department shortcuts for nearby styles.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -177,7 +177,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const discoveryTitle = saleOnly ? 'Sale picks worth a closer look' : `${title} top picks`;
   const discoveryDescription = saleOnly
     ? 'A compact edit of markdowns with strong value, ratings, and styling range.'
-    : 'A quick department edit to help shoppers start with the strongest products before refining.';
+    : 'A quick department edit that starts with strong styles, then lets shoppers refine the assortment.';
   const discoveryHeadingId = `category-discovery-${saleOnly ? 'sale' : department || 'all'}`;
 
   return (
@@ -332,7 +332,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
                   <section className="related-section search-recommendations">
                     <div className="section-heading">
                       <div>
-                        <h2>Suggested styles</h2>
+                        <h2>More to explore</h2>
                         <p>Popular picks that fit the same shopping lane.</p>
                       </div>
                     </div>

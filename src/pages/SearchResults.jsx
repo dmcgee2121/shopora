@@ -153,7 +153,7 @@ export default function SearchResults() {
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No results found.';
   const emptyDescription = activeFilterCount
     ? 'Try removing one or more filters, or clear the search to widen the results.'
-    : 'Try a broader keyword, or browse departments if you want to start from the collection.';
+    : 'Try a broader keyword, or browse departments when you want to start with a curated lane.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -180,8 +180,8 @@ export default function SearchResults() {
           title={query ? `Search results for "${query}"` : 'Search ShopOra'}
           description={
             query
-              ? 'Browse the styles that match your search across brands, departments, and colorways. Narrow the edit further with filters and sort controls.'
-              : 'Use the search bar in the navbar to look for products, categories, brands, and colors.'
+              ? 'Browse the styles that match your search across brands, departments, and colorways, then narrow the edit with filters and sort controls.'
+              : 'Use the search bar in the navbar to look for products, categories, brands, and colors when you want a fast way into the edit.'
           }
           action={query ? <span className="count-badge">{countLabel}</span> : null}
         />
@@ -192,9 +192,7 @@ export default function SearchResults() {
               <section className="search-landing-panel" aria-labelledby="search-start-title">
                 <p className="eyebrow">Search guide</p>
                 <h2 id="search-start-title">Start with a product, category, brand, or color.</h2>
-                <p>
-                  Try a focused search, then use filters to narrow by department, size, price, product status, or sale.
-                </p>
+                <p>Try a focused search, then refine by department, size, price, product status, or sale.</p>
                 <div className="recommendation-links search-suggestion-list" aria-label="Suggested searches">
                   {searchSuggestionLinks.map((link) => (
                     <Link key={link.to} to={link.to} className="query-chip">

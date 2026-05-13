@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
 import { getProductImage } from '../data/products';
+import { getCustomerNextBestAction, getCustomerRetentionLinks } from '../utils/customerRetention';
 import { idsMatch } from '../utils/idUtils';
 import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
 import { getRecommendedProducts } from '../utils/recommendations';
@@ -150,6 +151,7 @@ export default function AccountPage() {
       limit: 3,
     });
   }, [products, recentlyViewedProducts, safeSavedProductIds, savedProducts]);
+  const retentionLinks = getCustomerRetentionLinks(currentUser);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -228,6 +230,12 @@ export default function AccountPage() {
   const accountPickDescription = recentlyViewedProducts.length
     ? 'Jump back into styles you checked out earlier.'
     : 'A small edit based on saved styles and popular ShopOra favorites.';
+  const nextBestAction = getCustomerNextBestAction({
+    currentUser,
+    savedCount: safeSavedProductIds.length,
+    recentOrdersCount: recentOrders.length,
+    recentlyViewedCount: recentlyViewedProducts.length,
+  });
   const memberJourneySteps = [
     {
       label: 'Profile ready',
@@ -344,6 +352,19 @@ export default function AccountPage() {
             <div>
               <span>Member since</span>
               <strong>{memberSince}</strong>
+            </div>
+          </div>
+          <div className="account-next-step">
+            <span className="account-card-label">{nextBestAction.eyebrow}</span>
+            <strong>{nextBestAction.title}</strong>
+            <p>{nextBestAction.text}</p>
+            <div className="empty-state-actions">
+              <Link to={nextBestAction.to} className="btn btn-dark btn-small">
+                {nextBestAction.actionLabel}
+              </Link>
+              <Link to={retentionLinks.browseSale.to} className="btn btn-ghost btn-small">
+                {retentionLinks.browseSale.label}
+              </Link>
             </div>
           </div>
         </div>

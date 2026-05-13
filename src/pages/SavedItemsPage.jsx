@@ -3,6 +3,7 @@ import BrandLogo from '../components/BrandLogo';
 import ProductCard from '../components/ProductCard';
 import { useAuth } from '../context/AuthContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
+import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { idsMatch } from '../utils/idUtils';
 
 export default function SavedItemsPage() {
@@ -12,7 +13,7 @@ export default function SavedItemsPage() {
   const savedProducts = products.filter((product) =>
     safeSavedProductIds.some((id) => idsMatch(id, product.id)),
   );
-  const accountCta = currentUser ? { to: '/account', label: 'View account' } : { to: '/login', label: 'Sign in' };
+  const retentionLinks = getCustomerRetentionLinks(currentUser);
 
   return (
     <section className="container account-page">
@@ -36,23 +37,27 @@ export default function SavedItemsPage() {
 
       <p className="account-page-note">
         Saved items work like a simple wishlist. Compare favorite finds, revisit styles later, and keep a lightweight
-        member trail without any points or rewards balance.
+        member trail without any points, rewards, or redemption balance.
       </p>
 
       {savedProducts.length ? (
         <>
           <div className="account-toolbar">
             <div className="catalog-context">
+              <span className="query-chip">Save favorites, then come back to compare</span>
               <span className="query-chip">
                 {savedProducts.length} favorite{savedProducts.length === 1 ? '' : 's'} ready to browse
               </span>
             </div>
             <div className="empty-state-actions">
-              <Link to="/women" className="btn btn-dark btn-small">
-                Continue shopping
+              <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
+                {retentionLinks.continueShopping.label}
               </Link>
-              <Link to="/account/orders" className="btn btn-ghost btn-small">
-                View orders
+              <Link to={retentionLinks.account.to} className="btn btn-ghost btn-small">
+                {retentionLinks.account.label}
+              </Link>
+              <Link to={retentionLinks.browseSale.to} className="btn btn-ghost btn-small">
+                {retentionLinks.browseSale.label}
               </Link>
             </div>
           </div>
@@ -66,18 +71,21 @@ export default function SavedItemsPage() {
         <div className="empty-state account-empty">
           <h2>No saved items yet.</h2>
           <p>
-            Tap the heart icon on a product to build a wishlist, then come back here to compare favorites and repeat
-            looks.
+            Tap the heart icon on a product to build a wishlist, then come back here to compare favorites and revisit
+            them later.
           </p>
           <div className="empty-state-actions">
-            <Link to="/women" className="btn btn-dark">
-              Browse products
+            <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
+              {retentionLinks.continueShopping.label}
             </Link>
-            <Link to="/account/orders" className="btn btn-ghost">
-              View orders
+            <Link to={retentionLinks.browseSale.to} className="btn btn-ghost">
+              {retentionLinks.browseSale.label}
             </Link>
-            <Link to={accountCta.to} className="btn btn-ghost">
-              {accountCta.label}
+            <Link to={retentionLinks.orders.to} className="btn btn-ghost">
+              {retentionLinks.orders.label}
+            </Link>
+            <Link to={retentionLinks.account.to} className="btn btn-ghost">
+              {retentionLinks.account.label}
             </Link>
           </div>
         </div>

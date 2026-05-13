@@ -3,6 +3,7 @@ import BrandLogo from '../components/BrandLogo';
 import ShopOraImage from '../components/ShopOraImage';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { getOrderItemImage } from '../utils/orderItemUtils';
 import { getOrderStatusClass, getOrderStatusLabel, getPaymentStatusLabel } from '../utils/statusUtils';
 
@@ -48,6 +49,7 @@ export default function OrdersPage() {
   const { currentUser, authSource } = useAuth();
   const { getOrdersByUser, isOrdersLoading, ordersError } = useOrders();
   const orders = currentUser ? getOrdersByUser(currentUser.id) : [];
+  const retentionLinks = getCustomerRetentionLinks(currentUser);
 
   if (isOrdersLoading && authSource === 'supabase') {
     return (
@@ -87,8 +89,27 @@ export default function OrdersPage() {
       </div>
 
       <p className="account-page-note">
-        Use this page to scan recent purchases, check fulfillment status, and jump into a receipt.
+        Use this page to scan recent purchases, check fulfillment status, jump into a receipt, or head back to
+        browsing.
       </p>
+
+      <div className="account-toolbar">
+        <div className="catalog-context">
+          <span className="query-chip">Continue from your order history</span>
+          <span className="query-chip">Saved items stay close by</span>
+        </div>
+        <div className="empty-state-actions">
+          <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
+            {retentionLinks.continueShopping.label}
+          </Link>
+          <Link to={retentionLinks.browseSale.to} className="btn btn-ghost btn-small">
+            {retentionLinks.browseSale.label}
+          </Link>
+          <Link to={retentionLinks.savedItems.to} className="btn btn-ghost btn-small">
+            {retentionLinks.savedItems.label}
+          </Link>
+        </div>
+      </div>
 
       {ordersError ? <div className="auth-message auth-message-error">{ordersError}</div> : null}
 
@@ -190,15 +211,18 @@ export default function OrdersPage() {
           <h2>{authSource === 'supabase' ? 'No orders yet.' : 'No demo orders yet.'}</h2>
           <p>
             {authSource === 'supabase'
-              ? 'Your orders will appear here after checkout.'
-              : 'Demo orders on this device will appear here after checkout.'}
+              ? 'Your orders will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale.'
+              : 'Demo orders on this device will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale.'}
           </p>
           <div className="empty-state-actions">
-            <Link to="/women" className="btn btn-dark">
-              Start shopping
+            <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
+              {retentionLinks.continueShopping.label}
             </Link>
-            <Link to="/account/saved" className="btn btn-ghost">
-              View saved items
+            <Link to={retentionLinks.browseSale.to} className="btn btn-ghost">
+              {retentionLinks.browseSale.label}
+            </Link>
+            <Link to={retentionLinks.savedItems.to} className="btn btn-ghost">
+              {retentionLinks.savedItems.label}
             </Link>
           </div>
         </div>

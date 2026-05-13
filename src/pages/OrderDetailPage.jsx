@@ -4,6 +4,7 @@ import BrandLogo from '../components/BrandLogo';
 import ShopOraImage from '../components/ShopOraImage';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { idsMatch } from '../utils/idUtils';
 import { getOrderItemImage } from '../utils/orderItemUtils';
 import {
@@ -131,6 +132,7 @@ export default function OrderDetailPage() {
   const { currentUser } = useAuth();
   const { getOrderById, fetchOrderById, cancelOrder, isOrdersLoading, ordersError, ordersSource } = useOrders();
   const [resolvedOrder, setResolvedOrder] = useState(() => getOrderById(orderId));
+  const retentionLinks = getCustomerRetentionLinks(currentUser);
 
   useEffect(() => {
     let cancelled = false;
@@ -230,6 +232,9 @@ export default function OrderDetailPage() {
               </Link>
               <Link to="/women" className="btn btn-ghost">
                 Continue Shopping
+              </Link>
+              <Link to={retentionLinks.savedItems.to} className="btn btn-ghost">
+                {retentionLinks.savedItems.label}
               </Link>
             </div>
           </div>
@@ -420,6 +425,24 @@ export default function OrderDetailPage() {
             <p className="checkout-demo-note">
               {order.demoMode ? 'This is a demo receipt. No payment was processed.' : 'This receipt is ready for your records.'}
             </p>
+          </section>
+
+          <section className="order-receipt-panel">
+            <h3>Keep browsing</h3>
+            <p>
+              Use this receipt to revisit favorites, compare new finds, or continue shopping from the same account.
+            </p>
+            <div className="empty-state-actions">
+              <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
+                {retentionLinks.continueShopping.label}
+              </Link>
+              <Link to={retentionLinks.browseSale.to} className="btn btn-ghost btn-small">
+                {retentionLinks.browseSale.label}
+              </Link>
+              <Link to={retentionLinks.savedItems.to} className="btn btn-ghost btn-small">
+                {retentionLinks.savedItems.label}
+              </Link>
+            </div>
           </section>
 
           {order.demoMode && normalizeStatusValue(order.status) === 'pending' ? (

@@ -3533,6 +3533,27 @@ main {
   line-height: 1.6;
 }
 
+.account-next-step {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(228, 217, 204, 0.8);
+}
+
+.account-next-step strong {
+  font-size: 1.05rem;
+}
+
+.account-next-step p {
+  margin: 0;
+}
+
+.account-next-step .empty-state-actions,
+.order-receipt-panel .empty-state-actions {
+  justify-content: flex-start;
+}
+
 .account-profile-chips {
   display: flex;
   flex-wrap: wrap;

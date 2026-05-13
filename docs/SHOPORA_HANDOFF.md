@@ -41,6 +41,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Storefront merchandising polish was added
 - README was improved
 
+## v0.44 Customer Retention Touchpoints Polish
+
+- Added a frontend-only customer retention polish pass on `v0.44-customer-retention-touchpoints-polish`.
+- Tightened order history, order detail, saved items, cart, and account touchpoints so the buyer flow more clearly supports browsing again, revisiting favorites, and returning to the account area.
+- Kept the changes honest and display-only: no real rewards backend, no points, no discounts, no store credit, and no checkout, order creation, Stripe, Netlify, Supabase RLS, or auth behavior changes.
+- Added a small retention helper for frontend CTA/copy derivation from existing in-app state only.
+- Documented the scope in `docs/SHOPORA_CUSTOMER_RETENTION_TOUCHPOINTS.md`.
+- `npm run build` passed locally after the v0.44 edits.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.42 Local Merge Prep After Admin Polish
 
 - Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.

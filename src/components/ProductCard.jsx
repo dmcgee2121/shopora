@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useMiniCart } from '../context/MiniCartContext';
 import { getProductImage } from '../data/products';
-import { getProductMerchandisingBadges, getProductShelfLabel } from '../utils/merchandising';
+import { getProductMerchandisingBadges, getProductReviewDisplay, getProductShelfLabel } from '../utils/merchandising';
 import ShopOraImage from './ShopOraImage';
 
 const SWATCH_COLORS = {
@@ -64,9 +64,11 @@ function StarRating({ rating, reviewCount }) {
   const safeRating = Number.isFinite(rating) ? rating : 0;
   const safeReviewCount = Number.isFinite(reviewCount) ? reviewCount : 0;
   const filledStars = Math.round(safeRating);
+  const reviewsLabel = safeReviewCount > 0 ? `${safeReviewCount.toLocaleString()} shopper ratings` : 'No shopper ratings yet';
 
   return (
     <div className="rating" aria-label={`Rated ${safeRating.toFixed(1)} out of 5 by ${safeReviewCount} reviewers`}>
+      <span className="rating-label">Customer rating</span>
       <div className="rating-stars" aria-hidden="true">
         {Array.from({ length: 5 }, (_, index) => (
           <span key={index} className={index < filledStars ? 'filled' : ''}>
@@ -74,9 +76,7 @@ function StarRating({ rating, reviewCount }) {
           </span>
         ))}
       </div>
-      <span className="rating-value">
-        {safeRating.toFixed(1)} | {safeReviewCount}
-      </span>
+      <span className="rating-value">{safeRating.toFixed(1)} · {reviewsLabel}</span>
     </div>
   );
 }
@@ -120,6 +120,7 @@ export default function ProductCard({ product }) {
   const canAddToCart = Boolean(productId) && !isOutOfStock;
   const shelfLabel = getProductShelfLabel(safeProduct);
   const merchandisingBadges = getProductMerchandisingBadges(safeProduct);
+  const reviewDisplay = getProductReviewDisplay(safeProduct);
   const leftBadges = merchandisingBadges.filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured');
   const rightBadges = merchandisingBadges.filter((badge) => !leftBadges.includes(badge));
 
@@ -184,6 +185,11 @@ export default function ProductCard({ product }) {
         </Link>
         {productDescription ? <p className="product-story">{productDescription}</p> : null}
         <p className="product-meta">{shelfLabel}</p>
+        <p className="product-review-caption">
+          {reviewDisplay.hasReviews
+            ? `${reviewDisplay.reviewCount.toLocaleString()} shopper ratings`
+            : 'No shopper ratings yet'}
+        </p>
         <div className="price-row">
           <span className={hasSalePrice ? 'price price-sale' : 'price'}>{formatMoney(price)}</span>
           {hasSalePrice ? <span className="compare-price">{formatMoney(safeProduct.price)}</span> : null}

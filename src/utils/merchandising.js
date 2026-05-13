@@ -110,3 +110,51 @@ export function getProductMerchandisingBadges(product) {
 
   return badges.slice(0, 4);
 }
+
+export function getProductReviewDisplay(product) {
+  const rating = toNumber(product?.rating);
+  const reviewCount = Math.max(0, Math.floor(toNumber(product?.reviewCount)));
+  const isReviewDataAvailable = reviewCount > 0;
+  const category = toTitleCase(product?.category);
+  const department = toTitleCase(product?.department);
+  const fit = typeof product?.fit === 'string' ? product.fit.trim().toLowerCase() : '';
+
+  let summary;
+  let note;
+  const notes = [];
+
+  if (!isReviewDataAvailable) {
+    summary = 'No shopper ratings yet.';
+    note = 'This storefront preview shows display-only review metadata. A real review submission flow is not included.';
+    notes.push('Customer notes are not collected in this demo.');
+    notes.push('Use the product details and support sections to review the item before buying.');
+    notes.push('Ratings will appear here if future product data includes them.');
+  } else if (rating >= 4.8 && reviewCount >= 100) {
+    summary = 'A highly rated favorite with a steady stream of shopper feedback.';
+    note = 'Display-only review metadata keeps this section realistic without adding review submission logic.';
+    notes.push(`Popular for ${fit || 'repeat wear'} and easy styling.`);
+    notes.push(`A strong fit for ${department || 'the store'} shoppers comparing similar pieces.`);
+    notes.push('No review form is available in this prototype.');
+  } else if (rating >= 4.6 && reviewCount >= 50) {
+    summary = 'Well reviewed and easy to trust at a glance.';
+    note = 'Customer notes are preview content only and do not represent a live review system.';
+    notes.push(`Often chosen for ${fit || 'balanced everyday wear'}.`);
+    notes.push(`Pairs naturally with ${category || 'this category'} edits and wardrobe basics.`);
+    notes.push('Review data is display-only in this storefront demo.');
+  } else {
+    summary = 'A smaller set of shopper ratings, shown as a simple storefront preview.';
+    note = 'This section stays demo-safe and does not imply an active review submission workflow.';
+    notes.push(`Useful if you want a ${fit || 'straightforward'} option in the ${category || 'current'} edit.`);
+    notes.push(`Relevant for ${department || 'the department'} shoppers comparing similar styles.`);
+    notes.push('Ratings here are display metadata only.');
+  }
+
+  return {
+    rating,
+    reviewCount,
+    summary,
+    note,
+    notes,
+    hasReviews: isReviewDataAvailable,
+  };
+}

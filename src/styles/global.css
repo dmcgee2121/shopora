@@ -841,6 +841,15 @@ main {
   font-size: 0.9rem;
 }
 
+.rating-label {
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .rating-stars {
   display: inline-flex;
   gap: 2px;
@@ -854,6 +863,26 @@ main {
   margin-left: auto;
   color: var(--muted);
   font-weight: 700;
+}
+
+.product-card .rating {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.product-card .rating-value {
+  margin-left: 0;
+}
+
+.product-review-caption {
+  margin: 0 0 10px;
+  color: var(--gold-dark);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .stock-note {
@@ -1643,6 +1672,88 @@ main {
 
 .rating-detail {
   margin-top: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.rating-detail .rating-value {
+  margin-left: 0;
+}
+
+.product-review-summary {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(228, 217, 204, 0.95);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 250, 0.98), rgba(247, 242, 233, 0.88)),
+    rgba(255, 253, 250, 0.94);
+  box-shadow: var(--shadow-soft);
+}
+
+.product-review-summary-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.product-review-summary-head h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.review-summary-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.product-review-summary-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.product-review-notes {
+  display: grid;
+  gap: 10px;
+}
+
+.product-review-note {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.product-review-note span {
+  width: 10px;
+  height: 10px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(180, 138, 77, 0.12);
+}
+
+.product-review-note p {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.product-review-summary-footnote {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 
 .low-stock {
@@ -3094,6 +3205,14 @@ main {
     grid-template-columns: 1fr;
   }
 
+  .product-review-summary-head {
+    flex-direction: column;
+  }
+
+  .review-summary-badges {
+    justify-content: flex-start;
+  }
+
   .home-campaign,
   .campaign-visual {
     grid-template-columns: 1fr;
@@ -3393,6 +3512,10 @@ main {
 
   .product-detail-copy h1 {
     font-size: clamp(2.3rem, 10vw, 3.4rem);
+  }
+
+  .product-review-summary {
+    padding: 18px;
   }
 
   .detail-subline {

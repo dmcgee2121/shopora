@@ -303,6 +303,12 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build verification still passes locally.
 - Still local-only: no push, deploy, or merge was performed.
 
+## v0.53 Product Review Display Polish
+
+- Completed a local-only product review display polish pass on `v0.53-product-review-display-lite`.
+- Documented commit `4514ec9` and the scoped frontend-only review/rating presentation changes in `docs/SHOPORA_V053_PRODUCT_REVIEW_DISPLAY_QA.md`.
+- Build verification passed locally, browser QA looked good, and no push, deploy, or merge was performed.
+
 ## QA Checklist for Tomorrow
 
 - Run `git status`

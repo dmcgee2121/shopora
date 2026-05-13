@@ -60,6 +60,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build verification still passes locally.
 - Still local-only: no push, deploy, or merge was performed.
 
+## v0.46 Customer Support and Help Polish
+
+- Added a local-only customer support/help polish pass on `v0.46-customer-support-and-help-polish`.
+- Improved the customer-facing support pages and support touchpoints around contact, shipping, returns, account, orders, cart, and checkout with clearer help-oriented copy and frontend-only support CTAs.
+- Added a small reusable `SupportLinkStrip` component and a shared support-link utility so the help paths stay consistent without introducing any backend support workflow.
+- Kept the changes prototype-safe: no real support tickets, no live chat, no guaranteed response times, no checkout/order creation/Stripe/Netlify/Supabase RLS/auth changes, and no support backend work.
+- Created `docs/SHOPORA_CUSTOMER_SUPPORT_NOTES.md` for the frontend-only support scope and future upgrade ideas.
+- `npm run build` passed locally after the v0.46 edits.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.42 Local Merge Prep After Admin Polish
 
 - Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.

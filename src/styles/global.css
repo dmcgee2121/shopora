@@ -1019,6 +1019,77 @@ main {
   padding: 10px 0 40px;
 }
 
+.support-link-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 16px;
+  margin-top: 24px;
+  padding: 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(228, 217, 204, 0.88);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 250, 0.98), rgba(244, 236, 225, 0.86)),
+    rgba(255, 253, 250, 0.96);
+  box-shadow: var(--shadow-soft);
+}
+
+.support-link-strip-copy {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.support-link-strip-copy h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  line-height: 0.95;
+}
+
+.support-link-strip-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 42ch;
+}
+
+.support-link-strip-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.support-link-card {
+  display: grid;
+  gap: 6px;
+  min-height: 100%;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(228, 217, 204, 0.86);
+  background: rgba(255, 253, 250, 0.92);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.support-link-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(180, 138, 77, 0.45);
+  box-shadow: 0 14px 28px rgba(43, 33, 20, 0.08);
+}
+
+.support-link-card strong {
+  font-size: 1rem;
+}
+
+.support-link-card span {
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+
 .catalog-toolbar {
   display: flex;
   align-items: center;
@@ -2964,7 +3035,8 @@ main {
   .product-detail,
   .cart-layout,
   .checkout-layout,
-  .content-split {
+  .content-split,
+  .support-link-strip {
     grid-template-columns: 1fr;
   }
 
@@ -3337,6 +3409,10 @@ main {
   .checkout-support-note,
   .checkout-secure-payment-note {
     min-width: 0;
+  }
+
+  .support-link-strip-links {
+    grid-template-columns: 1fr;
   }
 }
 

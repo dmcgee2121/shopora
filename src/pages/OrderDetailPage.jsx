@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
 import ShopOraImage from '../components/ShopOraImage';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
 import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { idsMatch } from '../utils/idUtils';
 import { getOrderItemImage } from '../utils/orderItemUtils';
+import { getSupportLinks } from '../utils/supportLinks';
 import {
   getOrderStatusClass,
   getOrderStatusLabel,
@@ -133,6 +135,7 @@ export default function OrderDetailPage() {
   const { getOrderById, fetchOrderById, cancelOrder, isOrdersLoading, ordersError, ordersSource } = useOrders();
   const [resolvedOrder, setResolvedOrder] = useState(() => getOrderById(orderId));
   const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const supportLinks = getSupportLinks(currentUser);
 
   useEffect(() => {
     let cancelled = false;
@@ -444,6 +447,13 @@ export default function OrderDetailPage() {
               </Link>
             </div>
           </section>
+
+          <SupportLinkStrip
+            title="Need help with this order?"
+            description="Have the order number, receipt, or shipping address ready if you need support with tracking, returns, or account details."
+            links={supportLinks}
+            className="order-support-strip"
+          />
 
           {order.demoMode && normalizeStatusValue(order.status) === 'pending' ? (
             <div className="order-detail-actions no-print">

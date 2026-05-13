@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
 import ShopOraImage from '../components/ShopOraImage';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
 import { getCustomerRetentionLinks } from '../utils/customerRetention';
+import { getSupportLinks } from '../utils/supportLinks';
 import { getOrderItemImage } from '../utils/orderItemUtils';
 import { getOrderStatusClass, getOrderStatusLabel, getPaymentStatusLabel } from '../utils/statusUtils';
 
@@ -50,6 +52,7 @@ export default function OrdersPage() {
   const { getOrdersByUser, isOrdersLoading, ordersError } = useOrders();
   const orders = currentUser ? getOrdersByUser(currentUser.id) : [];
   const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const supportLinks = getSupportLinks(currentUser);
 
   if (isOrdersLoading && authSource === 'supabase') {
     return (
@@ -110,6 +113,12 @@ export default function OrdersPage() {
           </Link>
         </div>
       </div>
+
+      <SupportLinkStrip
+        title="Need help with this order history?"
+        description="Keep the receipt or order number handy, then use these support shortcuts if you need shipping, returns, or account help."
+        links={supportLinks}
+      />
 
       {ordersError ? <div className="auth-message auth-message-error">{ordersError}</div> : null}
 

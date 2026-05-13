@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
 import ShopOraImage from '../components/ShopOraImage';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
@@ -10,6 +11,7 @@ import { getCustomerNextBestAction, getCustomerRetentionLinks } from '../utils/c
 import { idsMatch } from '../utils/idUtils';
 import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
 import { getRecommendedProducts } from '../utils/recommendations';
+import { getSupportLinks } from '../utils/supportLinks';
 import {
   getOrderStatusClass,
   getOrderStatusLabel,
@@ -152,6 +154,7 @@ export default function AccountPage() {
     });
   }, [products, recentlyViewedProducts, safeSavedProductIds, savedProducts]);
   const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const supportLinks = getSupportLinks(currentUser);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -381,6 +384,12 @@ export default function AccountPage() {
           </div>
         </div>
       </section>
+
+      <SupportLinkStrip
+        title="Need help with your account?"
+        description="Use these shortcuts if you want help with orders, shipping, returns, or profile details before reaching out."
+        links={supportLinks}
+      />
 
       <section className="account-dashboard-section account-member-section" aria-labelledby="account-member-title">
         <div className="account-dashboard-section-head">

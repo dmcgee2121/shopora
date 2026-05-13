@@ -4,12 +4,14 @@ import BrandLogo from '../components/BrandLogo';
 import ProductCard from '../components/ProductCard';
 import QuantitySelector from '../components/QuantitySelector';
 import ShopOraImage from '../components/ShopOraImage';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
 import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
+import { getSupportLinks } from '../utils/supportLinks';
 
 export default function CartPage() {
   const { products } = useProductCatalog();
@@ -17,6 +19,7 @@ export default function CartPage() {
   const { items, subtotal, increaseItem, decreaseItem, removeItem, clearCart } = useCart();
   const departmentLinks = useMemo(() => getDepartmentLinks(), []);
   const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const supportLinks = getSupportLinks(currentUser);
   const accountLink = currentUser ? '/account' : '/login';
   const accountLabel = currentUser ? 'View account' : 'Sign in';
   const safeSavedProductIds = Array.isArray(savedProductIds) ? savedProductIds : [];
@@ -191,6 +194,12 @@ export default function CartPage() {
           ) : null}
         </>
       )}
+
+      <SupportLinkStrip
+        title="Need help before checkout?"
+        description="Review shipping and returns, check your account, or contact support before you place the order."
+        links={supportLinks}
+      />
     </section>
   );
 }

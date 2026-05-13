@@ -1,10 +1,15 @@
+import SupportLinkStrip from '../components/SupportLinkStrip';
+import { getSupportLinks } from '../utils/supportLinks';
+
 export default function ReturnsPage() {
+  const supportLinks = getSupportLinks();
+
   return (
     <section className="container content-page">
       <div className="content-split">
         <div>
           <p className="eyebrow">Returns</p>
-          <h1>Easy return guidance that feels fair and transparent.</h1>
+          <h1>Return guidance that stays clear and easy to follow.</h1>
           <p>
             This page provides prototype-safe return language for a polished storefront experience.
             It is not a final operational policy and should be updated by the business before launch.
@@ -55,6 +60,12 @@ export default function ReturnsPage() {
           </p>
         </div>
       </div>
+
+      <SupportLinkStrip
+        title="Need help with a return?"
+        description="Keep your order number close, review your receipt, and head to support with the details of the item you want to discuss."
+        links={supportLinks}
+      />
     </section>
   );
 }

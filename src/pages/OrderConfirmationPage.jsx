@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
 import ShopOraImage from '../components/ShopOraImage';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
 import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { idsMatch } from '../utils/idUtils';
 import { getOrderItemImage } from '../utils/orderItemUtils';
+import { getSupportLinks } from '../utils/supportLinks';
 import {
   getOrderStatusClass,
   getOrderStatusLabel,
@@ -209,6 +211,7 @@ export default function OrderConfirmationPage() {
   const paymentStatusLabel = getPaymentStatusLabel(order?.paymentStatus, { demoMode: Boolean(order?.demoMode) });
   const orderStatusClass = getOrderStatusClass(order?.status);
   const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const supportLinks = getSupportLinks(currentUser);
   const isLoading = lookupState === 'loading';
 
   if (isLoading) {
@@ -438,6 +441,13 @@ export default function OrderConfirmationPage() {
               </Link>
             ) : null}
           </div>
+
+          <SupportLinkStrip
+            title="Need help with your order?"
+            description="Keep the receipt close by if you want to ask about shipping, returns, account details, or product questions."
+            links={supportLinks}
+            className="order-support-strip"
+          />
         </div>
       </div>
     </section>

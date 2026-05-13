@@ -90,6 +90,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Still local-only: no push, deploy, or merge was performed.
 - Next recommended step: decide later whether to keep building locally or intentionally merge/deploy after a deliberate review.
 
+## v0.49 Final Full Local QA Pass
+
+- Completed a local-only full route QA pass on `v0.49-final-local-full-route-qa-pass`.
+- Reviewed the public storefront, discovery, customer, order, admin, support/help, and policy route groups against the current local route map and import surface.
+- Confirmed the recent customer loyalty, retention, support, trust, and merge-prep work remains documented and locally scoped.
+- Added `docs/SHOPORA_FINAL_FULL_LOCAL_QA.md` to capture the final QA scope, route groups, prototype-safe notes, and next-step reminder.
+- Build verification still passes locally.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.42 Local Merge Prep After Admin Polish
 
 - Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.

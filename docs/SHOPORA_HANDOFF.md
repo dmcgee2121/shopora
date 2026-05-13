@@ -294,6 +294,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - `npm run build` passed for this loyalty-lite pass.
 - Still local-only: no push, no deploy, no merge, and no Netlify changes.
 
+## v0.52 Customer Profile Preferences Polish
+
+- Completed a local-only customer profile/preferences polish pass on `v0.52-customer-profile-preferences-polish`.
+- Improved the account page presentation with a lightweight frontend-only shopping preferences preview derived from saved items and recently viewed products.
+- Kept the changes prototype-safe and presentation-only: no new backend preference storage, no auth/session/profile persistence changes, and no checkout/cart/order behavior changes.
+- Added `docs/SHOPORA_V052_CUSTOMER_PROFILE_PREFERENCES_QA.md` to capture the scope, build result, and local QA routes for this pass.
+- Build verification still passes locally.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## QA Checklist for Tomorrow
 
 - Run `git status`

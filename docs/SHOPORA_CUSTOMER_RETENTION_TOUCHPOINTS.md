@@ -28,3 +28,8 @@
 
 - Local-only work.
 - No push, deploy, or merge was performed.
+
+## v0.45 QA Note
+
+- The earlier `/admin/customers` `Link` import issue was fixed locally.
+- Customer and admin route smoke checks were reviewed at the source level for this local-only pass.

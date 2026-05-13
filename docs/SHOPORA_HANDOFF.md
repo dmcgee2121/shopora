@@ -51,6 +51,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - `npm run build` passed locally after the v0.44 edits.
 - Still local-only: no push, deploy, or merge was performed.
 
+## v0.45 Retention and Admin Link QA Pass
+
+- Completed a local-only QA and cleanup pass on `v0.45-retention-and-admin-link-qa-pass` for the customer retention touchpoints and admin routes.
+- Verified the scoped `Link` / `NavLink` imports in the admin and customer retention surfaces are present where JSX uses them, including the earlier `/admin/customers` `Link` fix.
+- Re-checked the admin and customer-facing route surfaces at the source level for obvious broken imports, undefined CTA references, and invalid retention links; no new code changes were required.
+- Routes reviewed in this pass: `/admin`, `/admin/products`, `/admin/orders`, `/admin/customers`, `/admin/login`, `/account`, `/orders`, `/account/orders`, `/saved`, `/account/saved`, `/cart`, `/checkout`, plus the existing order detail and order confirmation route patterns already used by the app.
+- Build verification still passes locally.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.42 Local Merge Prep After Admin Polish
 
 - Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.

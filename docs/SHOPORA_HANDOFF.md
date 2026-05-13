@@ -108,6 +108,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Still local-only: no push, deploy, or merge was performed.
 - Deployed `main` / `origin/main` remains at `c20937e` from the deployed version.
 
+## v0.51 Storefront Visual Merchandising Polish
+
+- Completed a local-only storefront visual merchandising polish pass on `v0.51-storefront-visual-merchandising-polish`.
+- Tightened the buyer-facing home, category, search, and merchandising presentation so the storefront feels more like a modern department-store edit.
+- Added `docs/SHOPORA_V051_STOREFRONT_MERCHANDISING_QA.md` to capture the scope, build result, and local QA routes for this polish pass.
+- Build verification still passes locally.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.42 Local Merge Prep After Admin Polish
 
 - Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.

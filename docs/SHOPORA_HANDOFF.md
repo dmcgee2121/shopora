@@ -99,6 +99,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build verification still passes locally.
 - Still local-only: no push, deploy, or merge was performed.
 
+## v0.50 Final Handoff and Next Session Plan
+
+- Created a local-only final handoff and next-session planning pass on `v0.50-final-handoff-and-next-session-plan`.
+- Summarized the full local workstream from v0.35 through v0.50 as a clean handoff for the next chat or a future intentional deploy review.
+- Added `docs/SHOPORA_NEXT_SESSION_PROMPT.md` to provide a paste-ready prompt for the next session.
+- Build verification still passes locally.
+- Still local-only: no push, deploy, or merge was performed.
+- Deployed `main` / `origin/main` remains at `c20937e` from the deployed version.
+
 ## v0.42 Local Merge Prep After Admin Polish
 
 - Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.

@@ -99,3 +99,9 @@
 - No real support ticketing/live chat backend exists
 - No real return-label workflow exists
 - No push, merge, or deploy was performed
+
+## v0.50 Note
+
+- The v0.50 final handoff and next-session plan was added after the v0.49 QA pass.
+- Still no push, merge, or deploy was performed.
+- Any future deploy still requires an intentional merge to `main` and an explicit push.

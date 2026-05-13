@@ -25,7 +25,7 @@ export default function ContactPage() {
           </p>
           <p>
             This storefront is still a prototype, so the help details below are presentation copy
-            rather than a live ticketing workflow.
+            rather than a live ticketing workflow or guaranteed response system.
           </p>
         </div>
         <div className="info-card">

@@ -70,6 +70,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - `npm run build` passed locally after the v0.46 edits.
 - Still local-only: no push, deploy, or merge was performed.
 
+## v0.47 Customer Trust and Policy QA Pass
+
+- Completed a local-only trust, support, and policy QA pass on `v0.47-customer-trust-and-policy-qa-pass`.
+- Tightened prototype-safe wording on the contact and privacy pages so the support language stays clearly presentation-only and does not imply a live ticketing or response system.
+- Re-reviewed the customer trust and policy surfaces for route/link consistency and confirmed the support CTA paths point to existing storefront routes.
+- Routes reviewed in this pass: `/contact`, `/shipping`, `/returns`, `/privacy`, `/about`, `/cart`, `/checkout`, `/account`, `/orders`, `/saved`, plus the existing order detail and order confirmation route patterns already used by the app.
+- Created `docs/SHOPORA_CUSTOMER_TRUST_POLICY_QA.md` to capture the QA scope and limitations.
+- Build verification still passes locally.
+- Still local-only: no push, deploy, or merge was performed.
+
 ## v0.42 Local Merge Prep After Admin Polish
 
 - Prepared a local-only merge/deploy readiness summary after the admin polish chain and storefront QA pass.

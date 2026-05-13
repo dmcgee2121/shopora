@@ -13,6 +13,8 @@ export default function PrivacyPage() {
           <p>
             Before using ShopOra as a live store, the operating business should review and replace
             this page with a policy that reflects its real tools, vendors, and data practices.
+            Support, shipping, and returns language elsewhere in the app is also prototype-safe
+            copy rather than a live service promise.
           </p>
         </div>
         <div className="info-card">

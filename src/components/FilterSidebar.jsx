@@ -88,7 +88,12 @@ export default function FilterSidebar({
         <div className="filter-block">
           <h3>Brand</h3>
           <div className="pill-group">
-            <button type="button" className={!brand ? 'pill active' : 'pill'} onClick={() => onChange({ brand: '' })}>
+            <button
+              type="button"
+              className={!brand ? 'pill active' : 'pill'}
+              aria-pressed={!brand}
+              onClick={() => onChange({ brand: '' })}
+            >
               All
             </button>
             {availableBrands.map((item) => (

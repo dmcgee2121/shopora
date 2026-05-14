@@ -34,6 +34,15 @@
   max-width: none;
 }
 
+.admin-brand:focus-visible,
+.admin-sidebar-toggle:focus-visible,
+.admin-nav-link:focus-visible,
+.admin-sidebar .btn:focus-visible {
+  outline: 2px solid rgba(255, 250, 242, 0.92);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(180, 138, 77, 0.2);
+}
+
 .admin-brand .brand-logo-bag {
   width: 48px;
   flex: none;

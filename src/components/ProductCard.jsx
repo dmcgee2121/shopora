@@ -76,7 +76,9 @@ function StarRating({ rating, reviewCount }) {
           </span>
         ))}
       </div>
-      <span className="rating-value">{safeRating.toFixed(1)} · {reviewsLabel}</span>
+      <span className="rating-value">
+        {safeRating.toFixed(1)} &middot; {reviewsLabel}
+      </span>
     </div>
   );
 }
@@ -142,7 +144,7 @@ export default function ProductCard({ product }) {
       onMouseLeave={() => setHovered(false)}
     >
       <div className="product-media-wrap">
-        <Link to={productPath} className="product-image-link">
+        <Link to={productPath} className="product-image-link" aria-label={`${productName} details`}>
           <div className="product-media">
             <ShopOraImage
               src={previewImage}

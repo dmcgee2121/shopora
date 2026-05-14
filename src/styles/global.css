@@ -12,6 +12,8 @@
   --border: #e4d9cc;
   --shadow: 0 20px 50px rgba(43, 33, 20, 0.08);
   --shadow-soft: 0 10px 26px rgba(43, 33, 20, 0.06);
+  --focus-ring: #8f6832;
+  --focus-ring-soft: rgba(180, 138, 77, 0.18);
   --radius-xl: 28px;
   --radius-lg: 22px;
   --radius-md: 16px;
@@ -116,12 +118,10 @@ button {
   cursor: pointer;
 }
 
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 2px solid rgba(180, 138, 77, 0.72);
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
+  box-shadow: 0 0 0 4px var(--focus-ring-soft);
 }
 
 .container {
@@ -236,6 +236,12 @@ select:focus-visible {
 
 .nav-link.active {
   color: var(--text);
+  border-color: var(--gold);
+}
+
+.nav-link:focus-visible,
+.account-link:focus-visible,
+.cart-link:focus-visible {
   border-color: var(--gold);
 }
 
@@ -428,6 +434,10 @@ main {
   font-size: 0.92rem;
 }
 
+.btn:focus-visible {
+  border-color: var(--gold);
+}
+
 .hero-visual {
   display: grid;
   grid-template-columns: 1.3fr 0.7fr;
@@ -614,6 +624,12 @@ main {
   box-shadow: var(--shadow);
 }
 
+.product-card:focus-within {
+  box-shadow:
+    0 0 0 3px rgba(180, 138, 77, 0.18),
+    var(--shadow-soft);
+}
+
 .product-media-wrap {
   position: relative;
 }
@@ -640,6 +656,10 @@ main {
 
 .product-card:hover .product-media-image {
   transform: scale(1.03);
+}
+
+.product-image-link {
+  display: block;
 }
 
 .badge {
@@ -754,6 +774,10 @@ main {
   background: rgba(180, 138, 77, 0.12);
   color: var(--gold-dark);
   border-color: rgba(180, 138, 77, 0.32);
+}
+
+.save-button:focus-visible {
+  border-color: var(--gold);
 }
 
 .product-category {
@@ -931,6 +955,10 @@ main {
   height: 18px;
   border-radius: 999px;
   display: block;
+}
+
+.color-swatch:focus-visible {
+  box-shadow: 0 0 0 3px rgba(180, 138, 77, 0.15);
 }
 
 .swatch-more {
@@ -1119,6 +1147,13 @@ main {
   box-shadow: 0 14px 28px rgba(43, 33, 20, 0.08);
 }
 
+.support-link-card:focus-visible {
+  border-color: var(--gold);
+  box-shadow:
+    0 0 0 3px rgba(180, 138, 77, 0.18),
+    0 14px 28px rgba(43, 33, 20, 0.08);
+}
+
 .support-link-card strong {
   font-size: 1rem;
 }
@@ -1250,6 +1285,12 @@ main {
   background: var(--text);
   color: #fff;
   border-color: var(--text);
+}
+
+.pill:focus-visible,
+.chip:focus-visible,
+.query-chip:focus-visible {
+  border-color: var(--gold);
 }
 
 .sale-toggle {
@@ -1600,6 +1641,11 @@ main {
   opacity: 1;
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(180, 138, 77, 0.12);
+}
+
+.thumb:focus-visible {
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(180, 138, 77, 0.18);
 }
 
 .thumb img {

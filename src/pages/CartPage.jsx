@@ -82,6 +82,8 @@ export default function CartPage() {
                         quantity={item.quantity}
                         onDecrease={() => decreaseItem(item.key)}
                         onIncrease={() => increaseItem(item.key)}
+                        decreaseLabel={`Decrease quantity of ${item.name}`}
+                        increaseLabel={`Increase quantity of ${item.name}`}
                       />
                       <strong>${(item.unitPrice * item.quantity).toFixed(2)}</strong>
                     </div>

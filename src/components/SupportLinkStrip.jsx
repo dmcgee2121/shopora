@@ -19,14 +19,14 @@ export default function SupportLinkStrip({
         {description ? <p>{description}</p> : null}
       </div>
 
-      <div className="support-link-strip-links" aria-label={title || eyebrow}>
+      <nav className="support-link-strip-links" aria-label={title || eyebrow || 'Support links'}>
         {links.map((link) => (
           <Link key={link.to} to={link.to} className="support-link-card">
             <strong>{link.label}</strong>
             {link.note ? <span>{link.note}</span> : null}
           </Link>
         ))}
-      </div>
+      </nav>
     </section>
   );
 }

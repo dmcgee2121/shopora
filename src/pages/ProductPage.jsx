@@ -285,13 +285,15 @@ export default function ProductPage() {
 
           {galleryImages.length > 1 ? (
             <>
-              <div className="thumb-rail" aria-label="Product images">
+              <div className="thumb-rail" role="group" aria-label="Product images">
                 {galleryImages.map((thumb, index) => (
                   <button
                     key={thumb}
                     type="button"
                     className={activeImage === index ? 'thumb active' : 'thumb'}
                     onClick={() => setActiveImage(index)}
+                    aria-label={`${product.name} view ${index + 1}`}
+                    aria-pressed={activeImage === index}
                   >
                     <ShopOraImage
                       src={thumb}
@@ -419,6 +421,8 @@ export default function ProductPage() {
                     type="button"
                     className={selectedSize === size ? 'chip active' : 'chip'}
                     onClick={() => setSelectedSize(size)}
+                    aria-pressed={selectedSize === size}
+                    aria-label={`Select size ${size}`}
                   >
                     {size}
                   </button>
@@ -436,6 +440,7 @@ export default function ProductPage() {
                     className={selectedColor === color ? 'color-swatch active' : 'color-swatch'}
                     onClick={() => setSelectedColor(color)}
                     aria-label={color}
+                    aria-pressed={selectedColor === color}
                     title={color}
                   >
                     <span style={{ backgroundColor: getSwatchColor(color) }} />
@@ -450,6 +455,8 @@ export default function ProductPage() {
                 quantity={quantity}
                 onDecrease={() => setQuantity((value) => Math.max(1, value - 1))}
                 onIncrease={() => setQuantity((value) => value + 1)}
+                decreaseLabel={`Decrease quantity for ${product.name}`}
+                increaseLabel={`Increase quantity for ${product.name}`}
               />
             </div>
 

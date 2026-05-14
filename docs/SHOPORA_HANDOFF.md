@@ -356,6 +356,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build passed locally after the v0.59 edits.
 - Recommended next branch: a different safe frontend polish pass, such as catalog discovery or checkout reassurance.
 
+## v0.60 Local Release Wrap-Up
+
+- Started `v0.60-local-release-wrap-up` as a documentation-only release checkpoint after the v0.57-v0.59 feature sequence.
+- Added `docs/SHOPORA_V0_60_LOCAL_RELEASE_WRAP_UP.md` to capture the branch state, commit sequence, build status, diff status, QA checklist, deployment-readiness checklist, and next options.
+- No application behavior changed in this checkpoint.
+- The no-touch areas remain preserved: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, and env files/secrets.
+- `npm run build` still passes locally.
+- Recommended next choice is either documentation-only merge prep, Netlify deployment prep, or a new safe feature branch depending on what you want to do next.
+
 ## v0.51-v0.53 Local Session Wrap-Up
 
 - Completed the local session through `v0.53-product-review-display-lite` with the latest completed feature commit at `b32316e`.

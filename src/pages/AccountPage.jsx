@@ -205,6 +205,7 @@ export default function AccountPage() {
   );
   const retentionLinks = getCustomerRetentionLinks(currentUser);
   const supportLinks = getSupportLinks(currentUser);
+  const memberSearchLinks = retentionLinks.searchLinks.slice(0, 3);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -533,10 +534,10 @@ export default function AccountPage() {
         <div className="account-dashboard-section-head">
           <div>
             <span className="account-card-label">Member benefits</span>
-            <h2 id="account-member-title">Your ShopOra perks</h2>
+            <h2 id="account-member-title">Your ShopOra member experience</h2>
             <p>
-              Frontend-only member cues that make the account feel more personal. There are no points, store credit, or
-              redemption balances here.
+              Frontend-only member cues that make the account feel more personal. There are no points, store credit,
+              or redemption balances here.
             </p>
           </div>
           <div className="recommendation-links account-member-links" aria-label="Member shortcuts">
@@ -553,6 +554,13 @@ export default function AccountPage() {
               Returns
             </Link>
           </div>
+        </div>
+        <div className="recommendation-links account-member-shortcuts" aria-label="Search shortcuts">
+          {memberSearchLinks.map((link) => (
+            <Link key={link.to} to={link.to} className="query-chip">
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         <div className="account-member-benefits-grid">

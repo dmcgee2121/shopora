@@ -346,6 +346,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build passed locally and is captured in the v0.58 QA note.
 - Recommended next step is manual admin route QA plus `npm run build` before any future release-candidate decision.
 
+## v0.59 Customer Retention Lite
+
+- Started `v0.59-customer-retention-lite` as a local-only customer retention and trust polish pass.
+- Improved saved-items, account, order history, order detail, order confirmation, homepage campaign, and product-card copy so shoppers have warmer reasons to keep browsing, save items, revisit receipts, and return later.
+- Added real shopping links and search shortcuts to empty states while keeping the experience frontend-only and avoiding any fake rewards or backend loyalty system.
+- Preserved the no-touch areas: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, and loyalty backend logic.
+- Added `docs/SHOPORA_V0_59_CUSTOMER_RETENTION_QA.md` to capture the scope, smoke-test checklist, accessibility notes, and known limitations.
+- Build passed locally after the v0.59 edits.
+- Recommended next branch: a different safe frontend polish pass, such as catalog discovery or checkout reassurance.
+
 ## v0.51-v0.53 Local Session Wrap-Up
 
 - Completed the local session through `v0.53-product-review-display-lite` with the latest completed feature commit at `b32316e`.

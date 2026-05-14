@@ -5,6 +5,13 @@ const shopDepartmentLinks = [
   { to: '/accessories', label: 'Accessories' },
 ];
 
+const retentionSearchLinks = [
+  { to: '/search?q=new%20arrivals', label: 'Search new arrivals' },
+  { to: '/search?q=sale', label: 'Search sale' },
+  { to: '/search?q=women', label: 'Search women' },
+  { to: '/search?q=men', label: 'Search men' },
+];
+
 export function getCustomerRetentionLinks(currentUser) {
   return {
     continueShopping: { to: '/women', label: 'Continue shopping' },
@@ -22,6 +29,7 @@ export function getCustomerRetentionLinks(currentUser) {
       label: currentUser ? 'View account' : 'Sign in',
     },
     departmentLinks: shopDepartmentLinks,
+    searchLinks: retentionSearchLinks,
   };
 }
 
@@ -34,7 +42,7 @@ export function getCustomerNextBestAction({
   if (!currentUser) {
     return {
       eyebrow: 'Next best action',
-      title: 'Sign in to keep your shopping trail together',
+      title: 'Join the ShopOra member experience',
       text: 'Save favorites, revisit orders, and pick up where you left off from one account view.',
       actionLabel: 'Sign in',
       to: '/login',
@@ -44,7 +52,7 @@ export function getCustomerNextBestAction({
   if (savedCount > 0) {
     return {
       eyebrow: 'Next best action',
-      title: 'Return to your saved items',
+      title: 'Return to your saved favorites',
       text: 'Pick up favorite finds, compare them again, and keep building a short list for later.',
       actionLabel: 'View saved items',
       to: '/account/saved',
@@ -54,7 +62,7 @@ export function getCustomerNextBestAction({
   if (recentOrdersCount > 0) {
     return {
       eyebrow: 'Next best action',
-      title: 'Review your recent orders',
+      title: 'Review your receipts and keep browsing',
       text: 'Open receipts, confirm details, or shop the next outfit after checking what you already bought.',
       actionLabel: 'View orders',
       to: '/account/orders',
@@ -64,7 +72,7 @@ export function getCustomerNextBestAction({
   if (recentlyViewedCount > 0) {
     return {
       eyebrow: 'Next best action',
-      title: 'Revisit what you were browsing',
+      title: 'Continue your style trail',
       text: 'Your recent product trail is ready whenever you want to continue exploring.',
       actionLabel: 'Open account',
       to: '/account',

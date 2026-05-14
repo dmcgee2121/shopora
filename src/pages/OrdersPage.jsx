@@ -53,6 +53,7 @@ export default function OrdersPage() {
   const orders = currentUser ? getOrdersByUser(currentUser.id) : [];
   const retentionLinks = getCustomerRetentionLinks(currentUser);
   const supportLinks = getSupportLinks(currentUser);
+  const searchLinks = retentionLinks.searchLinks.slice(0, 2);
 
   if (isOrdersLoading && authSource === 'supabase') {
     return (
@@ -93,13 +94,14 @@ export default function OrdersPage() {
 
       <p className="account-page-note">
         Use this page to scan recent purchases, check fulfillment status, jump into a receipt, or head back to
-        browsing.
+        browsing. ShopOra keeps order history visible for quick reference and support.
       </p>
 
       <div className="account-toolbar">
         <div className="catalog-context">
           <span className="query-chip">Continue from your order history</span>
           <span className="query-chip">Saved items stay close by</span>
+          <span className="query-chip">ShopOra member experience</span>
         </div>
         <div className="empty-state-actions">
           <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
@@ -220,8 +222,8 @@ export default function OrdersPage() {
           <h2>{authSource === 'supabase' ? 'No orders yet.' : 'No demo orders yet.'}</h2>
           <p>
             {authSource === 'supabase'
-              ? 'Your orders will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale.'
-              : 'Demo orders on this device will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale.'}
+              ? 'Your orders will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale. Receipts will stay tied to your account for quick review later.'
+              : 'Demo orders on this device will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale. Receipts will stay tied to this demo account for quick review later.'}
           </p>
           <div className="empty-state-actions">
             <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
@@ -233,6 +235,13 @@ export default function OrdersPage() {
             <Link to={retentionLinks.savedItems.to} className="btn btn-ghost">
               {retentionLinks.savedItems.label}
             </Link>
+          </div>
+          <div className="recommendation-links account-empty-links" aria-label="Search shortcuts">
+            {searchLinks.map((link) => (
+              <Link key={link.to} to={link.to} className="query-chip">
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
       )}

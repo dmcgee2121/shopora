@@ -88,7 +88,7 @@ function getDiscoveryCue(product, stockState, reviewDisplay, price) {
     return 'Featured markdown';
   }
 
-  return product?.shippingNote || product?.returnNote || 'Compare details on the product page';
+  return product?.shippingNote || product?.returnNote || 'Save this style for later, then compare details on the product page';
 }
 
 function StarRating({ rating, reviewCount }) {

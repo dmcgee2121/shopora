@@ -273,7 +273,10 @@ export default function OrderConfirmationPage() {
             </div>
           </div>
           <div className="order-confirmation-card order-not-found">
-            <p>We could not find that order after checking your account and payment details.</p>
+            <p>
+              We could not find that order after checking your account and payment details. Your saved items and
+              receipts still stay available from the account area.
+            </p>
             {lookupError ? <p className="auth-message auth-message-error">{lookupError}</p> : null}
             {ordersError ? <p className="auth-message auth-message-error">{ordersError}</p> : null}
             <div className="order-confirmation-actions no-print">
@@ -298,7 +301,9 @@ export default function OrderConfirmationPage() {
           <div>
             <p className="eyebrow">ShopOra</p>
             <h1>Order confirmed</h1>
-            <p>Thanks for your order. Your receipt is below.</p>
+            <p>
+              Thanks for your order. Your receipt is below, along with quick paths back to shopping and saved items.
+            </p>
           </div>
         </div>
 
@@ -441,6 +446,11 @@ export default function OrderConfirmationPage() {
               </Link>
             ) : null}
           </div>
+
+          <p className="order-confirmation-note">
+            ShopOra member experience means your receipt, saved items, and support shortcuts stay close together
+            without any points balance or hidden rewards system.
+          </p>
 
           <SupportLinkStrip
             title="Need help with your order?"

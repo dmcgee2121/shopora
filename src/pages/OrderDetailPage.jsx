@@ -219,7 +219,7 @@ export default function OrderDetailPage() {
               <h1>Order unavailable</h1>
               <p>
                 We could not load that order for this account. It may not exist or it may belong to a different
-                customer.
+                customer. Receipts stay scoped to the signed-in account for privacy.
               </p>
             </div>
           </div>
@@ -228,7 +228,10 @@ export default function OrderDetailPage() {
 
           <div className="empty-state order-detail-empty">
             <h2>Receipt not available</h2>
-            <p>This order can only be viewed by the account that placed it.</p>
+            <p>
+              This order can only be viewed by the account that placed it. Your saved items and order history are still
+              ready from the account area.
+            </p>
             <div className="order-detail-actions">
               <Link to="/account/orders" className="btn btn-dark">
                 Back to Orders
@@ -254,7 +257,11 @@ export default function OrderDetailPage() {
           <div>
             <p className="eyebrow">{order.demoMode ? 'Demo orders' : 'Order history'}</p>
             <h1>Order receipt</h1>
-            <p>{order.demoMode ? 'Detailed receipt view for a demo order.' : 'Detailed receipt view for your order.'}</p>
+            <p>
+              {order.demoMode
+                ? 'Detailed receipt view for a demo order.'
+                : 'Detailed receipt view for your order. Keep it for support, reorders, or a quick account check.'}
+            </p>
           </div>
         </div>
 

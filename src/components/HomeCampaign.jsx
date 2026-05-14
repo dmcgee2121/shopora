@@ -32,7 +32,8 @@ export default function HomeCampaign({ products = [] }) {
         <div className="campaign-tags" aria-label="Merchandising highlights">
           <span className="query-chip">New arrivals</span>
           <span className="query-chip">Trending now</span>
-          <span className="query-chip">Weekend refresh</span>
+          <span className="query-chip">Saved for later</span>
+          <span className="query-chip">ShopOra member experience</span>
         </div>
         <div className="campaign-discovery-links" aria-label="Browse departments">
           {departmentLinks.map((link) => (

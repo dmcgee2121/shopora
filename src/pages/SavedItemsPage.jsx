@@ -14,6 +14,7 @@ export default function SavedItemsPage() {
     safeSavedProductIds.some((id) => idsMatch(id, product.id)),
   );
   const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const savedSearchLinks = retentionLinks.searchLinks.slice(0, 3);
 
   return (
     <section className="container account-page">
@@ -37,7 +38,7 @@ export default function SavedItemsPage() {
 
       <p className="account-page-note">
         Saved items work like a simple wishlist. Compare favorite finds, revisit styles later, and keep a lightweight
-        member trail without any points, rewards, or redemption balance.
+        ShopOra member trail without any points, rewards, or redemption balance.
       </p>
 
       {savedProducts.length ? (
@@ -48,6 +49,7 @@ export default function SavedItemsPage() {
               <span className="query-chip">
                 {savedProducts.length} favorite{savedProducts.length === 1 ? '' : 's'} ready to browse
               </span>
+              <span className="query-chip">Member perks coming soon</span>
             </div>
             <div className="empty-state-actions">
               <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
@@ -71,8 +73,8 @@ export default function SavedItemsPage() {
         <div className="empty-state account-empty">
           <h2>No saved items yet.</h2>
           <p>
-            Tap the heart icon on a product to build a wishlist, then come back here to compare favorites and revisit
-            them later.
+            Tap the heart icon on a product to build a wishlist, then come back here to compare favorites, revisit
+            them later, or pick up a new search.
           </p>
           <div className="empty-state-actions">
             <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
@@ -87,6 +89,13 @@ export default function SavedItemsPage() {
             <Link to={retentionLinks.account.to} className="btn btn-ghost">
               {retentionLinks.account.label}
             </Link>
+          </div>
+          <div className="recommendation-links account-empty-links" aria-label="Search shortcuts">
+            {savedSearchLinks.map((link) => (
+              <Link key={link.to} to={link.to} className="query-chip">
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
       )}

@@ -30,6 +30,9 @@ export default function FilterSidebar({
       <div className="filter-heading">
         <h2>Refine the edit</h2>
         <p>Narrow the collection by category, brand, price, size, or product status.</p>
+        <p className="filter-help">
+          Start with one or two filters, then sort the results to compare close matches more easily.
+        </p>
       </div>
 
       {filterGroupTitle(availableDepartments, 'Department') ? (

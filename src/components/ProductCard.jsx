@@ -60,6 +60,37 @@ function formatMoney(value) {
   return `$${Number.isFinite(numeric) ? numeric.toFixed(2) : '0.00'}`;
 }
 
+function getDiscoveryCue(product, stockState, reviewDisplay, price) {
+  const listPrice = Number(product?.price ?? 0);
+  const saleSavings = Number.isFinite(listPrice) && Number.isFinite(price) && listPrice > price ? listPrice - price : 0;
+
+  if (saleSavings > 0) {
+    return `Save ${formatMoney(saleSavings)} on this style`;
+  }
+
+  if (stockState.tone === 'low') {
+    return stockState.label;
+  }
+
+  if (stockState.tone === 'out') {
+    return stockState.label;
+  }
+
+  if (reviewDisplay.hasReviews) {
+    return `${reviewDisplay.reviewCount.toLocaleString()} shopper ratings`;
+  }
+
+  if (product?.isNew) {
+    return 'New arrival';
+  }
+
+  if (product?.isSale) {
+    return 'Featured markdown';
+  }
+
+  return product?.shippingNote || product?.returnNote || 'Compare details on the product page';
+}
+
 function StarRating({ rating, reviewCount }) {
   const safeRating = Number.isFinite(rating) ? rating : 0;
   const safeReviewCount = Number.isFinite(reviewCount) ? reviewCount : 0;
@@ -123,6 +154,8 @@ export default function ProductCard({ product }) {
   const shelfLabel = getProductShelfLabel(safeProduct);
   const merchandisingBadges = getProductMerchandisingBadges(safeProduct);
   const reviewDisplay = getProductReviewDisplay(safeProduct);
+  const discoveryCue = getDiscoveryCue(safeProduct, stockState, reviewDisplay, price);
+  const supportCue = safeProduct.shippingNote || safeProduct.returnNote || reviewDisplay.summary;
   const leftBadges = merchandisingBadges.filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured');
   const rightBadges = merchandisingBadges.filter((badge) => !leftBadges.includes(badge));
 
@@ -192,12 +225,15 @@ export default function ProductCard({ product }) {
             ? `${reviewDisplay.reviewCount.toLocaleString()} shopper ratings`
             : 'No shopper ratings yet'}
         </p>
+        {reviewDisplay.hasReviews ? <p className="product-review-summary-mini">{reviewDisplay.summary}</p> : null}
         <div className="price-row">
           <span className={hasSalePrice ? 'price price-sale' : 'price'}>{formatMoney(price)}</span>
           {hasSalePrice ? <span className="compare-price">{formatMoney(safeProduct.price)}</span> : null}
         </div>
         <StarRating rating={Number(safeProduct.rating ?? 0)} reviewCount={Number(safeProduct.reviewCount ?? 0)} />
         <p className={`stock-note stock-note-${stockState.tone}`}>{stockState.label}</p>
+        <p className="product-discovery-cue">{discoveryCue}</p>
+        {supportCue ? <p className="product-discovery-support">{supportCue}</p> : null}
         {colors.length ? (
           <div className="product-swatches" aria-label={`${productName} colors`}>
             {colors.slice(0, 4).map((color) => (

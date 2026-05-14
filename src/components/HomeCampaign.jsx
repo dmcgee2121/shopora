@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { getProductImage, products as fallbackProducts } from '../data/products';
+import { getHomepageDepartmentLinks } from '../utils/recommendations';
 import ShopOraImage from './ShopOraImage';
 
 export default function HomeCampaign({ products = [] }) {
@@ -8,6 +9,7 @@ export default function HomeCampaign({ products = [] }) {
   const supportProducts = featuredProducts
     .filter((product) => product.id !== heroProduct?.id)
     .slice(0, 2);
+  const departmentLinks = getHomepageDepartmentLinks().slice(0, 4);
 
   return (
     <section className="home-campaign">
@@ -31,6 +33,13 @@ export default function HomeCampaign({ products = [] }) {
           <span className="query-chip">New arrivals</span>
           <span className="query-chip">Trending now</span>
           <span className="query-chip">Weekend refresh</span>
+        </div>
+        <div className="campaign-discovery-links" aria-label="Browse departments">
+          {departmentLinks.map((link) => (
+            <Link key={link.to} to={link.to} className="query-chip">
+              {link.label}
+            </Link>
+          ))}
         </div>
       </div>
 

@@ -909,6 +909,13 @@ main {
   text-transform: uppercase;
 }
 
+.product-review-summary-mini {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 .stock-note {
   margin: 0 0 14px;
   font-size: 0.92rem;
@@ -926,6 +933,21 @@ main {
 
 .stock-note-out {
   color: #8e5642;
+}
+
+.product-discovery-cue {
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.product-discovery-support {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
 }
 
 .product-swatches,
@@ -1173,6 +1195,13 @@ main {
   flex-wrap: wrap;
 }
 
+.catalog-toolbar-note {
+  margin: -8px 0 18px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
 .catalog-context,
 .active-filter-row,
 .empty-state-actions {
@@ -1251,6 +1280,12 @@ main {
   color: var(--muted);
   line-height: 1.55;
   font-size: 0.92rem;
+}
+
+.filter-help {
+  color: var(--gold-dark);
+  font-size: 0.86rem;
+  line-height: 1.55;
 }
 
 .filter-block + .filter-block {
@@ -2479,6 +2514,19 @@ main {
 }
 
 .campaign-tags .query-chip {
+  background: rgba(247, 242, 233, 0.98);
+  color: var(--text);
+  border-color: rgba(180, 138, 77, 0.22);
+}
+
+.campaign-discovery-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.campaign-discovery-links .query-chip {
   background: rgba(247, 242, 233, 0.98);
   color: var(--text);
   border-color: rgba(180, 138, 77, 0.22);

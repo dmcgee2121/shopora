@@ -155,8 +155,8 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const countLabel = isInitialCatalogLoading ? 'Loading styles' : `${filteredProducts.length} products`;
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No styles found.';
   const emptyDescription = activeFilterCount
-    ? 'Try removing brand, size, price, or status filters to widen the edit.'
-    : 'This lane is still being merchandised, so browse the department shortcuts for nearby styles.';
+    ? 'Try removing brand, size, price, or status filters, or clear the search term to widen the edit.'
+    : 'This lane is still being merchandised, so browse the department shortcuts, sale picks, or nearby categories.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -189,6 +189,9 @@ export default function CategoryPage({ title, description, department, saleOnly 
           description={`${description} You are browsing the ${browsingLabel.toLowerCase()}. Use the filters to narrow the edit by category, brand, price, size, and product status.`}
           action={<span className="count-badge">{countLabel}</span>}
         />
+        <p className="catalog-toolbar-note">
+          Filters narrow the edit, sort changes what appears first, and the result count updates as you refine the lane.
+        </p>
 
         <section className="discovery-hero" aria-labelledby={discoveryHeadingId}>
           <div className="discovery-hero-copy">
@@ -241,11 +244,11 @@ export default function CategoryPage({ title, description, department, saleOnly 
           </nav>
         ) : null}
 
-        <div className="catalog-toolbar">
-          <div className="toolbar-group">
-            <label className="toolbar-label">
-              Sort
-              <select value={sort} onChange={(event) => updateSearchParams({ sort: event.target.value })}>
+            <div className="catalog-toolbar">
+              <div className="toolbar-group">
+                <label className="toolbar-label">
+                  Sort
+                  <select value={sort} onChange={(event) => updateSearchParams({ sort: event.target.value })}>
                 <option value="featured">Featured</option>
                 <option value="newest">Newest</option>
                 <option value="priceAsc">Price: Low to High</option>
@@ -254,17 +257,17 @@ export default function CategoryPage({ title, description, department, saleOnly 
                 <option value="reviews">Most Reviewed</option>
               </select>
             </label>
-          </div>
-          <div className="catalog-context">
-            <span className="query-chip">{browsingLabel}</span>
-            {q ? <span className="query-chip">Search: &quot;{q}&quot;</span> : null}
-            {activeFilterCount ? (
+              </div>
+              <div className="catalog-context">
+                <span className="query-chip">{browsingLabel}</span>
+                {q ? <span className="query-chip">Search: &quot;{q}&quot;</span> : null}
+                {activeFilterCount ? (
               <span className="query-chip">
                 {activeFilterCount} filter{activeFilterCount === 1 ? '' : 's'} applied
               </span>
-            ) : null}
-          </div>
-        </div>
+                ) : null}
+              </div>
+            </div>
 
         {filterSummary.length ? (
           <div className="active-filter-row" aria-label="Active catalog filters">
@@ -319,6 +322,12 @@ export default function CategoryPage({ title, description, department, saleOnly 
                         Clear search
                       </button>
                     ) : null}
+                    <Link to="/sale" className="btn btn-ghost">
+                      Browse sale
+                    </Link>
+                    <Link to="/women" className="btn btn-ghost">
+                      Browse women
+                    </Link>
                   </div>
                   <div className="recommendation-links" aria-label="Browse departments">
                     {departmentLinks.map((link) => (
@@ -327,6 +336,15 @@ export default function CategoryPage({ title, description, department, saleOnly 
                       </Link>
                     ))}
                   </div>
+                  {shortcutLinks.length ? (
+                    <div className="recommendation-links search-suggestion-list" aria-label="Suggested ways to refine">
+                      {shortcutLinks.map((link) => (
+                        <Link key={`${link.label}-${link.to}`} to={link.to} className="query-chip">
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
                 {recommendedProducts.length ? (
                   <section className="related-section search-recommendations">

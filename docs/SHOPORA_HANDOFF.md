@@ -330,6 +330,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - No push, deploy, merge, or PR was performed.
 - Recommended next step is a careful local smoke-test review plus `npm run build` before any future deploy decision.
 
+## v0.57 Product Discovery Upgrade
+
+- Started a product discovery upgrade branch on `v0.57-product-discovery-upgrade`.
+- Improved buyer-facing discovery copy and presentation across home, category, search, and product cards.
+- Added `docs/SHOPORA_V0_57_PRODUCT_DISCOVERY_QA.md` for the local QA and readiness record.
+- No push, deploy, merge, or PR was performed.
+- Recommended next step is manual route QA and `npm run build` before any future release candidate decision.
+
 ## v0.51-v0.53 Local Session Wrap-Up
 
 - Completed the local session through `v0.53-product-review-display-lite` with the latest completed feature commit at `b32316e`.

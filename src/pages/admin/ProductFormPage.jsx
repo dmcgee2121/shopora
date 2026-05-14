@@ -448,7 +448,7 @@ export default function ProductFormPage({ mode }) {
               <p>Core merchandising fields that define the product in the storefront and drive the editor readiness panel.</p>
               <p className="field-help">
                 Required fields keep the listing usable in the catalog and product detail pages. Keep the title,
-                brand, SKU, category, and department aligned with the storefront naming.
+                brand, SKU, category, and department aligned with storefront naming so discovery stays consistent.
               </p>
             </div>
             <div className="admin-form-grid">
@@ -544,9 +544,9 @@ export default function ProductFormPage({ mode }) {
               </label>
               <label>
                 Review count
-                <span className="field-help">Optional. Used for product page social proof.</span>
+                <span className="field-help">Optional. Pairs with rating to give shoppers quick social proof.</span>
                 <input name="reviewCount" type="number" value={form.reviewCount} onChange={handleChange} />
-                <span className="field-help">Keep it consistent with the expected demo story.</span>
+                <span className="field-help">Keep it consistent with the expected demo story and discovery cues.</span>
                 {errors.reviewCount ? <span className="field-error">{errors.reviewCount}</span> : null}
               </label>
             </div>
@@ -558,7 +558,8 @@ export default function ProductFormPage({ mode }) {
               <p>Use one clean hero image and, when possible, a small gallery of fallback views.</p>
               <p className="field-help">
                 Paste hosted image URLs only. File uploads are not part of this editor yet, and the readiness panel
-                uses the primary image to judge storefront completeness.
+                uses the primary image to judge storefront completeness. A strong image set also helps the admin
+                list feel more merchandised.
               </p>
             </div>
             <div className="admin-preview-layout">
@@ -630,7 +631,8 @@ export default function ProductFormPage({ mode }) {
               <p>Control availability and merchandising badges without touching the storefront code.</p>
               <p className="field-help">
                 Products without an explicit status remain Active in the admin list. Draft and archived values are
-                shown if they already exist in the catalog data. Stock counts are read by the readiness checklist.
+                shown if they already exist in the catalog data. Stock counts are read by the readiness checklist,
+                and sale or low-stock states will surface in the admin product list.
               </p>
             </div>
             <div className="admin-form-grid">
@@ -697,7 +699,8 @@ export default function ProductFormPage({ mode }) {
               <p>These fields power the product page accordion and detail sections.</p>
               <p className="field-help">
                 The readiness panel treats these as merchandising enrichments, so adding them makes the listing feel
-                complete even if the base product is already valid.
+                complete even if the base product is already valid. They also give the admin list stronger discovery
+                cues beyond price and stock.
               </p>
             </div>
             <div className="admin-form-grid">
@@ -728,6 +731,9 @@ export default function ProductFormPage({ mode }) {
             <div className="admin-form-section-header">
               <h2>Shipping &amp; Returns</h2>
               <p>These notes keep the product page polished without requiring fulfillment integration.</p>
+              <p className="field-help">
+                Short, readable notes help shoppers trust the product page without implying a real shipping backend.
+              </p>
             </div>
             <div className="admin-form-grid">
               <label className="full-span">

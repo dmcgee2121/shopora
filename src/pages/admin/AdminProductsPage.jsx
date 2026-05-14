@@ -7,6 +7,7 @@ import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import {
   getCatalogAttentionProducts,
   getCatalogReadinessSummary,
+  getProductMerchandisingReadiness,
   getProductVisibilityInfo,
 } from '../../utils/catalogReadiness';
 
@@ -359,6 +360,7 @@ export default function AdminProductsPage() {
               <tbody>
                 {filtered.map((product) => {
                   const visibility = getProductVisibilityInfo(product);
+                  const merchandisingReadiness = getProductMerchandisingReadiness(product);
                   const stockCountValue = Number(product.stockCount);
                   const stockCount = Number.isFinite(stockCountValue) ? stockCountValue : null;
                   const stockState = getStockState(stockCount);
@@ -382,6 +384,14 @@ export default function AdminProductsPage() {
                               {featuredActive ? <span className="status-badge status-badge-muted">Featured</span> : null}
                               {saleActive ? <span className="status-badge status-badge-sale">Sale</span> : null}
                             </div>
+                            <div className="status-badges admin-readiness-badges">
+                              {merchandisingReadiness.badges.map((badge) => (
+                                <span key={badge.label} className={`status-badge ${badge.tone}`.trim()}>
+                                  {badge.label}
+                                </span>
+                              ))}
+                            </div>
+                            <p className="admin-product-readiness-detail">{merchandisingReadiness.detail}</p>
                           </div>
                         </div>
                       </td>
@@ -451,13 +461,14 @@ export default function AdminProductsPage() {
           </div>
 
           <div className="admin-product-cards">
-            {filtered.map((product) => {
-              const visibility = getProductVisibilityInfo(product);
-              const stockCountValue = Number(product.stockCount);
-              const stockCount = Number.isFinite(stockCountValue) ? stockCountValue : null;
-              const stockState = getStockState(stockCount);
-              const saleActive = product.isSale || Number(product.salePrice ?? 0) > 0;
-              const featuredActive = Boolean(product.isNew || product.featured);
+                {filtered.map((product) => {
+                  const visibility = getProductVisibilityInfo(product);
+                  const merchandisingReadiness = getProductMerchandisingReadiness(product);
+                  const stockCountValue = Number(product.stockCount);
+                  const stockCount = Number.isFinite(stockCountValue) ? stockCountValue : null;
+                  const stockState = getStockState(stockCount);
+                  const saleActive = product.isSale || Number(product.salePrice ?? 0) > 0;
+                  const featuredActive = Boolean(product.isNew || product.featured);
 
               return (
                 <article key={product.id} className="admin-product-card">
@@ -468,20 +479,28 @@ export default function AdminProductsPage() {
                       className="admin-product-thumb"
                       fallbackText="ShopOra"
                     />
-                    <div className="admin-product-card-meta">
-                      <h3>{safeText(product.name, 'Untitled product')}</h3>
-                      <p>{safeText(product.brand, 'Unbranded')}</p>
-                      <p>{safeText(product.sku, 'No SKU assigned')}</p>
-                      <p>
-                        {safeText(product.department, 'Unassigned')} / {safeText(product.category, 'Unassigned')}
-                      </p>
-                      <div className="status-badges">
-                        <span className={`status-badge ${visibility.className}`}>{visibility.label}</span>
-                        {featuredActive ? <span className="status-badge status-badge-muted">Featured</span> : null}
-                        {saleActive ? <span className="status-badge status-badge-sale">Sale</span> : null}
+                      <div className="admin-product-card-meta">
+                        <h3>{safeText(product.name, 'Untitled product')}</h3>
+                        <p>{safeText(product.brand, 'Unbranded')}</p>
+                        <p>{safeText(product.sku, 'No SKU assigned')}</p>
+                        <p>
+                          {safeText(product.department, 'Unassigned')} / {safeText(product.category, 'Unassigned')}
+                        </p>
+                        <div className="status-badges">
+                          <span className={`status-badge ${visibility.className}`}>{visibility.label}</span>
+                          {featuredActive ? <span className="status-badge status-badge-muted">Featured</span> : null}
+                          {saleActive ? <span className="status-badge status-badge-sale">Sale</span> : null}
+                        </div>
+                        <div className="status-badges admin-readiness-badges">
+                          {merchandisingReadiness.badges.map((badge) => (
+                            <span key={badge.label} className={`status-badge ${badge.tone}`.trim()}>
+                              {badge.label}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="admin-product-readiness-detail">{merchandisingReadiness.detail}</p>
                       </div>
                     </div>
-                  </div>
 
                   <div className="admin-product-card-body">
                     <div className="admin-product-card-row">

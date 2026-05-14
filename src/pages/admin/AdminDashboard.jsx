@@ -303,7 +303,7 @@ export default function AdminDashboard() {
               <span>Store readiness</span>
               <p>
                 {catalogReadiness.totalProducts
-                  ? 'A compact view of catalog health before demos, screenshots, or future launches.'
+                  ? 'A compact view of catalog health before demos, screenshots, or future launches. Look for missing images, copy, taxonomy, stock, and detail data first.'
                   : 'No products are in the catalog yet, so readiness signals will populate after the first item is added.'}
               </p>
             </div>
@@ -472,7 +472,7 @@ export default function AdminDashboard() {
               <span>Needs attention</span>
               <p>
                 {attentionProducts.length
-                  ? 'A short list of product fixes to handle before screenshots, demos, or future launch prep.'
+                  ? 'A short list of product fixes to handle before screenshots, demos, or future launch prep. Each card points to the most obvious merchandising gap first.'
                   : storefrontReady
                     ? 'Storefront is in good shape. No immediate catalog issues are flagged right now.'
                     : 'No products were matched for issues yet, but the catalog still has readiness gaps.'}

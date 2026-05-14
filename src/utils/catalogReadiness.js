@@ -48,6 +48,121 @@ function countGalleryImages(product) {
   return product.images.filter((image) => safeText(image)).length;
 }
 
+function hasDiscoverySupport(product) {
+  const reviewCount = safeNumber(product?.reviewCount);
+  const rating = safeNumber(product?.rating);
+
+  return Boolean(
+    (reviewCount !== null && reviewCount > 0) ||
+      (rating !== null && rating > 0) ||
+      product?.isNew ||
+      product?.featured ||
+      product?.isSale,
+  );
+}
+
+function getIssueBadgeLabel(issue) {
+  switch (issue?.key) {
+    case 'image':
+      return 'Needs image';
+    case 'department':
+      return 'Needs department';
+    case 'category':
+      return 'Needs category';
+    case 'sku':
+      return 'Missing SKU';
+    case 'price':
+      return 'Missing price';
+    case 'description':
+      return 'Weak copy';
+    case 'details':
+      return 'Missing details';
+    case 'merchandising':
+      return 'Missing merchandising details';
+    case 'gallery':
+      return 'Needs gallery';
+    case 'stockCount':
+      if (issue?.detail?.includes('Low stock')) return 'Low stock';
+      if (issue?.detail?.includes('Out of stock')) return 'Out of stock';
+      return 'Stock issue';
+    default:
+      return issue?.label || 'Needs attention';
+  }
+}
+
+function getIssueBadgeTone(issue) {
+  if (issue?.key === 'stockCount' && issue?.detail?.includes('Out of stock')) {
+    return 'stock-out';
+  }
+
+  if (issue?.key === 'stockCount' && issue?.detail?.includes('Low stock')) {
+    return 'stock-low';
+  }
+
+  return issue?.tone || 'admin-issue-missing';
+}
+
+export function getProductMerchandisingReadiness(product = {}) {
+  const issues = getProductReadinessIssues(product);
+  const stockCount = safeNumber(product.stockCount);
+  const price = safeNumber(product.price);
+  const salePrice = safeNumber(product.salePrice);
+  const reviewCount = safeNumber(product.reviewCount);
+  const rating = safeNumber(product.rating);
+  const hasValidSale = salePrice !== null && price !== null && salePrice > 0 && salePrice < price;
+  const badges = [];
+
+  const pushBadge = (label, tone) => {
+    if (!label || badges.some((badge) => badge.label === label)) {
+      return;
+    }
+
+    badges.push({ label, tone });
+  };
+
+  if (issues.length === 0) {
+    pushBadge('Ready for storefront', 'status-active');
+  } else {
+    const issue = issues[0];
+    pushBadge(getIssueBadgeLabel(issue), getIssueBadgeTone(issue));
+  }
+
+  if (hasValidSale) {
+    pushBadge('Sale ready', 'status-badge-sale');
+  }
+
+  if (product.isNew) {
+    pushBadge('New arrival', 'status-badge-muted');
+  } else if (product.featured) {
+    pushBadge('Featured', 'status-badge-muted');
+  }
+
+  if (reviewCount !== null && reviewCount > 0) {
+    pushBadge(`${reviewCount.toLocaleString()} reviews`, 'status-badge-muted');
+  } else if (!hasDiscoverySupport(product)) {
+    pushBadge('Discovery weak', 'admin-issue-missing');
+  } else if (rating !== null && rating > 0 && reviewCount === null) {
+    pushBadge(`${rating.toFixed(1)} rating`, 'status-badge-muted');
+  }
+
+  if (stockCount !== null && stockCount <= 7 && stockCount > 0) {
+    pushBadge(`Low stock (${stockCount})`, 'stock-low');
+  } else if (stockCount !== null && stockCount <= 0) {
+    pushBadge('Out of stock', 'stock-out');
+  }
+
+  return {
+    label: badges[0]?.label || 'Ready for storefront',
+    tone: badges[0]?.tone || 'status-active',
+    detail:
+      issues[0]?.detail ||
+      (issues.length === 0
+        ? 'Core merchandising fields are in place.'
+        : 'Review the product record for missing catalog data.'),
+    badges: badges.slice(0, 3),
+  };
+}
+
 function normalizeOrderPaymentStatus(value) {
   return safeText(value).toLowerCase();
 }
@@ -218,6 +333,26 @@ export function getProductReadinessIssues(product = {}) {
     });
   }
 
+  if (!safeText(product.department)) {
+    issues.push({
+      key: 'department',
+      label: 'Missing department',
+      tone: 'admin-issue-missing',
+      severity: 89,
+      detail: 'Assign a browse department so discovery works cleanly.',
+    });
+  }
+
+  if (!safeText(product.category)) {
+    issues.push({
+      key: 'category',
+      label: 'Missing category',
+      tone: 'admin-issue-missing',
+      severity: 88,
+      detail: 'Assign a storefront category for clean filtering.',
+    });
+  }
+
   if (stockCount === null) {
     issues.push({
       key: 'stockCount',
@@ -261,6 +396,26 @@ export function getProductReadinessIssues(product = {}) {
       tone: 'admin-issue-missing',
       severity: 70,
       detail: 'Add bullets or a short details list.',
+    });
+  }
+
+  if (!hasMerchandisingDetails(product)) {
+    issues.push({
+      key: 'merchandising',
+      label: 'Missing merchandising details',
+      tone: 'admin-issue-missing',
+      severity: 66,
+      detail: 'Add material, care, fit, or detail bullets.',
+    });
+  }
+
+  if (countGalleryImages(product) === 0) {
+    issues.push({
+      key: 'gallery',
+      label: 'Missing gallery images',
+      tone: 'admin-issue-missing',
+      severity: 58,
+      detail: 'Add alternate images so the catalog feels fully merchandised.',
     });
   }
 
@@ -424,7 +579,23 @@ export function getCatalogReadinessSummary(products = []) {
         summary.featuredProducts += 1;
       }
 
-      if (issues.some((issue) => issue.key === 'image' || issue.key === 'brand' || issue.key === 'sku' || issue.key === 'price' || issue.key === 'stockCount' || issue.key === 'description' || issue.key === 'details')) {
+      if (
+        issues.some((issue) =>
+          [
+            'image',
+            'brand',
+            'sku',
+            'price',
+            'stockCount',
+            'description',
+            'details',
+            'merchandising',
+            'gallery',
+            'category',
+            'department',
+          ].includes(issue.key),
+        )
+      ) {
         summary.missingMerchandisingInfo += 1;
       }
 

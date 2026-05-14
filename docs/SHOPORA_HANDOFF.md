@@ -338,6 +338,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - No push, deploy, merge, or PR was performed.
 - Recommended next step is manual route QA and `npm run build` before any future release candidate decision.
 
+## v0.58 Admin Merchandising Controls
+
+- Started `v0.58-admin-merchandising-controls` as a local-only admin merchandising and catalog readiness polish pass.
+- Improved admin readiness guidance, product list signals, and product editor microcopy without changing checkout, order, Stripe, Netlify, Supabase RLS, or auth behavior.
+- Added `docs/SHOPORA_V0_58_ADMIN_MERCHANDISING_QA.md` to document the scope, local QA checklist, and limitations.
+- Build passed locally and is captured in the v0.58 QA note.
+- Recommended next step is manual admin route QA plus `npm run build` before any future release-candidate decision.
+
 ## v0.51-v0.53 Local Session Wrap-Up
 
 - Completed the local session through `v0.53-product-review-display-lite` with the latest completed feature commit at `b32316e`.

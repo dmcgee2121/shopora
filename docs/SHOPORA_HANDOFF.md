@@ -40,6 +40,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Route-level code splitting was added
 - Storefront merchandising polish was added
 - README was improved
+- v0.54 accessibility keyboard focus polish was completed locally and documented in `docs/SHOPORA_V054_ACCESSIBILITY_KEYBOARD_FOCUS_QA.md`
 
 ## v0.44 Customer Retention Touchpoints Polish
 
@@ -308,6 +309,12 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Completed a local-only product review display polish pass on `v0.53-product-review-display-lite`.
 - Documented commit `4514ec9` and the scoped frontend-only review/rating presentation changes in `docs/SHOPORA_V053_PRODUCT_REVIEW_DISPLAY_QA.md`.
 - Build verification passed locally, browser QA looked good, and no push, deploy, or merge was performed.
+
+## v0.54 Accessibility Keyboard Focus Polish
+
+- Completed a local-only accessibility and keyboard-focus polish pass on `v0.54-accessibility-keyboard-focus-qa`.
+- Documented commit `804a4ef Add accessibility keyboard focus polish` in `docs/SHOPORA_V054_ACCESSIBILITY_KEYBOARD_FOCUS_QA.md`.
+- Build verification passed locally with Vite, browser keyboard QA looked good, and no push, deploy, or merge was performed.
 
 ## v0.51-v0.53 Local Session Wrap-Up
 

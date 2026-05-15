@@ -6,12 +6,10 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.64-docs-merge-and-deploy-prep`
-- This branch is not docs-only versus `origin/main`.
-- v0.64 is release prep for accumulated UI/customer/admin feature changes.
-- The `src` review surfaces called out for this branch are `src/components/CatalogStatusNote.jsx`, `src/components/CategoryPage.jsx`, `src/components/FilterSidebar.jsx`, `src/components/Footer.jsx`, `src/components/HomeCampaign.jsx`, `src/components/ProductCard.jsx`, `src/components/QuantitySelector.jsx`, `src/components/SupportLinkStrip.jsx`, and `src/pages/AccountPage.jsx`.
-- The branch does not touch checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files, or secrets.
-- The v0.64 documentation update itself did not modify any `src` files.
+- `v0.65-post-deploy-smoke-and-stability-notes`
+- v0.64 deployed successfully and the production smoke test passed.
+- v0.65 is a documentation-only post-deploy checkpoint.
+- The next work should be treated as stability tracking or a future safe feature branch, not as new release behavior.
 
 ## Current Stack
 
@@ -52,6 +50,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.54 accessibility keyboard focus polish was completed locally and documented in `docs/SHOPORA_V054_ACCESSIBILITY_KEYBOARD_FOCUS_QA.md`
 - v0.63 docs-only merge prep was completed locally and documented in `docs/SHOPORA_V0_63_DOCS_ONLY_MERGE_PREP.md`
 - v0.64 docs merge and deploy prep was completed locally and documented in `docs/SHOPORA_V0_64_DOCS_MERGE_AND_DEPLOY_PREP.md`
+- v0.65 post-deploy smoke and stability notes were started locally and documented in `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
+
+## v0.65 Post-Deploy Smoke And Stability
+
+- Started `v0.65-post-deploy-smoke-and-stability-notes` after a successful v0.64 deployment and production smoke test.
+- Confirmed the latest known deployed release context is v0.64 and that the smoke test passed.
+- Added `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md` to record the branch, deployed-release context, smoke-test result, checked routes and surfaces, no-touch areas, warnings, rollback note, and next options.
+- Kept v0.65 documentation-only and did not start new feature work after deploy.
+- Recommended next action: use v0.65 as a stability checkpoint, or start the next safe feature branch when ready.
 
 ## v0.64 Docs Merge And Deploy Prep
 

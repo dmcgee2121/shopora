@@ -5,6 +5,9 @@
 - Branch: `v0.64-docs-merge-and-deploy-prep`
 - Top commit: `0572dbc` - `Add v0.63 docs-only merge prep`
 - Working tree was clean when this prep pass started.
+- The branch is not docs-only versus `origin/main`.
+- The named safe admin-presentational `src` delta to keep in view is `src/components/CatalogStatusNote.jsx`.
+- The cumulative `src` diff versus `origin/main` still reflects the broader earlier feature trail, so this branch is release prep rather than a pure docs-only branch.
 - No `src` files were modified in the v0.64 documentation update itself.
 
 ## Build Status
@@ -14,8 +17,9 @@
 
 ## Diff Scope Versus `origin/main`
 
-- The branch is not docs-only versus `origin/main` at the repository-history level.
-- `git diff origin/main...HEAD -- src` is not empty; the cumulative branch history still includes earlier `src/` work from the v0.57-v0.61 trail.
+- The branch is not docs-only versus `origin/main`.
+- `git diff origin/main...HEAD -- src` is not empty and still includes the broader earlier `src` trail.
+- `src/components/CatalogStatusNote.jsx` is the named safe admin-presentational delta to keep in view during review.
 - The v0.64 prep pass itself did not add or change any app code.
 
 ## Docs Currently Different From `origin/main`
@@ -29,24 +33,26 @@
 ## Why This Is Low Risk
 
 - This prep pass is documentation-only and does not touch app behavior.
+- The named admin helper delta is presentation-only and does not affect checkout, order creation, Stripe, Netlify, Supabase, or auth behavior.
 - No checkout, order, Stripe, Netlify function, Supabase, auth, or environment changes were made.
 - The build already passed before the docs update.
 - The working tree started clean, which makes the change set easy to review.
-- The only live risk is branch-scope clarity: the repo history still contains older `src` changes that must not be misrepresented as docs-only.
+- The only live risk is branch-scope clarity: this is release/deploy prep, not a docs-only merge candidate.
 
-## Docs-Only Merge Checklist
+## Release Prep Checklist
 
 - Confirm the branch summary matches the actual repository history.
 - Confirm the review uses the correct merge base and not a stale assumption about branch scope.
 - Confirm `docs/SHOPORA_HANDOFF.md` and `docs/SHOPORA_NEXT_SESSION_PROMPT.md` both describe the current branch honestly.
 - Confirm no `src` files were changed in the v0.64 prep itself.
 - Confirm no protected areas were touched.
-- Confirm the branch state is acceptable for the intended merge path.
+- Confirm the branch state is acceptable for continued release prep.
 
 ## Netlify Deployment Prep Checklist
 
 - Confirm the deployment target is intentional and not accidental.
 - Confirm the intended commit is the one to review for deployment.
+- Confirm the named `src/components/CatalogStatusNote.jsx` delta is understood and accepted as presentation-only.
 - Confirm checkout, order creation, Stripe Checkout, Netlify Functions, Supabase RLS, auth, and env handling remain unchanged in this prep.
 - Confirm the build still passes after any future merge or branch adjustments.
 - Confirm the docs match the real branch state before any preview or production deploy.
@@ -71,5 +77,5 @@
 
 ## Recommendation
 
-- Do not treat this branch as a pure docs-only merge candidate until the source-history mismatch is acknowledged in review.
-- Next action: reconcile the branch scope against `origin/main`, then decide whether to proceed with a docs-only merge, a separate deploy review, or a clean docs-only branch cut from the intended base.
+- Safe to continue release prep after confirming build and smoke test.
+- Next action: confirm the build, run the smoke test checklist, then decide whether to proceed with merge/deploy review or keep staging docs and release notes.

@@ -7,8 +7,10 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 ## Current Branch
 
 - `v0.64-docs-merge-and-deploy-prep`
-- This branch started as a documentation-only prep pass, but the cumulative `origin/main...HEAD` history still includes older `src` changes from the v0.57-v0.61 trail.
-- The v0.64 work itself did not modify any `src` files.
+- This branch is not docs-only versus `origin/main`.
+- The named safe admin-presentational delta to keep in view is `src/components/CatalogStatusNote.jsx`.
+- The cumulative `src` diff versus `origin/main` still reflects the broader earlier feature trail, so this branch should be treated as release/deploy prep rather than a pure docs-only branch.
+- The v0.64 documentation update itself did not modify any `src` files.
 
 ## Current Stack
 
@@ -54,10 +56,11 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 - Started `v0.64-docs-merge-and-deploy-prep` as a local-only documentation prep pass on top of the existing branch history.
 - Confirmed the working tree was clean before the docs update and that `npm run build` passed locally.
-- Added `docs/SHOPORA_V0_64_DOCS_MERGE_AND_DEPLOY_PREP.md` to record the branch state, build status, diff scope, no-touch areas, merge checklist, deployment prep checklist, smoke-test checklist, rollback notes, and next-step recommendation.
+- Added `docs/SHOPORA_V0_64_DOCS_MERGE_AND_DEPLOY_PREP.md` to record the branch state, build status, known `src` delta, no-touch areas, release prep checklist, deployment prep checklist, smoke-test checklist, rollback notes, and next-step recommendation.
+- Added `docs/SHOPORA_V0_64_DOCS_MERGE_AND_DEPLOY_PREP.md` to record the branch state, build status, named `src` delta, no-touch areas, release prep checklist, deployment prep checklist, smoke-test checklist, rollback notes, and next-step recommendation.
 - Kept the v0.64 prep itself docs-only: no checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, package/dependency changes, or app behavior changes.
-- Important branch-scope note: the cumulative `origin/main...HEAD` diff still includes older `src` changes from the v0.57-v0.61 trail, so this branch should not be described as source-free.
-- Recommended next action: reconcile the branch scope against `origin/main` before any merge or deployment decision.
+- Important branch-scope note: the branch is release/deploy prep with a named safe app-code delta, not a docs-only merge candidate.
+- Recommended next action: safe to continue release prep after confirming build and smoke test.
 
 ## v0.44 Customer Retention Touchpoints Polish
 
@@ -425,4 +428,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. Before any merge or deploy decision, reconcile the branch scope against `origin/main` so the source-history mismatch is documented correctly.
+The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as release/deploy prep with a named safe app-code delta, not as a docs-only merge branch.

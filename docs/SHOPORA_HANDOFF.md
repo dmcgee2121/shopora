@@ -6,13 +6,13 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.66-production-qa-polish`
+- `v0.67-mobile-and-responsive-polish`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
-- v0.66 is not docs-only versus `origin/main`.
-- v0.66 includes small post-deploy UI/support polish plus QA documentation.
-- The current `src` scope is limited to `src/components/Footer.jsx`, `src/components/ProductCard.jsx`, and `src/components/SupportLinkStrip.jsx`.
-- The changes are display/support-link/customer-facing polish only and do not introduce a new feature area or backend behavior change.
+- v0.66 completed small post-deploy UI/support polish plus QA documentation.
+- v0.67 is not docs-only versus `origin/main`.
+- The branch keeps the earlier `src/components/Footer.jsx`, `src/components/ProductCard.jsx`, and `src/components/SupportLinkStrip.jsx` polish in history and adds responsive/mobile CSS polish in `src/styles/global.css` and `src/styles/admin.css`.
+- The changes are display/support-link/customer-facing/admin-surface polish only and do not introduce a new feature area or backend behavior change.
 
 ## Current Stack
 
@@ -55,6 +55,17 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.64 docs merge and deploy prep was completed locally and documented in `docs/SHOPORA_V0_64_DOCS_MERGE_AND_DEPLOY_PREP.md`
 - v0.65 post-deploy smoke and stability notes were started locally and documented in `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
 - v0.66 production QA polish was started locally and documented in `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
+- v0.67 mobile and responsive polish was started locally and documented in `docs/SHOPORA_V0_67_MOBILE_RESPONSIVE_POLISH.md`
+
+## v0.67 Mobile And Responsive Polish
+
+- Started `v0.67-mobile-and-responsive-polish` as a local-only responsive UI cleanup pass on top of the existing storefront and admin polish trail.
+- Added mobile-friendly spacing, stacking, and button-wrapping improvements in `src/styles/global.css` for the support strip, catalog toolbar, empty states, product cards, footer, and account surfaces.
+- Added matching responsive cleanup in `src/styles/admin.css` so the admin header actions, toolbar actions, empty states, and product card actions behave better on narrow screens.
+- Kept all no-touch areas intact: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, and package/dependency changes.
+- Build verification passed locally with `npm run build`.
+- Added `docs/SHOPORA_V0_67_MOBILE_RESPONSIVE_POLISH.md` to capture the branch scope, responsive areas improved, intentionally untouched areas, smoke-test checklists, accessibility notes, limitations, and recommendation.
+- Recommended next action: run a local mobile and desktop smoke test, then decide whether to keep iterating or use v0.67 as a handoff checkpoint.
 
 ## v0.66 Production QA Polish
 
@@ -449,4 +460,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as a small post-deploy UI/support polish pass plus QA documentation, not as a docs-only merge branch.
+The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as a small mobile/responsive UI polish pass plus QA documentation, not as a docs-only merge branch.

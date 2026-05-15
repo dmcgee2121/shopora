@@ -118,7 +118,7 @@ export default function OrdersPage() {
 
       <SupportLinkStrip
         title="Need help with this order history?"
-        description="Keep the receipt or order number handy, then use these support shortcuts if you need shipping, returns, or account help."
+        description="Keep the receipt or order number handy, then use these support shortcuts if you need shipping, returns, privacy, or account help."
         links={supportLinks}
       />
 

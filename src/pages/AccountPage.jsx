@@ -526,7 +526,7 @@ export default function AccountPage() {
 
       <SupportLinkStrip
         title="Need help with your account?"
-        description="Use these shortcuts if you want help with orders, shipping, returns, or profile details before reaching out."
+        description="Use these shortcuts if you want help with orders, shipping, returns, privacy, or profile details before reaching out."
         links={supportLinks}
       />
 

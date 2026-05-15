@@ -1,12 +1,28 @@
+import { Link } from 'react-router-dom';
 import SupportLinkStrip from '../components/SupportLinkStrip';
 import { getSupportLinks } from '../utils/supportLinks';
 
 const helpTopics = [
-  'Order help and receipt questions',
-  'Shipping updates and delivery timing',
-  'Returns, exchanges, and damaged items',
-  'Account sign-in and profile help',
-  'Product fit, sizing, and styling questions',
+  {
+    title: 'Orders',
+    note: 'Receipt questions, status checks, delivery updates, and order-number follow-up.',
+  },
+  {
+    title: 'Shipping',
+    note: 'Timing, tracking basics, delivery expectations, and address questions.',
+  },
+  {
+    title: 'Returns',
+    note: 'Exchanges, refunds, damaged items, and what to include with a request.',
+  },
+  {
+    title: 'Account help',
+    note: 'Sign-in support, profile details, saved items, and order history access.',
+  },
+  {
+    title: 'Product questions',
+    note: 'Sizing, fit, materials, care, and styling questions before you buy.',
+  },
 ];
 
 export default function ContactPage() {
@@ -19,36 +35,56 @@ export default function ContactPage() {
           <p className="eyebrow">Contact</p>
           <h1>Need help with an order, shipping question, or product detail?</h1>
           <p>
-            ShopOra keeps support paths simple: reach out with order questions, shipping concerns,
+            ShopOra keeps support paths simple. Reach out with order questions, shipping concerns,
             return requests, account help, or product questions and keep your order number handy if
             you have one.
           </p>
           <p>
-            This storefront is still a prototype, so the help details below are presentation copy
-            rather than a live ticketing workflow or guaranteed response system.
+            If you are writing about a recent order, include the order number, the email used at
+            checkout, and a short description of what you need. That keeps the conversation short
+            and clear.
           </p>
         </div>
         <div className="info-card">
-          <h2>Help categories</h2>
-          <ul>
-            {helpTopics.map((topic) => (
-              <li key={topic}>{topic}</li>
-            ))}
-          </ul>
+          <h2>Reach support</h2>
           <p>
-            Typical support details: support@shopora.example, (555) 555-0199, Monday to Friday,
-            9am to 6pm.
+            Use the direct links below for a quick start. A live store should keep these details
+            current and easy to find.
           </p>
-          <p>
-            ShopOra note: this is a local storefront prototype, so support details are presentation
-            copy unless the business replaces them with real contact channels.
+          <div className="support-contact-actions">
+            <a className="btn btn-dark btn-small" href="mailto:support@shopora.example">
+              Email support
+            </a>
+            <a className="btn btn-ghost btn-small" href="tel:+15555550199">
+              Call support
+            </a>
+            <Link to="/shipping" className="btn btn-ghost btn-small">
+              Shipping policy
+            </Link>
+            <Link to="/returns" className="btn btn-ghost btn-small">
+              Returns policy
+            </Link>
+          </div>
+          <p className="support-contact-note">
+            Example support hours: Monday to Friday, 9am to 6pm. Response timing should be
+            published by the live store.
           </p>
         </div>
       </div>
 
+      <div className="support-category-grid" aria-label="Support categories">
+        {helpTopics.map((topic) => (
+          <article key={topic.title} className="info-card support-category-card">
+            <p className="eyebrow">Help topic</p>
+            <h3>{topic.title}</h3>
+            <p>{topic.note}</p>
+          </article>
+        ))}
+      </div>
+
       <SupportLinkStrip
         title="Keep the support path close at hand"
-        description="Use these shortcuts to review orders, check shipping or returns guidance, or get back to your account before reaching out."
+        description="Use these shortcuts to review orders, check shipping, returns, or privacy guidance, or get back to your account before reaching out."
         links={supportLinks}
       />
     </section>

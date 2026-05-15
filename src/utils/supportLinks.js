@@ -2,17 +2,22 @@ const baseSupportLinks = [
   {
     to: '/contact',
     label: 'Contact support',
-    note: 'Questions about orders, products, or account help',
+    note: 'Questions about orders, products, shipping, or account help',
   },
   {
     to: '/shipping',
-    label: 'Shipping info',
+    label: 'Shipping policy',
     note: 'Review timing, tracking, and fulfillment basics',
   },
   {
     to: '/returns',
-    label: 'Returns info',
-    note: 'See how exchanges and returns are handled',
+    label: 'Returns policy',
+    note: 'See how exchanges, refunds, and damaged items are handled',
+  },
+  {
+    to: '/privacy',
+    label: 'Privacy policy',
+    note: 'See how shopper data is handled',
   },
 ];
 

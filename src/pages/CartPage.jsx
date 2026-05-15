@@ -199,7 +199,7 @@ export default function CartPage() {
 
       <SupportLinkStrip
         title="Need help before checkout?"
-        description="Review shipping and returns, check your account, or contact support before you place the order."
+        description="Review shipping, returns, privacy, and account details or contact support before you place the order."
         links={supportLinks}
       />
     </section>

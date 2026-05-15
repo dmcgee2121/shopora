@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function PrivacyPage() {
   return (
     <section className="container content-page">
@@ -20,15 +22,26 @@ export default function PrivacyPage() {
         <div className="info-card">
           <h2>Privacy overview</h2>
           <ul>
-            <li>Shopper information is used to support browsing, checkout, accounts, and orders.</li>
+            <li>Shopper information supports browsing, checkout, accounts, and orders.</li>
             <li>Payment entry is handled through Stripe during secure checkout.</li>
-            <li>Final privacy terms should be reviewed before a live launch.</li>
+            <li>Account and order history help shoppers review receipts and shipping details.</li>
             <li>This prototype should not be treated as a final legal privacy policy.</li>
           </ul>
+          <div className="support-contact-actions">
+            <Link to="/contact" className="btn btn-dark btn-small">
+              Contact support
+            </Link>
+            <Link to="/shipping" className="btn btn-ghost btn-small">
+              Shipping policy
+            </Link>
+            <Link to="/returns" className="btn btn-ghost btn-small">
+              Returns policy
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="content-split">
+      <div className="policy-grid">
         <div className="info-card">
           <h2>Information shoppers provide</h2>
           <p>
@@ -58,12 +71,17 @@ export default function PrivacyPage() {
           </p>
         </div>
         <div className="info-card">
-          <h2>Contact</h2>
+          <h2>What this prototype does not do</h2>
           <p>
-            Questions about privacy, account information, or order details can be directed through
-            the Contact page.
+            It does not replace a legal policy, and it does not promise any specific retention
+            period, vendor list, or compliance outcome.
           </p>
         </div>
+      </div>
+
+      <div className="privacy-contact-note">
+        Questions about privacy, account information, or order details can be directed through{' '}
+        <Link to="/contact">Contact</Link>.
       </div>
     </section>
   );

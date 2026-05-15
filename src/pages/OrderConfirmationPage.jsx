@@ -454,7 +454,7 @@ export default function OrderConfirmationPage() {
 
           <SupportLinkStrip
             title="Need help with your order?"
-            description="Keep the receipt close by if you want to ask about shipping, returns, account details, or product questions."
+            description="Keep the receipt close by if you want to ask about shipping, returns, privacy, account details, or product questions."
             links={supportLinks}
             className="order-support-strip"
           />

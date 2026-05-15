@@ -365,6 +365,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - `npm run build` still passes locally.
 - Recommended next choice is either documentation-only merge prep, Netlify deployment prep, or a new safe feature branch depending on what you want to do next.
 
+## v0.61 Support and Policy Experience Polish
+
+- Started `v0.61-support-policy-experience` as a local-only customer support and policy polish pass.
+- Tightened the customer-facing contact, shipping, returns, privacy, account, cart, checkout, order history, and order receipt surfaces with clearer copy and more obvious support links.
+- Added a friendlier contact experience with direct mailto/tel links, clearer support categories, and easier entry points to shipping and returns guidance.
+- Reworked the shipping, returns, and privacy pages into more scannable, reassuring sections without making promises that depend on backend support or fulfillment logic.
+- Kept the no-touch areas preserved: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, and env files/secrets.
+- `npm run build` passed locally after the v0.61 edits.
+- Next recommended branch: `v0.62-customer-account-polish`.
+
 ## v0.51-v0.53 Local Session Wrap-Up
 
 - Completed the local session through `v0.53-product-review-display-lite` with the latest completed feature commit at `b32316e`.

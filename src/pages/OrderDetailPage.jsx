@@ -457,7 +457,7 @@ export default function OrderDetailPage() {
 
           <SupportLinkStrip
             title="Need help with this order?"
-            description="Have the order number, receipt, or shipping address ready if you need support with tracking, returns, or account details."
+            description="Have the order number, receipt, or shipping address ready if you need support with tracking, returns, privacy, or account details."
             links={supportLinks}
             className="order-support-strip"
           />

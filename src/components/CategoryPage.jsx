@@ -158,7 +158,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No styles found.';
   const emptyDescription = activeFilterCount
     ? 'Try removing brand, size, price, or status filters, or clear the search term to widen the edit.'
-    : 'This lane is still being merchandised, so browse the department shortcuts, sale picks, or nearby categories.';
+    : 'This lane is still being merchandised, so use the department shortcuts, sale picks, or nearby categories to keep browsing.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -192,7 +192,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
           action={<span className="count-badge">{countLabel}</span>}
         />
         <p className="catalog-toolbar-note">
-          Filters narrow the edit, sort changes what appears first, and the result count updates as you refine the lane.
+          Filters narrow the edit, sort changes what appears first, and the result count updates as you refine the shopping lane.
         </p>
 
         <section className="discovery-hero" aria-labelledby={discoveryHeadingId}>

@@ -155,7 +155,7 @@ export default function SearchResults() {
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No results found.';
   const emptyDescription = activeFilterCount
     ? 'Try removing one or more filters, clearing the search, or browsing sale and new arrival styles to widen the results.'
-    : 'Try a broader keyword, check spelling, or use the department shortcuts when you want to start with a curated lane.';
+    : 'Try a broader keyword, check spelling, or use a department shortcut to start with a curated edit.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -210,7 +210,7 @@ export default function SearchResults() {
               <section className="search-landing-panel search-landing-panel-soft" aria-labelledby="search-browse-title">
                 <p className="eyebrow">Browse instead</p>
                 <h2 id="search-browse-title">Move through the store by department.</h2>
-                <p>Use a department shortcut when you want a curated lane before narrowing the catalog, or jump to sale to see markdowns first.</p>
+                <p>Use a department shortcut when you want a curated edit first, or jump to sale when you want markdowns right away.</p>
                 <div className="recommendation-links search-suggestion-list" aria-label="Browse departments">
                   {departmentLinks.map((link) => (
                     <Link key={link.to} to={link.to} className="query-chip">

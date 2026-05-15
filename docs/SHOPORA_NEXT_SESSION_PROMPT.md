@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.71-local-branch-scope-clarification
+- v0.72-storefront-polish-lite
 
 Current state:
 - v0.64 deployed successfully and the production smoke test passed
@@ -18,9 +18,10 @@ Current state:
 - v0.69 completed admin QA/dashboard polish
 - v0.70 completed the local release checkpoint
 - v0.71 clarifies the local branch scope after the v0.70 checkpoint
-- v0.71 is not docs-only versus `origin/main`
+- v0.72 adds a small storefront polish-lite pass
+- v0.72 is not docs-only versus `origin/main`
 - The branch stack is local-only source plus documentation work, not docs-only
-- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.70
+- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.72
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
 
@@ -37,7 +38,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a local branch-scope clarification on top of the successful v0.64 release and the earlier v0.65-v0.70 UI/doc trail.
+2. Reconfirm the branch scope as a local storefront polish-lite pass on top of the successful v0.64 release and the earlier v0.65-v0.71 UI/doc trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -46,6 +47,7 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
+   - `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md`
    - `docs/SHOPORA_V0_71_LOCAL_BRANCH_SCOPE_CLARIFICATION.md`
    - `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md`
    - `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
@@ -57,6 +59,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md`
 - `docs/SHOPORA_V0_71_LOCAL_BRANCH_SCOPE_CLARIFICATION.md`
 - `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md`
 - `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
@@ -68,4 +71,4 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Continue local feature work, prepare a future release PR, or pause here and use v0.71 as a clean handoff checkpoint.
+- Continue local feature work, prepare a future release PR, or pause here and use v0.72 as a clean handoff checkpoint.

@@ -88,7 +88,7 @@ function getDiscoveryCue(product, stockState, reviewDisplay, price) {
     return 'Featured markdown';
   }
 
-  return product?.shippingNote || product?.returnNote || 'Save this style for later, then compare details on the product page';
+  return product?.shippingNote || product?.returnNote || 'Open the product page to compare details, sizing, and support notes.';
 }
 
 function StarRating({ rating, reviewCount }) {
@@ -156,7 +156,9 @@ export default function ProductCard({ product }) {
   const reviewDisplay = getProductReviewDisplay(safeProduct);
   const discoveryCue = getDiscoveryCue(safeProduct, stockState, reviewDisplay, price);
   const supportCue =
-    safeProduct.shippingNote || safeProduct.returnNote || (reviewDisplay.hasReviews ? reviewDisplay.summary : '');
+    safeProduct.shippingNote ||
+    safeProduct.returnNote ||
+    (reviewDisplay.hasReviews ? reviewDisplay.summary : 'Open the product page to see sizing, shipping, and support details.');
   const leftBadges = merchandisingBadges.filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured');
   const rightBadges = merchandisingBadges.filter((badge) => !leftBadges.includes(badge));
 

@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.71-local-branch-scope-clarification`
+- `v0.72-storefront-polish-lite`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
 - v0.66 completed small post-deploy UI/support polish plus QA documentation.
@@ -14,9 +14,9 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.68 completed storefront content and SEO polish.
 - v0.69 completed admin QA/dashboard polish.
 - v0.70 completed the local release checkpoint.
-- v0.71 is not docs-only versus `origin/main`.
+- v0.72 is not docs-only versus `origin/main`.
 - The branch stack is local-only source plus documentation work, not docs-only.
-- The branch still carries the accumulated UI/customer/admin src changes from the v0.65-v0.70 trail and no new production-risk logic changes were introduced in this checkpoint.
+- The branch still carries the accumulated UI/customer/admin src changes from the v0.65-v0.72 trail and no new production-risk logic changes were introduced in this checkpoint.
 
 ## Current Stack
 
@@ -64,6 +64,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.69 admin QA dashboard polish was started locally and documented in `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
 - v0.70 local release checkpoint was started locally and documented in `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md`
 - v0.71 local branch scope clarification was started locally and documented in `docs/SHOPORA_V0_71_LOCAL_BRANCH_SCOPE_CLARIFICATION.md`
+- v0.72 storefront polish lite was started locally and documented in `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md`
 
 ## v0.68 Storefront Content And SEO Polish
 
@@ -102,6 +103,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Kept the checkpoint itself documentation-only: no checkout submission, order creation, cart business logic, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, package/dependency changes, or app behavior changes.
 - Added `docs/SHOPORA_V0_71_LOCAL_BRANCH_SCOPE_CLARIFICATION.md` to capture the branch state, source/doc deltas, build and smoke-test history, no-touch areas, and next-step options.
 - Recommended next action: continue local feature work, prepare a future release PR, or pause here and use v0.71 as a clean handoff checkpoint.
+
+## v0.72 Storefront Polish Lite
+
+- Started `v0.72-storefront-polish-lite` as a small buyer-facing storefront polish pass on top of the local release trail.
+- Tightened home discovery copy, category and search guidance, product card fallback guidance, footer trust copy, and product-page support copy.
+- Kept the work limited to presentation-only edits in `src/pages/HomePage.jsx`, `src/components/HomeCampaign.jsx`, `src/components/ProductCard.jsx`, `src/components/Footer.jsx`, `src/components/CategoryPage.jsx`, `src/pages/SearchResults.jsx`, and `src/pages/ProductPage.jsx`.
+- Kept all no-touch areas intact: checkout submission, order creation, cart business logic, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, and package/dependency changes.
+- Build verification passed locally with `npm run build`.
+- Added `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md` to capture the branch state, files changed, storefront areas improved, intentionally untouched areas, smoke-test checklist, accessibility notes, limitations, and recommendation.
+- Recommended next action: continue local feature work, prepare a future release PR, or pause here and use v0.72 as a clean handoff checkpoint.
 
 ## v0.67 Mobile And Responsive Polish
 

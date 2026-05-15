@@ -47,7 +47,7 @@ export default function Footer() {
           </div>
           <p className="footer-copy">
             A calm, curated storefront for modern clothing and lifestyle shopping with secure checkout,
-            clear shipping and returns guidance, and straightforward support.
+            clear shipping and returns guidance, and straightforward support when you need it.
           </p>
         </div>
 

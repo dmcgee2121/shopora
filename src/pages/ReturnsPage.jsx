@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import SupportLinkStrip from '../components/SupportLinkStrip';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { getSupportLinks } from '../utils/supportLinks';
 
 export default function ReturnsPage() {
   const supportLinks = getSupportLinks();
+  useDocumentTitle('Returns help | ShopOra');
 
   return (
     <section className="container content-page">
@@ -44,7 +46,8 @@ export default function ReturnsPage() {
           <h2>Return eligibility</h2>
           <p>
             ShopOra does not define a fixed return window in this prototype. A real storefront
-            should clearly state which items can be returned and what condition is required.
+            should clearly state which items can be returned, what condition is required, and how
+            long shoppers have to start a request.
           </p>
         </div>
         <div className="info-card">

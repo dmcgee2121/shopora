@@ -8,6 +8,7 @@ import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
@@ -15,6 +16,7 @@ import { getSupportLinks } from '../utils/supportLinks';
 
 export default function CartPage() {
   const { products } = useProductCatalog();
+  useDocumentTitle('ShopOra | Cart');
   const { currentUser, savedProductIds } = useAuth();
   const { items, subtotal, increaseItem, decreaseItem, removeItem, clearCart } = useCart();
   const departmentLinks = useMemo(() => getDepartmentLinks(), []);

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import SupportLinkStrip from '../components/SupportLinkStrip';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { getSupportLinks } from '../utils/supportLinks';
 
 const helpTopics = [
@@ -27,6 +28,7 @@ const helpTopics = [
 
 export default function ContactPage() {
   const supportLinks = getSupportLinks();
+  useDocumentTitle('Contact ShopOra | ShopOra');
 
   return (
     <section className="container content-page">
@@ -35,21 +37,21 @@ export default function ContactPage() {
           <p className="eyebrow">Contact</p>
           <h1>Need help with an order, shipping question, or product detail?</h1>
           <p>
-            ShopOra keeps support paths simple. Reach out with order questions, shipping concerns,
-            return requests, account help, or product questions and keep your order number handy if
+            ShopOra keeps support paths simple. Reach out with order questions, shipping updates,
+            return requests, account help, or product details and keep your order number handy if
             you have one.
           </p>
           <p>
             If you are writing about a recent order, include the order number, the email used at
-            checkout, and a short description of what you need. That keeps the conversation short
-            and clear.
+            checkout, and a short description of what you need. That keeps the conversation clear
+            and fast to triage.
           </p>
         </div>
         <div className="info-card">
           <h2>Reach support</h2>
           <p>
             Use the direct links below for a quick start. A live store should keep these details
-            current and easy to find.
+            current, consistent, and easy to find.
           </p>
           <div className="support-contact-actions">
             <a className="btn btn-dark btn-small" href="mailto:support@shopora.example">

@@ -13,6 +13,7 @@ import { idsMatch } from '../utils/idUtils';
 import { getProductMerchandisingBadges, getProductReviewDisplay, getProductShelfLabel } from '../utils/merchandising';
 import { getRecommendedProducts } from '../utils/recommendations';
 import { addRecentlyViewedId, filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 function CloseIcon() {
   return (
@@ -151,6 +152,7 @@ export default function ProductPage() {
   const { id } = useParams();
   const catalogProducts = products.length ? products : fallbackProducts;
   const product = catalogProducts.find((item) => idsMatch(item.id, id));
+  useDocumentTitle(`ShopOra | ${product?.name || 'Product'}`);
   const { addItem } = useCart();
   const { isAuthenticated, isSavedItem, toggleSavedItem } = useAuth();
   const { openMiniCart } = useMiniCart();

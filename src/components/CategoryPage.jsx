@@ -19,6 +19,7 @@ import {
   matchesCatalogStatus,
   sortCatalogProducts,
 } from '../utils/catalogFilters';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 function uniqueValues(products, accessor) {
   return [...new Set(products.map(accessor).filter(Boolean))].sort((a, b) => a.localeCompare(b));
@@ -42,6 +43,7 @@ function matchesText(product, value) {
 
 export default function CategoryPage({ title, description, department, saleOnly = false }) {
   const { products, isCatalogLoading } = useProductCatalog();
+  useDocumentTitle(`${title} | ShopOra`);
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get('category') ?? '';
   const brand = searchParams.get('brand') ?? '';
@@ -176,8 +178,8 @@ export default function CategoryPage({ title, description, department, saleOnly 
   );
   const discoveryTitle = saleOnly ? 'Sale picks worth a closer look' : `${title} top picks`;
   const discoveryDescription = saleOnly
-    ? 'A compact edit of markdowns with strong value, ratings, and styling range.'
-    : 'A quick department edit that starts with strong styles, then lets shoppers refine the assortment.';
+    ? 'A compact edit of markdowns with clear value, ratings, and styling range.'
+    : 'A quick department edit that starts with strong styles, then lets shoppers refine the assortment by category, brand, size, price, or status.';
   const discoveryHeadingId = `category-discovery-${saleOnly ? 'sale' : department || 'all'}`;
 
   return (
@@ -197,7 +199,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
           <div className="discovery-hero-copy">
             <p className="eyebrow">{discoveryProfile.eyebrow}</p>
             <h2 id={discoveryHeadingId}>{discoveryProfile.title}</h2>
-            <p>{discoveryProfile.description}</p>
+              <p>{discoveryProfile.description}</p>
           </div>
           <div className="discovery-stat-card" aria-label={`${title} discovery summary`}>
             <span className="account-card-label">Department snapshot</span>

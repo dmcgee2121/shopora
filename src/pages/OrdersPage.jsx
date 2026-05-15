@@ -4,6 +4,7 @@ import ShopOraImage from '../components/ShopOraImage';
 import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { getSupportLinks } from '../utils/supportLinks';
 import { getOrderItemImage } from '../utils/orderItemUtils';
@@ -49,6 +50,7 @@ function getItemDetails(item) {
 
 export default function OrdersPage() {
   const { currentUser, authSource } = useAuth();
+  useDocumentTitle('ShopOra | Orders');
   const { getOrdersByUser, isOrdersLoading, ordersError } = useOrders();
   const orders = currentUser ? getOrdersByUser(currentUser.id) : [];
   const retentionLinks = getCustomerRetentionLinks(currentUser);

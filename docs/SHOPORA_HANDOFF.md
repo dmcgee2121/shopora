@@ -6,13 +6,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.67-mobile-and-responsive-polish`
+- `v0.68-storefront-content-seo-polish`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
 - v0.66 completed small post-deploy UI/support polish plus QA documentation.
-- v0.67 is not docs-only versus `origin/main`.
-- The branch keeps the earlier `src/components/Footer.jsx`, `src/components/ProductCard.jsx`, and `src/components/SupportLinkStrip.jsx` polish in history and adds responsive/mobile CSS polish in `src/styles/global.css` and `src/styles/admin.css`.
-- The changes are display/support-link/customer-facing/admin-surface polish only and do not introduce a new feature area or backend behavior change.
+- v0.67 completed mobile/responsive polish.
+- v0.68 is not docs-only versus `origin/main`.
+- The branch keeps the earlier responsive polish in history and adds storefront content, trust-copy, support-label, and page-title improvements.
+- The changes are display/support-link/customer-facing polish only and do not introduce a new feature area or backend behavior change.
 
 ## Current Stack
 
@@ -56,6 +57,18 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.65 post-deploy smoke and stability notes were started locally and documented in `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
 - v0.66 production QA polish was started locally and documented in `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
 - v0.67 mobile and responsive polish was started locally and documented in `docs/SHOPORA_V0_67_MOBILE_RESPONSIVE_POLISH.md`
+- v0.68 storefront content and SEO polish was started locally and documented in `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md`
+
+## v0.68 Storefront Content And SEO Polish
+
+- Started `v0.68-storefront-content-seo-polish` as a local-only storefront copy and title polish pass on top of the existing merchandised storefront.
+- Added a tiny reusable `useDocumentTitle` hook and used it on the main shopper-facing pages so browser tabs reflect the current page more clearly.
+- Tightened the home, search, category, product, cart, checkout-render, order-history, order-detail, and support pages with clearer headings and helper copy.
+- Improved footer support labels and shared support-link labels for more explicit navigation and trust copy.
+- Kept all no-touch areas intact: checkout submission, order creation, cart business logic, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, and package/dependency changes.
+- Build verification passed locally with `npm run build`.
+- Added `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md` to capture the branch scope, files changed, content/SEO areas improved, intentionally untouched areas, smoke-test checklist, accessibility notes, limitations, and recommendation.
+- Recommended next action: run a local browser smoke test, then decide whether to keep iterating or use v0.68 as a handoff checkpoint.
 
 ## v0.67 Mobile And Responsive Polish
 
@@ -460,4 +473,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as a small mobile/responsive UI polish pass plus QA documentation, not as a docs-only merge branch.
+The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as a small storefront content and SEO polish pass plus QA documentation, not as a docs-only merge branch.

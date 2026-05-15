@@ -11,6 +11,7 @@ import {
   getSearchLandingProducts,
   getSearchSuggestionLinks,
 } from '../utils/discovery';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import {
   getCatalogPriceLabel,
   getCatalogSortLabel,
@@ -43,6 +44,7 @@ export default function SearchResults() {
   const { products, isCatalogLoading } = useProductCatalog();
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q')?.trim() ?? '';
+  useDocumentTitle(`ShopOra | ${query ? `Search results for ${query}` : 'Search'}`);
   const sort = searchParams.get('sort') ?? 'featured';
   const category = searchParams.get('category') ?? '';
   const department = searchParams.get('department') ?? '';
@@ -152,8 +154,8 @@ export default function SearchResults() {
   ].filter(Boolean);
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No results found.';
   const emptyDescription = activeFilterCount
-    ? 'Try removing one or more filters, clearing the search, or browsing sale/new arrival styles to widen the results.'
-    : 'Try a broader keyword, check spelling, or browse departments when you want to start with a curated lane.';
+    ? 'Try removing one or more filters, clearing the search, or browsing sale and new arrival styles to widen the results.'
+    : 'Try a broader keyword, check spelling, or use the department shortcuts when you want to start with a curated lane.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -313,9 +315,9 @@ export default function SearchResults() {
                     ))}
                   </div>
                 ) : (
-                  <div className="empty-state search-empty">
-                    <h2>{emptyTitle}</h2>
-                    <p>{emptyDescription}</p>
+                <div className="empty-state search-empty">
+                  <h2>{emptyTitle}</h2>
+                  <p>{emptyDescription}</p>
                     <div className="empty-state-actions">
                       {activeFilterCount ? (
                         <button type="button" className="btn btn-dark" onClick={resetFilters}>

@@ -12,6 +12,7 @@ import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
 import CatalogStatusNote from '../components/CatalogStatusNote';
 import { useProductCatalog } from '../context/ProductCatalogContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
 import { getHomepageDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import {
@@ -85,6 +86,7 @@ function HomeDiscoverySection({ title, description, products, action, links, loa
 
 export default function HomePage() {
   const { products, isCatalogLoading } = useProductCatalog();
+  useDocumentTitle('ShopOra | Curated department-store shopping');
   const isInitialCatalogLoading = isCatalogLoading && products.length === 0;
   const catalogProducts = useMemo(() => uniqueProducts(products), [products]);
   const homepageDepartmentLinks = useMemo(() => getHomepageDepartmentLinks(), []);
@@ -170,7 +172,7 @@ export default function HomePage() {
         <MerchSection
           id="new-arrivals"
           title="New Arrivals"
-          description="Freshly added styles selected to balance wardrobe staples with sharper seasonal pieces and easy outfit builders."
+          description="Freshly added styles selected to balance wardrobe staples with seasonal pieces and easy outfit builders."
           action={<Link to="/women">Browse Women's Edit</Link>}
           products={newArrivals}
           loading={isInitialCatalogLoading}

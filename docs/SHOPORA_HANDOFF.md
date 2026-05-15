@@ -373,7 +373,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Reworked the shipping, returns, and privacy pages into more scannable, reassuring sections without making promises that depend on backend support or fulfillment logic.
 - Kept the no-touch areas preserved: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, and env files/secrets.
 - `npm run build` passed locally after the v0.61 edits.
-- Next recommended branch: `v0.62-customer-account-polish`.
+- Next recommended branch at that time: `v0.62-customer-account-polish`.
 
 ## v0.62 Deployment Readiness Review
 
@@ -381,7 +381,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Added `docs/SHOPORA_V0_62_DEPLOYMENT_READINESS_REVIEW.md` to record the current branch, clean working tree, build status, diff status, review commands, no-touch areas, and rollback guidance.
 - Confirmed the branch is clean and `npm run build` still passes locally.
 - Kept the no-touch areas preserved: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, and env files/secrets.
-- Recommended next branch/state: docs-only merge prep or deliberate deployment-prep review, depending on release scope.
+- Recommended next branch/state at that time: docs-only merge prep or deliberate deployment-prep review, depending on release scope.
+
+## v0.63 Docs-Only Merge Prep
+
+- Started `v0.63-docs-only-merge-prep` as a local-only documentation cleanup and merge-prep pass on top of the v0.57-v0.62 trail.
+- Added `docs/SHOPORA_V0_63_DOCS_ONLY_MERGE_PREP.md` to capture the branch snapshot, the v0.55-v0.63 QA trail, the current review command outputs, no-touch areas, and merge/rollback guidance.
+- Cleaned up the handoff and next-session prompt so the current branch state is clearer without changing app behavior.
+- Kept the no-touch areas preserved: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, and env files/secrets.
+- No app behavior changed in v0.63.
+- Recommended next options: docs-only merge, Netlify deployment prep, or the next safe app feature branch.
 
 ## v0.51-v0.53 Local Session Wrap-Up
 

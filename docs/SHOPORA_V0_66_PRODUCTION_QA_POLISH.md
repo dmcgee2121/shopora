@@ -3,8 +3,10 @@
 ## Current Branch
 
 - Branch: `v0.66-production-qa-polish`
-- This is a small post-deploy QA polish pass after the successful v0.64 release and the v0.65 stability checkpoint.
-- No major feature work was started.
+- This is not docs-only versus `origin/main`.
+- v0.66 includes small post-deploy UI/support polish plus QA documentation after the successful v0.64 release and the v0.65 stability checkpoint.
+- The current `src` scope is limited to `src/components/Footer.jsx`, `src/components/ProductCard.jsx`, and `src/components/SupportLinkStrip.jsx`.
+- The changes are display/support-link/customer-facing polish only.
 
 ## Files Changed
 
@@ -32,6 +34,7 @@
 - Product cards no longer repeat the no-review message when an item has no shopper ratings yet.
 - Shared support links now expose clearer assistive labels that combine the visible label with the helper note.
 - Footer support labels were shortened to make the footer easier to scan on narrow layouts.
+- These are UI-only refinements and do not alter app behavior.
 
 ## Intentionally Not Touched
 
@@ -44,6 +47,7 @@
 - env files/secrets
 - package/dependency changes
 - large refactors
+- No dangerous backend, payment, auth, or environment areas were touched.
 
 ## Local Smoke-Test Checklist
 
@@ -73,5 +77,5 @@
 
 ## Recommendation
 
-- This branch is ready as a lightweight production QA checkpoint.
-- Next step: use it as the handoff point for either the next safe feature branch or a deeper production QA pass if you want more verification before new work begins.
+- Run a local smoke test next, then consider an optional small follow-up PR if the polish still looks good.
+- Keep the branch scoped to display/support-link/customer-facing cleanup unless a new issue is identified.

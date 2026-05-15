@@ -9,8 +9,10 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - `v0.66-production-qa-polish`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
-- v0.66 is a small production QA polish pass focused on copy, layout, and accessibility cleanup only.
-- The branch does not introduce a new feature area or backend behavior change.
+- v0.66 is not docs-only versus `origin/main`.
+- v0.66 includes small post-deploy UI/support polish plus QA documentation.
+- The current `src` scope is limited to `src/components/Footer.jsx`, `src/components/ProductCard.jsx`, and `src/components/SupportLinkStrip.jsx`.
+- The changes are display/support-link/customer-facing polish only and do not introduce a new feature area or backend behavior change.
 
 ## Current Stack
 
@@ -56,12 +58,13 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## v0.66 Production QA Polish
 
-- Started `v0.66-production-qa-polish` as a small post-deploy polish pass focused on UI copy, layout, and accessibility cleanup.
+- Started `v0.66-production-qa-polish` as a small post-deploy polish pass focused on UI/support cleanup plus QA documentation.
 - Improved product cards so the no-review state is no longer repeated for shoppers.
 - Improved shared support links with clearer accessible labels and shortened footer support labels for cleaner narrow-screen layout.
 - Kept all no-touch areas intact: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, and package/dependency changes.
+- No dangerous backend, payment, auth, or environment areas were touched.
 - Added `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md` to record the files changed, production polish areas, intentionally untouched areas, smoke-test checklist, follow-up checklist, accessibility notes, limitations, and recommendation.
-- Recommended next action: use v0.66 as a lightweight production QA checkpoint or move to the next safe feature branch after verification.
+- Recommended next action: run a local smoke test, then consider an optional small follow-up PR if the polish still looks good.
 
 ## v0.65 Post-Deploy Smoke And Stability
 
@@ -446,4 +449,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as final release/deploy prep for accumulated UI/customer/admin feature changes, not as a docs-only merge branch.
+The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as a small post-deploy UI/support polish pass plus QA documentation, not as a docs-only merge branch.

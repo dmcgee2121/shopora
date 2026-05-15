@@ -12,8 +12,10 @@ Current branch:
 Current state:
 - v0.64 deployed successfully and the production smoke test passed
 - v0.65 captured the post-deploy stability checkpoint
-- v0.66 is a small production QA polish pass focused on copy, layout, and accessibility cleanup only
-- No major feature work started after deploy
+- v0.66 is not docs-only versus `origin/main`
+- v0.66 includes small post-deploy UI/support polish plus QA documentation
+- The current `src` scope is limited to `src/components/Footer.jsx`, `src/components/ProductCard.jsx`, and `src/components/SupportLinkStrip.jsx`
+- The changes are display/support-link/customer-facing polish only
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
 
@@ -30,7 +32,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a small production QA polish pass after the successful v0.64 release.
+2. Reconfirm the branch scope as a small post-deploy UI/support polish pass after the successful v0.64 release.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -51,4 +53,4 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Use v0.66 as a lightweight production QA checkpoint or start the next safe feature branch after verification.
+- Run a local smoke test, then consider an optional small follow-up PR if the polish still looks good.

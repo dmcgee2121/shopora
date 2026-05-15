@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.73-local-feature-batch-checkpoint
+- v0.74-future-release-pr-prep
 
 Current state:
 - v0.64 deployed successfully and the production smoke test passed
@@ -19,10 +19,11 @@ Current state:
 - v0.70 completed the local release checkpoint
 - v0.71 clarified the local branch scope after the v0.70 checkpoint
 - v0.72 completed storefront polish lite
-- v0.73 records the local feature batch checkpoint for the v0.65-v0.72 trail
-- v0.73 is not docs-only versus `origin/main`
+- v0.73 completed the local feature batch checkpoint for the v0.65-v0.72 trail
+- v0.74 prepares the local v0.65-v0.73 feature batch for a future controlled release PR
+- v0.74 is not docs-only versus `origin/main`
 - The branch stack is local-only source plus documentation work, not docs-only
-- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.72
+- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.73
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
 
@@ -48,6 +49,7 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
+   - `docs/SHOPORA_V0_74_FUTURE_RELEASE_PR_PREP.md`
    - `docs/SHOPORA_V0_73_LOCAL_FEATURE_BATCH_CHECKPOINT.md`
    - `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md`
    - `docs/SHOPORA_V0_71_LOCAL_BRANCH_SCOPE_CLARIFICATION.md`
@@ -61,6 +63,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_74_FUTURE_RELEASE_PR_PREP.md`
 - `docs/SHOPORA_V0_73_LOCAL_FEATURE_BATCH_CHECKPOINT.md`
 - `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md`
 - `docs/SHOPORA_V0_71_LOCAL_BRANCH_SCOPE_CLARIFICATION.md`
@@ -74,4 +77,4 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Continue local feature work, prepare a future release PR, or pause here and use v0.73 as a clean handoff checkpoint.
+- Continue local feature work, prepare a future release PR, or pause here and use v0.74 as a clean handoff checkpoint.

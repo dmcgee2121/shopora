@@ -336,7 +336,7 @@ export default function ProductFormPage({ mode }) {
       <AdminPageHeader
         eyebrow="Catalog editor"
         title={mode === 'edit' ? 'Edit Product' : 'Add Product'}
-        subtitle="Update product merchandising, pricing, inventory flags, and content in one place without changing the write flow."
+        subtitle="Update product merchandising, pricing, inventory flags, and content in one place while keeping the write flow unchanged."
         actionLabel="Back to Products"
         actionTo="/admin/products"
         actionClassName="btn btn-ghost"
@@ -389,7 +389,7 @@ export default function ProductFormPage({ mode }) {
             <p>
               {readinessNeedsCount
                 ? `${readinessNeedsCount} checklist item${readinessNeedsCount === 1 ? '' : 's'} still need attention before this item feels storefront-ready.`
-                : 'This draft is ready for the storefront checklist.'}
+                : 'This draft is ready for the storefront QA checklist.'}
             </p>
           </div>
 
@@ -445,10 +445,10 @@ export default function ProductFormPage({ mode }) {
           <section className="admin-form-section">
             <div className="admin-form-section-header">
               <h2>Product Basics</h2>
-              <p>Core merchandising fields that define the product in the storefront and drive the editor readiness panel.</p>
+              <p>Core merchandising fields that define the product in the storefront and keep the readiness panel useful for QA.</p>
               <p className="field-help">
                 Required fields keep the listing usable in the catalog and product detail pages. Keep the title,
-                brand, SKU, category, and department aligned with storefront naming so discovery stays consistent.
+                brand, SKU, category, and department aligned with storefront naming so QA and discovery stay consistent.
               </p>
             </div>
             <div className="admin-form-grid">

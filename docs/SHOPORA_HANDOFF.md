@@ -6,14 +6,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.68-storefront-content-seo-polish`
+- `v0.69-admin-qa-dashboard-polish`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
 - v0.66 completed small post-deploy UI/support polish plus QA documentation.
 - v0.67 completed mobile/responsive polish.
-- v0.68 is not docs-only versus `origin/main`.
-- The branch keeps the earlier responsive polish in history and adds storefront content, trust-copy, support-label, and page-title improvements.
-- The changes are display/support-link/customer-facing polish only and do not introduce a new feature area or backend behavior change.
+- v0.68 completed storefront content and SEO polish.
+- v0.69 is not docs-only versus `origin/main`.
+- The branch is a small admin QA/dashboard polish pass focused on readability, readiness guidance, and display-only cleanup.
+- The current `src` scope is limited to `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProductsPage.jsx`, and `src/pages/admin/ProductFormPage.jsx`.
+- The changes do not introduce a new feature area or backend behavior change.
 
 ## Current Stack
 
@@ -58,6 +60,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.66 production QA polish was started locally and documented in `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
 - v0.67 mobile and responsive polish was started locally and documented in `docs/SHOPORA_V0_67_MOBILE_RESPONSIVE_POLISH.md`
 - v0.68 storefront content and SEO polish was started locally and documented in `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md`
+- v0.69 admin QA dashboard polish was started locally and documented in `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
 
 ## v0.68 Storefront Content And SEO Polish
 
@@ -69,6 +72,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build verification passed locally with `npm run build`.
 - Added `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md` to capture the branch scope, files changed, content/SEO areas improved, intentionally untouched areas, smoke-test checklist, accessibility notes, limitations, and recommendation.
 - Recommended next action: run a local browser smoke test, then decide whether to keep iterating or use v0.68 as a handoff checkpoint.
+
+## v0.69 Admin QA Dashboard Polish
+
+- Started `v0.69-admin-qa-dashboard-polish` as a small admin-side QA and dashboard readability pass on top of the storefront content and responsive polish history.
+- Tightened the admin dashboard, admin products, and product editor guidance so the pages read more clearly as QA/readiness surfaces.
+- Kept the work limited to display-only, copy-only, and light layout cleanup in `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProductsPage.jsx`, and `src/pages/admin/ProductFormPage.jsx`.
+- Kept all no-touch areas intact: checkout submission, order creation, cart business logic, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, and package/dependency changes.
+- Build verification passed locally with `npm run build`.
+- Added `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md` to capture the branch scope, files changed, admin QA/dashboard areas improved, intentionally untouched areas, smoke-test checklist, accessibility notes, limitations, and recommendation.
+- Recommended next action: run a local browser smoke test on the admin surfaces, then decide whether to keep polishing or treat v0.69 as a handoff checkpoint.
 
 ## v0.67 Mobile And Responsive Polish
 

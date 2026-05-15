@@ -155,7 +155,7 @@ export default function AdminProductsPage() {
 
       <CatalogStatusNote variant="admin" className="admin-catalog-status" />
       {!resetAvailable ? (
-        <p className="admin-catalog-helper">Reset catalog is available for local demo mode only.</p>
+        <p className="admin-catalog-helper">Reset catalog is only available in local demo mode.</p>
       ) : null}
 
       <div className="admin-readiness-grid">
@@ -268,7 +268,7 @@ export default function AdminProductsPage() {
         ) : (
           <div className="admin-empty-state-tight admin-readiness-empty">
             <h3>Everything in this catalog is demo-ready.</h3>
-            <p>All tracked products have the core merchandising fields needed for screenshots and future admin work.</p>
+            <p>All tracked products have the core merchandising fields needed for screenshots, demos, and admin QA.</p>
           </div>
         )}
       </section>
@@ -280,7 +280,7 @@ export default function AdminProductsPage() {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search catalog, brands, departments, or SKU"
+            placeholder="Search by name, brand, department, or SKU"
             aria-label="Search catalog"
           />
 

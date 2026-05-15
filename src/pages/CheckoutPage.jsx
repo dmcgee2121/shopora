@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useOrders } from '../context/OrdersContext';
 import { createStripeCheckoutSession } from '../services/stripeCheckoutService';
+import { getSupportLinks } from '../utils/supportLinks';
 
 const defaultForm = {
   email: '',
@@ -48,6 +50,7 @@ export default function CheckoutPage() {
   const { isAuthenticated, currentUser, authSource } = useAuth();
   const { createOrder } = useOrders();
   const navigate = useNavigate();
+  const supportLinks = getSupportLinks(currentUser);
   const [form, setForm] = useState(defaultForm);
   const [error, setError] = useState('');
   const [placedOrderId, setPlacedOrderId] = useState('');
@@ -539,10 +542,17 @@ export default function CheckoutPage() {
                 : 'This is a frontend-only demo checkout flow. No payment will be processed.'}
             </p>
             <p>
-              Need help with shipping or returns? <Link to="/shipping">Shipping</Link> or{' '}
-              <Link to="/returns">Returns</Link>.
+              Need help before placing the order? <Link to="/shipping">Shipping</Link>,{' '}
+              <Link to="/returns">Returns</Link>, or <Link to="/contact">Contact support</Link>.
             </p>
           </div>
+
+          <SupportLinkStrip
+            title="Reassurance before payment"
+            description="Review your cart, shipping, returns, privacy, and support options here so the last step feels clear before you continue."
+            links={supportLinks}
+            className="checkout-support-strip"
+          />
 
           <button
             type="button"

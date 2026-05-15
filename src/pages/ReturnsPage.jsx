@@ -1,10 +1,16 @@
+import { Link } from 'react-router-dom';
+import SupportLinkStrip from '../components/SupportLinkStrip';
+import { getSupportLinks } from '../utils/supportLinks';
+
 export default function ReturnsPage() {
+  const supportLinks = getSupportLinks();
+
   return (
     <section className="container content-page">
       <div className="content-split">
         <div>
           <p className="eyebrow">Returns</p>
-          <h1>Easy return guidance that feels fair and transparent.</h1>
+          <h1>Return guidance that stays clear and easy to follow.</h1>
           <p>
             This page provides prototype-safe return language for a polished storefront experience.
             It is not a final operational policy and should be updated by the business before launch.
@@ -15,17 +21,25 @@ export default function ReturnsPage() {
           </p>
         </div>
         <div className="info-card">
-          <h2>Returns overview</h2>
+          <h2>At a glance</h2>
           <ul>
             <li>Return requests should be reviewed by the store team.</li>
             <li>Eligibility depends on the final store policy.</li>
             <li>Refund timing should reflect the live payment and fulfillment setup.</li>
             <li>Customers should be able to reach support easily with the order number in hand.</li>
           </ul>
+          <div className="support-contact-actions">
+            <Link to="/contact" className="btn btn-dark btn-small">
+              Contact support
+            </Link>
+            <Link to="/shipping" className="btn btn-ghost btn-small">
+              Shipping policy
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="content-split">
+      <div className="policy-grid">
         <div className="info-card">
           <h2>Return eligibility</h2>
           <p>
@@ -55,6 +69,12 @@ export default function ReturnsPage() {
           </p>
         </div>
       </div>
+
+      <SupportLinkStrip
+        title="Need help with a return?"
+        description="Keep your order number close, review your receipt, and head to support with the details of the item you want to discuss, including shipping or privacy questions if needed."
+        links={supportLinks}
+      />
     </section>
   );
 }

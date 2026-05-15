@@ -10,7 +10,7 @@ import { useMiniCart } from '../context/MiniCartContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
 import { getProductImage, products as fallbackProducts } from '../data/products';
 import { idsMatch } from '../utils/idUtils';
-import { getProductMerchandisingBadges, getProductShelfLabel } from '../utils/merchandising';
+import { getProductMerchandisingBadges, getProductReviewDisplay, getProductShelfLabel } from '../utils/merchandising';
 import { getRecommendedProducts } from '../utils/recommendations';
 import { addRecentlyViewedId, filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
 
@@ -219,6 +219,7 @@ export default function ProductPage() {
   const currentImage = getProductImage(product, activeImage);
   const shelfLabel = getProductShelfLabel(product);
   const merchandisingBadges = getProductMerchandisingBadges(product);
+  const reviewDisplay = getProductReviewDisplay(product);
   const primaryBadges = merchandisingBadges.filter(
     (badge) => badge.tone === 'badge-new' || badge.tone === 'badge-sale' || badge.tone === 'badge-featured',
   );
@@ -284,13 +285,15 @@ export default function ProductPage() {
 
           {galleryImages.length > 1 ? (
             <>
-              <div className="thumb-rail" aria-label="Product images">
+              <div className="thumb-rail" role="group" aria-label="Product images">
                 {galleryImages.map((thumb, index) => (
                   <button
                     key={thumb}
                     type="button"
                     className={activeImage === index ? 'thumb active' : 'thumb'}
                     onClick={() => setActiveImage(index)}
+                    aria-label={`${product.name} view ${index + 1}`}
+                    aria-pressed={activeImage === index}
                   >
                     <ShopOraImage
                       src={thumb}
@@ -316,6 +319,7 @@ export default function ProductPage() {
             <span className="product-fit">{product.fit}</span>
           </div>
           <div className="rating rating-detail" aria-label={`Rated ${rating.toFixed(1)} out of 5`}>
+            <span className="rating-label">Customer rating</span>
             <div className="rating-stars" aria-hidden="true">
               {Array.from({ length: 5 }, (_, index) => (
                 <span key={index} className={index < Math.round(rating) ? 'filled' : ''}>
@@ -324,7 +328,7 @@ export default function ProductPage() {
               ))}
             </div>
             <span className="rating-value">
-              {rating.toFixed(1)} &middot; {reviewCount.toLocaleString()} reviews
+              {rating.toFixed(1)} &middot; {reviewCount.toLocaleString()} shopper ratings
             </span>
           </div>
           <div className="price-row price-row-large">
@@ -336,6 +340,33 @@ export default function ProductPage() {
             {stockMessage}
           </p>
           <p className="detail-description">{product.description}</p>
+
+          <section className="product-review-summary" aria-labelledby="product-review-summary-title">
+            <div className="product-review-summary-head">
+              <div>
+                <p className="product-section-label">Review preview</p>
+                <h2 id="product-review-summary-title">Customer notes</h2>
+              </div>
+              <div className="review-summary-badges" aria-label="Review summary stats">
+                <span className="query-chip">{rating.toFixed(1)} average</span>
+                <span className="query-chip">
+                  {reviewDisplay.reviewCount > 0
+                    ? `${reviewDisplay.reviewCount.toLocaleString()} shopper ratings`
+                    : 'No shopper ratings yet'}
+                </span>
+              </div>
+            </div>
+            <p className="product-review-summary-copy">{reviewDisplay.summary}</p>
+            <div className="product-review-notes" aria-label="Customer notes preview">
+              {reviewDisplay.notes.map((note) => (
+                <div key={note} className="product-review-note">
+                  <span />
+                  <p>{note}</p>
+                </div>
+              ))}
+            </div>
+            <p className="product-review-summary-footnote">{reviewDisplay.note}</p>
+          </section>
 
           {quickFacts.length ? (
             <div className="product-story-grid" aria-label="Product story and support highlights">
@@ -390,6 +421,8 @@ export default function ProductPage() {
                     type="button"
                     className={selectedSize === size ? 'chip active' : 'chip'}
                     onClick={() => setSelectedSize(size)}
+                    aria-pressed={selectedSize === size}
+                    aria-label={`Select size ${size}`}
                   >
                     {size}
                   </button>
@@ -407,6 +440,7 @@ export default function ProductPage() {
                     className={selectedColor === color ? 'color-swatch active' : 'color-swatch'}
                     onClick={() => setSelectedColor(color)}
                     aria-label={color}
+                    aria-pressed={selectedColor === color}
                     title={color}
                   >
                     <span style={{ backgroundColor: getSwatchColor(color) }} />
@@ -421,6 +455,8 @@ export default function ProductPage() {
                 quantity={quantity}
                 onDecrease={() => setQuantity((value) => Math.max(1, value - 1))}
                 onIncrease={() => setQuantity((value) => value + 1)}
+                decreaseLabel={`Decrease quantity for ${product.name}`}
+                increaseLabel={`Increase quantity for ${product.name}`}
               />
             </div>
 

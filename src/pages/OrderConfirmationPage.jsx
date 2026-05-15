@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
 import ShopOraImage from '../components/ShopOraImage';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { idsMatch } from '../utils/idUtils';
 import { getOrderItemImage } from '../utils/orderItemUtils';
+import { getSupportLinks } from '../utils/supportLinks';
 import {
   getOrderStatusClass,
   getOrderStatusLabel,
@@ -207,6 +210,8 @@ export default function OrderConfirmationPage() {
   const orderStatusLabel = getOrderStatusLabel(order?.status);
   const paymentStatusLabel = getPaymentStatusLabel(order?.paymentStatus, { demoMode: Boolean(order?.demoMode) });
   const orderStatusClass = getOrderStatusClass(order?.status);
+  const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const supportLinks = getSupportLinks(currentUser);
   const isLoading = lookupState === 'loading';
 
   if (isLoading) {
@@ -246,6 +251,9 @@ export default function OrderConfirmationPage() {
               <Link to="/women" className="btn btn-dark">
                 Continue Shopping
               </Link>
+              <Link to="/sale" className="btn btn-ghost">
+                Browse Sale
+              </Link>
             </div>
           </div>
         </div>
@@ -265,12 +273,18 @@ export default function OrderConfirmationPage() {
             </div>
           </div>
           <div className="order-confirmation-card order-not-found">
-            <p>We could not find that order after checking your account and payment details.</p>
+            <p>
+              We could not find that order after checking your account and payment details. Your saved items and
+              receipts still stay available from the account area.
+            </p>
             {lookupError ? <p className="auth-message auth-message-error">{lookupError}</p> : null}
             {ordersError ? <p className="auth-message auth-message-error">{ordersError}</p> : null}
             <div className="order-confirmation-actions no-print">
               <Link to="/women" className="btn btn-dark">
                 Continue Shopping
+              </Link>
+              <Link to={retentionLinks.savedItems.to} className="btn btn-ghost">
+                {retentionLinks.savedItems.label}
               </Link>
             </div>
           </div>
@@ -287,7 +301,9 @@ export default function OrderConfirmationPage() {
           <div>
             <p className="eyebrow">ShopOra</p>
             <h1>Order confirmed</h1>
-            <p>Thanks for your order. Your receipt is below.</p>
+            <p>
+              Thanks for your order. Your receipt is below, along with quick paths back to shopping and saved items.
+            </p>
           </div>
         </div>
 
@@ -415,8 +431,14 @@ export default function OrderConfirmationPage() {
           </section>
 
           <div className="order-confirmation-actions no-print">
-            <Link to="/women" className="btn btn-dark">
-              Continue Shopping
+            <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
+              {retentionLinks.continueShopping.label}
+            </Link>
+            <Link to={retentionLinks.browseSale.to} className="btn btn-ghost">
+              {retentionLinks.browseSale.label}
+            </Link>
+            <Link to={retentionLinks.savedItems.to} className="btn btn-ghost">
+              {retentionLinks.savedItems.label}
             </Link>
             {currentUser && idsMatch(order.userId, currentUser.id) ? (
               <Link to="/account/orders" className="btn btn-ghost">
@@ -424,6 +446,18 @@ export default function OrderConfirmationPage() {
               </Link>
             ) : null}
           </div>
+
+          <p className="order-confirmation-note">
+            ShopOra member experience means your receipt, saved items, and support shortcuts stay close together
+            without any points balance or hidden rewards system.
+          </p>
+
+          <SupportLinkStrip
+            title="Need help with your order?"
+            description="Keep the receipt close by if you want to ask about shipping, returns, privacy, account details, or product questions."
+            links={supportLinks}
+            className="order-support-strip"
+          />
         </div>
       </div>
     </section>

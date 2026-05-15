@@ -1,34 +1,48 @@
+import { Link } from 'react-router-dom';
+import SupportLinkStrip from '../components/SupportLinkStrip';
+import { getSupportLinks } from '../utils/supportLinks';
+
 export default function ShippingPage() {
+  const supportLinks = getSupportLinks();
+
   return (
     <section className="container content-page">
       <div className="content-split">
         <div>
           <p className="eyebrow">Shipping</p>
-          <h1>Shipping that feels clear, simple, and easy to understand.</h1>
+          <h1>Shipping information that is easy to scan before checkout.</h1>
           <p>
-            This page outlines how shipping information is presented in the ShopOra demo storefront.
-            It is written as shopper-facing guidance for a prototype and can be adapted to match a
-            real store&apos;s fulfillment process.
+            ShopOra shows shipping information as shopper-facing guidance so customers can review
+            timing, delivery expectations, and the order details they may need if they contact
+            support later.
           </p>
           <p>
-            Final shipping options, costs, carriers, and delivery estimates should be confirmed by
-            the business operating the store before launch.
+            Final shipping options, costs, carriers, and delivery estimates should always be
+            confirmed by the business operating the store before launch.
           </p>
         </div>
         <div className="info-card">
-          <h2>Shipping overview</h2>
+          <h2>At a glance</h2>
           <ul>
             <li>Orders collect shipping details during checkout.</li>
             <li>Shipping costs are shown in the order summary before payment.</li>
-            <li>Order records are available from the customer account area.</li>
-            <li>Shipping is currently presented as prototype-safe guidance, not a final policy.</li>
+            <li>Order records stay available from the customer account area.</li>
+            <li>Shipping guidance is prototype-safe, not a final policy.</li>
           </ul>
+          <div className="support-contact-actions">
+            <Link to="/contact" className="btn btn-dark btn-small">
+              Contact support
+            </Link>
+            <Link to="/returns" className="btn btn-ghost btn-small">
+              Returns policy
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="content-split">
+      <div className="policy-grid">
         <div className="info-card">
-          <h2>Order processing</h2>
+          <h2>Processing and handoff</h2>
           <p>
             ShopOra can display order status updates such as pending, processing, shipped, or
             delivered. In this prototype, those labels are for demonstration and receipt display.
@@ -56,6 +70,12 @@ export default function ShippingPage() {
           </p>
         </div>
       </div>
+
+      <SupportLinkStrip
+        title="Need help with shipping?"
+        description="Review your account or order history, then contact support if you want help understanding shipping, returns, privacy, or a receipt."
+        links={supportLinks}
+      />
     </section>
   );
 }

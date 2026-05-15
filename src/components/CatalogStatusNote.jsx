@@ -50,6 +50,12 @@ export default function CatalogStatusNote({ variant = 'storefront', className = 
   return (
     <div className={`catalog-status-note ${variant} ${className}`.trim()} aria-live="polite">
       <span className={`status-badge ${tone}`.trim()}>{label}</span>
+      {variant === 'admin' ? (
+        <p className="catalog-status-helper">
+          Catalog readiness checks cover images, copy, SKU, category, department, pricing, stock, and detail
+          fields.
+        </p>
+      ) : null}
       {variant === 'admin' && isCatalogSaving ? <p className="catalog-status-error">Updating catalog...</p> : null}
       {showMutationError ? <p className="catalog-status-error">{catalogMutationError}</p> : null}
       {showCatalogError ? <p className="catalog-status-error">{catalogError}</p> : null}

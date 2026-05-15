@@ -4,6 +4,11 @@ import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import ShopOraImage from '../../components/ShopOraImage';
 import { useProductCatalog } from '../../context/ProductCatalogContext';
 import { idsMatch } from '../../utils/idUtils';
+import {
+  getProductEditorReadinessChecklist,
+  getProductReadinessIssues,
+  getProductVisibilityInfo,
+} from '../../utils/catalogReadiness';
 
 const emptyForm = {
   name: '',
@@ -65,6 +70,13 @@ function generateSku(brand, name, category) {
     .slice(0, 18);
   const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `${base || 'SHOP'}-${suffix}`;
+}
+
+function splitLines(value) {
+  return value
+    .split('\n')
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 export default function ProductFormPage({ mode }) {
@@ -201,10 +213,7 @@ export default function ProductFormPage({ mode }) {
       rating: Number(form.rating),
       reviewCount: Number(form.reviewCount),
       stockCount: Number(form.stockCount),
-      details: form.details
-        .split('\n')
-        .map((item) => item.trim())
-        .filter(Boolean),
+      details: splitLines(form.details),
       isNew: Boolean(form.isNew),
       isSale: Boolean(form.isSale),
     };
@@ -229,23 +238,98 @@ export default function ProductFormPage({ mode }) {
   const galleryImages = useMemo(() => splitCsv(form.images), [form.images]);
   const colorValues = useMemo(() => splitCsv(form.colors), [form.colors]);
   const sizeValues = useMemo(() => splitCsv(form.sizes), [form.sizes]);
+  const editorProduct = useMemo(
+    () => ({
+      ...form,
+      status: existingProduct?.status ?? '',
+      visibility: existingProduct?.visibility ?? '',
+      archived: Boolean(existingProduct?.archived),
+      isArchived: Boolean(existingProduct?.isArchived),
+      draft: Boolean(existingProduct?.draft),
+      isDraft: Boolean(existingProduct?.isDraft),
+      isActive: existingProduct?.isActive,
+      featured: Boolean(existingProduct?.featured),
+      name: form.name.trim(),
+      brand: form.brand.trim(),
+      department: form.department.trim(),
+      category: form.category.trim(),
+      price: form.price,
+      salePrice: form.salePrice,
+      description: form.description.trim(),
+      image: form.image.trim(),
+      images: galleryImages,
+      sku: form.sku.trim(),
+      material: form.material.trim(),
+      care: form.care.trim(),
+      fit: form.fit.trim(),
+      details: splitLines(form.details),
+      stockCount: form.stockCount,
+      isNew: Boolean(form.isNew),
+      isSale: Boolean(form.isSale),
+    }),
+    [
+      form.brand,
+      form.category,
+      form.care,
+      form.department,
+      form.description,
+      form.details,
+      form.fit,
+      form.image,
+      form.images,
+      form.isNew,
+      form.isSale,
+      form.material,
+      form.name,
+      form.price,
+      form.salePrice,
+      form.sku,
+      form.stockCount,
+      existingProduct?.archived,
+      existingProduct?.draft,
+      existingProduct?.featured,
+      existingProduct?.isActive,
+      existingProduct?.isArchived,
+      existingProduct?.isDraft,
+      existingProduct?.status,
+      existingProduct?.visibility,
+      galleryImages,
+    ],
+  );
+  const readinessChecklist = useMemo(
+    () => getProductEditorReadinessChecklist(editorProduct),
+    [editorProduct],
+  );
+  const readinessIssues = useMemo(
+    () => getProductReadinessIssues(editorProduct),
+    [editorProduct],
+  );
+  const readinessReadyCount = readinessChecklist.filter((item) => item.ready).length;
+  const readinessNeedsCount = readinessChecklist.length - readinessReadyCount;
   const merchandisingSummary = useMemo(() => {
     const stockCount = Number(form.stockCount);
-    const stockLabel =
-      !Number.isFinite(stockCount) || stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? 'Low stock' : 'In stock';
+    const stockLabel = !Number.isFinite(stockCount)
+      ? 'Stock not set'
+      : stockCount <= 0
+        ? 'Out of stock'
+        : stockCount <= 7
+          ? 'Low stock'
+          : 'In stock';
     const priceLabel = form.salePrice
       ? `${formatMoney(form.salePrice)} on sale from ${formatMoney(form.price)}`
       : formatMoney(form.price);
     const assetLabel = `${galleryImages.length} images / ${sizeValues.length} sizes / ${colorValues.length} colors`;
+    const visibility = getProductVisibilityInfo(editorProduct);
 
     return {
       productLabel: `${form.name || 'Untitled product'}${form.brand ? ` - ${form.brand}` : ''}`,
       priceLabel,
       stockLabel,
-      stockCount: Number.isFinite(stockCount) ? stockCount : 0,
+      stockCount: Number.isFinite(stockCount) ? stockCount : null,
       assetLabel,
+      visibility,
     };
-  }, [colorValues.length, form.brand, form.name, form.price, form.salePrice, form.stockCount, galleryImages.length, sizeValues.length]);
+  }, [editorProduct, form.brand, form.name, form.price, form.salePrice, form.stockCount, galleryImages.length, sizeValues.length]);
 
   return (
     <section className="admin-form-page">
@@ -258,31 +342,89 @@ export default function ProductFormPage({ mode }) {
         actionClassName="btn btn-ghost"
       />
 
-      <div className="admin-status-grid">
-        <div className="admin-status-card">
-          <span>Storefront preview</span>
-          <strong>{merchandisingSummary.productLabel}</strong>
-          <p>
-            {form.department || 'Unassigned department'}
-            {form.category ? ` / ${form.category}` : ''}{' '}
-            {form.sku ? ` - SKU ${form.sku}` : ' - SKU not assigned'}
-          </p>
+      <div className="admin-editor-overview">
+        <div className="admin-status-grid admin-editor-summary-grid">
+          <div className="admin-status-card">
+            <span>Storefront preview</span>
+            <strong>{merchandisingSummary.productLabel}</strong>
+            <p>
+              {form.department || 'Unassigned department'}
+              {form.category ? ` / ${form.category}` : ''}{' '}
+              {form.sku ? ` - SKU ${form.sku}` : ' - SKU not assigned'}
+            </p>
+            <div className="status-badges admin-preview-badges">
+              <span className={`status-badge ${merchandisingSummary.visibility.className}`}>
+                {merchandisingSummary.visibility.label}
+              </span>
+              <span className="status-badge status-badge-muted">{merchandisingSummary.stockLabel}</span>
+            </div>
+            <p className="admin-preview-hint">
+              {merchandisingSummary.visibility.helper} The editor preview reflects the current draft values before save.
+            </p>
+          </div>
+          <div className="admin-status-card">
+            <span>Pricing</span>
+            <strong>{merchandisingSummary.priceLabel}</strong>
+            <p>Sale price, if set, renders as compare-at pricing in the storefront.</p>
+          </div>
+          <div className="admin-status-card">
+            <span>Inventory</span>
+            <strong>{merchandisingSummary.stockLabel}</strong>
+            <p>
+              {Number.isFinite(merchandisingSummary.stockCount)
+                ? `${merchandisingSummary.stockCount} units`
+                : 'Stock count not set'}
+            </p>
+          </div>
+          <div className="admin-status-card">
+            <span>Merchandising assets</span>
+            <strong>{galleryImages.length} images</strong>
+            <p>{merchandisingSummary.assetLabel}</p>
+          </div>
         </div>
-        <div className="admin-status-card">
-          <span>Pricing</span>
-          <strong>{merchandisingSummary.priceLabel}</strong>
-          <p>Sale price, if set, renders as compare-at pricing in the storefront.</p>
-        </div>
-        <div className="admin-status-card">
-          <span>Inventory</span>
-          <strong>{merchandisingSummary.stockLabel}</strong>
-          <p>{Number.isFinite(merchandisingSummary.stockCount) ? `${merchandisingSummary.stockCount} units` : 'Stock count not set'}</p>
-        </div>
-        <div className="admin-status-card">
-          <span>Merchandising assets</span>
-          <strong>{galleryImages.length} images</strong>
-          <p>{merchandisingSummary.assetLabel}</p>
-        </div>
+
+        <aside className="admin-editor-readiness-panel">
+          <div className="admin-dashboard-section-heading compact">
+            <span>Product readiness</span>
+            <p>
+              {readinessNeedsCount
+                ? `${readinessNeedsCount} checklist item${readinessNeedsCount === 1 ? '' : 's'} still need attention before this item feels storefront-ready.`
+                : 'This draft is ready for the storefront checklist.'}
+            </p>
+          </div>
+
+          <div className="admin-editor-readiness-summary">
+            <div className="admin-editor-readiness-stat">
+              <strong>{readinessReadyCount}</strong>
+              <span>Ready</span>
+            </div>
+            <div className="admin-editor-readiness-stat">
+              <strong>{readinessNeedsCount}</strong>
+              <span>Needs attention</span>
+            </div>
+            <div className="admin-editor-readiness-stat">
+              <strong>{readinessIssues.length}</strong>
+              <span>Core issues</span>
+            </div>
+          </div>
+
+          <div className="admin-editor-readiness-list">
+            {readinessChecklist.map((item) => (
+              <div
+                key={item.key}
+                className={`admin-editor-readiness-item ${item.ready ? 'is-ready' : 'needs-attention'}`}
+              >
+                <div className="admin-editor-readiness-item-row">
+                  <strong>{item.label}</strong>
+                  <span className={`status-badge ${item.ready ? 'status-active' : 'admin-issue-missing'}`}>
+                    {item.ready ? 'Ready' : 'Needs attention'}
+                  </span>
+                </div>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </div>
+        </aside>
       </div>
 
       {mode === 'edit' && !existingProduct ? (
@@ -303,9 +445,10 @@ export default function ProductFormPage({ mode }) {
           <section className="admin-form-section">
             <div className="admin-form-section-header">
               <h2>Product Basics</h2>
-              <p>Core merchandising fields that define the product in the storefront.</p>
+              <p>Core merchandising fields that define the product in the storefront and drive the editor readiness panel.</p>
               <p className="field-help">
-                Required fields keep the listing usable in the catalog and product detail pages.
+                Required fields keep the listing usable in the catalog and product detail pages. Keep the title,
+                brand, SKU, category, and department aligned with storefront naming so discovery stays consistent.
               </p>
             </div>
             <div className="admin-form-grid">
@@ -313,31 +456,35 @@ export default function ProductFormPage({ mode }) {
                 Name
                 <span className="field-help field-required">Required</span>
                 <input name="name" value={form.name} onChange={handleChange} />
+                <span className="field-help">Use the shopper-facing product title, not an internal label.</span>
                 {errors.name ? <span className="field-error">{errors.name}</span> : null}
               </label>
               <label>
                 Brand
                 <span className="field-help field-required">Required</span>
                 <input name="brand" value={form.brand} onChange={handleChange} />
+                <span className="field-help">Use the exact published brand name shown to shoppers.</span>
                 {errors.brand ? <span className="field-error">{errors.brand}</span> : null}
               </label>
               <label>
                 Department
                 <span className="field-help field-required">Required</span>
                 <input name="department" value={form.department} onChange={handleChange} />
+                <span className="field-help">Controls browse navigation and category discovery.</span>
                 {errors.department ? <span className="field-error">{errors.department}</span> : null}
               </label>
               <label>
                 Category
                 <span className="field-help field-required">Required</span>
                 <input name="category" value={form.category} onChange={handleChange} />
+                <span className="field-help">Pick the closest catalog category for filtering and search.</span>
                 {errors.category ? <span className="field-error">{errors.category}</span> : null}
               </label>
               <label className="full-span">
                 SKU
-                <span className="field-help">Optional. Leave blank or generate one for internal catalog tracking.</span>
+                <span className="field-help">Optional in the demo, but useful for support, filtering, and readiness tracking.</span>
                 <input name="sku" value={form.sku} onChange={handleChange} />
-                <span className="field-help">Internal product identifier used for catalog and operations.</span>
+                <span className="field-help">Keep it short, unique, and stable across product updates.</span>
                 <button
                   type="button"
                   className="btn btn-ghost btn-small sku-generate-button"
@@ -353,7 +500,7 @@ export default function ProductFormPage({ mode }) {
               </label>
               <label className="full-span">
                 Product description
-                <span className="field-help">Optional. Keep this concise and shopper-facing.</span>
+                <span className="field-help">Optional. Keep this concise, shopper-facing, and useful in demos.</span>
                 <textarea name="description" rows="4" value={form.description} onChange={handleChange} />
               </label>
             </div>
@@ -364,7 +511,8 @@ export default function ProductFormPage({ mode }) {
               <h2>Pricing &amp; Merchandising</h2>
               <p>Keep the base price and optional sale price aligned with the catalog presentation.</p>
               <p className="field-help">
-                Ratings and reviews are display-only metadata. Sale price should stay lower than the base price.
+                Ratings and reviews are display-only metadata. Sale price should stay lower than the base price and
+                the readiness panel will flag it if the values do not line up.
               </p>
             </div>
             <div className="admin-form-grid">
@@ -372,6 +520,7 @@ export default function ProductFormPage({ mode }) {
                 Base price
                 <span className="field-help field-required">Required</span>
                 <input name="price" type="number" step="0.01" value={form.price} onChange={handleChange} />
+                <span className="field-help">Required. Use the standard price shown on the storefront.</span>
                 {errors.price ? <span className="field-error">{errors.price}</span> : null}
               </label>
               <label>
@@ -384,6 +533,7 @@ export default function ProductFormPage({ mode }) {
                   value={form.salePrice}
                   onChange={handleChange}
                 />
+                <span className="field-help">When used, it should stay below the base price.</span>
                 {errors.salePrice ? <span className="field-error">{errors.salePrice}</span> : null}
               </label>
               <label>
@@ -394,8 +544,9 @@ export default function ProductFormPage({ mode }) {
               </label>
               <label>
                 Review count
-                <span className="field-help">Optional. Used for product page social proof.</span>
+                <span className="field-help">Optional. Pairs with rating to give shoppers quick social proof.</span>
                 <input name="reviewCount" type="number" value={form.reviewCount} onChange={handleChange} />
+                <span className="field-help">Keep it consistent with the expected demo story and discovery cues.</span>
                 {errors.reviewCount ? <span className="field-error">{errors.reviewCount}</span> : null}
               </label>
             </div>
@@ -406,7 +557,9 @@ export default function ProductFormPage({ mode }) {
               <h2>Images</h2>
               <p>Use one clean hero image and, when possible, a small gallery of fallback views.</p>
               <p className="field-help">
-                Paste hosted image URLs only. File uploads are not part of this editor yet.
+                Paste hosted image URLs only. File uploads are not part of this editor yet, and the readiness panel
+                uses the primary image to judge storefront completeness. A strong image set also helps the admin
+                list feel more merchandised.
               </p>
             </div>
             <div className="admin-preview-layout">
@@ -428,7 +581,7 @@ export default function ProductFormPage({ mode }) {
                 </div>
                 <div className="admin-image-preview-meta">
                   <strong>Primary image preview</strong>
-                  <span>Paste a hosted image URL. File uploads will be added later.</span>
+                  <span>Paste a hosted image URL. The storefront preview will use this as the hero image.</span>
                 </div>
               </div>
 
@@ -437,12 +590,12 @@ export default function ProductFormPage({ mode }) {
                   Primary image
                   <span className="field-help field-required">Required</span>
                   <input name="image" value={form.image} onChange={handleChange} />
-                  <span className="field-help">Use a direct image URL that loads in the browser preview.</span>
+                  <span className="field-help">Use a direct image URL that loads in the browser preview and storefront.</span>
                   {errors.image ? <span className="field-error">{errors.image}</span> : null}
                 </label>
                 <div className="admin-gallery-preview-header">
                   <strong>Gallery previews</strong>
-                  <span className="field-help">Optional. Separate multiple image URLs with commas.</span>
+                  <span className="field-help">Optional. Separate multiple image URLs with commas for alternate views.</span>
                 </div>
                 <label className="full-span">
                   Gallery image URLs, comma separated
@@ -478,7 +631,8 @@ export default function ProductFormPage({ mode }) {
               <p>Control availability and merchandising badges without touching the storefront code.</p>
               <p className="field-help">
                 Products without an explicit status remain Active in the admin list. Draft and archived values are
-                shown if they already exist in the catalog data.
+                shown if they already exist in the catalog data. Stock counts are read by the readiness checklist,
+                and sale or low-stock states will surface in the admin product list.
               </p>
             </div>
             <div className="admin-form-grid">
@@ -543,19 +697,27 @@ export default function ProductFormPage({ mode }) {
             <div className="admin-form-section-header">
               <h2>Material, Fit &amp; Details</h2>
               <p>These fields power the product page accordion and detail sections.</p>
+              <p className="field-help">
+                The readiness panel treats these as merchandising enrichments, so adding them makes the listing feel
+                complete even if the base product is already valid. They also give the admin list stronger discovery
+                cues beyond price and stock.
+              </p>
             </div>
             <div className="admin-form-grid">
               <label className="full-span">
                 Material
                 <input name="material" value={form.material} onChange={handleChange} />
+                <span className="field-help">Optional, but helpful for materials-led shopping decisions.</span>
               </label>
               <label className="full-span">
                 Care
                 <input name="care" value={form.care} onChange={handleChange} />
+                <span className="field-help">Optional. Use concise care instructions shoppers can scan quickly.</span>
               </label>
               <label className="full-span">
                 Fit type
                 <input name="fit" value={form.fit} onChange={handleChange} />
+                <span className="field-help">Optional. A simple fit note makes the listing easier to understand.</span>
               </label>
               <label className="full-span">
                 Details, one per line
@@ -569,15 +731,20 @@ export default function ProductFormPage({ mode }) {
             <div className="admin-form-section-header">
               <h2>Shipping &amp; Returns</h2>
               <p>These notes keep the product page polished without requiring fulfillment integration.</p>
+              <p className="field-help">
+                Short, readable notes help shoppers trust the product page without implying a real shipping backend.
+              </p>
             </div>
             <div className="admin-form-grid">
               <label className="full-span">
                 Shipping note
                 <textarea name="shippingNote" rows="3" value={form.shippingNote} onChange={handleChange} />
+                <span className="field-help">Optional. Use short, confident fulfillment copy.</span>
               </label>
               <label className="full-span">
                 Return note
                 <textarea name="returnNote" rows="3" value={form.returnNote} onChange={handleChange} />
+                <span className="field-help">Optional. Keep the policy language short and readable.</span>
               </label>
             </div>
           </section>

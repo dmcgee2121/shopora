@@ -152,8 +152,8 @@ export default function SearchResults() {
   ].filter(Boolean);
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No results found.';
   const emptyDescription = activeFilterCount
-    ? 'Try removing one or more filters, or clear the search to widen the results.'
-    : 'Try a broader keyword, or browse departments if you want to start from the collection.';
+    ? 'Try removing one or more filters, clearing the search, or browsing sale/new arrival styles to widen the results.'
+    : 'Try a broader keyword, check spelling, or browse departments when you want to start with a curated lane.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -180,11 +180,14 @@ export default function SearchResults() {
           title={query ? `Search results for "${query}"` : 'Search ShopOra'}
           description={
             query
-              ? 'Browse the styles that match your search across brands, departments, and colorways. Narrow the edit further with filters and sort controls.'
-              : 'Use the search bar in the navbar to look for products, categories, brands, and colors.'
+              ? 'Browse the styles that match your search across brands, departments, and colorways, then narrow the edit with filters and sort controls.'
+              : 'Use the search bar in the navbar to look for products, categories, brands, and colors when you want a fast way into the edit.'
           }
           action={query ? <span className="count-badge">{countLabel}</span> : null}
         />
+        <p className="catalog-toolbar-note">
+          Sort controls change the order of the results, while filters narrow the catalog to a smaller set of matches.
+        </p>
 
         {!query ? (
           <div className="search-landing">
@@ -192,9 +195,7 @@ export default function SearchResults() {
               <section className="search-landing-panel" aria-labelledby="search-start-title">
                 <p className="eyebrow">Search guide</p>
                 <h2 id="search-start-title">Start with a product, category, brand, or color.</h2>
-                <p>
-                  Try a focused search, then use filters to narrow by department, size, price, product status, or sale.
-                </p>
+                <p>Try a focused search, then refine by department, size, price, product status, or sale.</p>
                 <div className="recommendation-links search-suggestion-list" aria-label="Suggested searches">
                   {searchSuggestionLinks.map((link) => (
                     <Link key={link.to} to={link.to} className="query-chip">
@@ -207,7 +208,7 @@ export default function SearchResults() {
               <section className="search-landing-panel search-landing-panel-soft" aria-labelledby="search-browse-title">
                 <p className="eyebrow">Browse instead</p>
                 <h2 id="search-browse-title">Move through the store by department.</h2>
-                <p>Use a department shortcut when you want a curated lane before narrowing the catalog.</p>
+                <p>Use a department shortcut when you want a curated lane before narrowing the catalog, or jump to sale to see markdowns first.</p>
                 <div className="recommendation-links search-suggestion-list" aria-label="Browse departments">
                   {departmentLinks.map((link) => (
                     <Link key={link.to} to={link.to} className="query-chip">
@@ -241,7 +242,7 @@ export default function SearchResults() {
         ) : isInitialCatalogLoading ? (
           <div className="empty-state search-empty">
             <h2>Loading styles.</h2>
-            <p>We are getting the latest catalog ready before showing matching products.</p>
+            <p>We are getting the latest catalog ready before showing matching products. You can still use the department shortcuts while the catalog loads.</p>
           </div>
         ) : (
           <>
@@ -328,6 +329,9 @@ export default function SearchResults() {
                       <Link to="/women" className="btn btn-ghost">
                         Browse women
                       </Link>
+                      <Link to="/sale" className="btn btn-ghost">
+                        Browse sale
+                      </Link>
                     </div>
                     <div className="recommendation-links" aria-label="Browse departments">
                       {departmentLinks.map((link) => (
@@ -342,6 +346,12 @@ export default function SearchResults() {
                           {link.label}
                         </Link>
                       ))}
+                    </div>
+                    <div className="recommendation-links search-suggestion-list" aria-label="How to refine search">
+                      <span className="query-chip">Check spelling</span>
+                      <span className="query-chip">Try a broader keyword</span>
+                      <span className="query-chip">Clear filters</span>
+                      <span className="query-chip">Browse new arrivals</span>
                     </div>
                   </div>
                 )}

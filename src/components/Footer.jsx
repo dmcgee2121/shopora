@@ -11,10 +11,10 @@ const shopLinks = [
 ];
 
 const supportLinks = [
-  { to: '/contact', label: 'Contact' },
-  { to: '/shipping', label: 'Shipping' },
-  { to: '/returns', label: 'Returns' },
-  { to: '/privacy', label: 'Privacy' },
+  { to: '/contact', label: 'Contact support' },
+  { to: '/shipping', label: 'Shipping policy' },
+  { to: '/returns', label: 'Returns policy' },
+  { to: '/privacy', label: 'Privacy policy' },
 ];
 
 const accountLinks = [

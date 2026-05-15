@@ -4,15 +4,25 @@ import BrandLogo from '../components/BrandLogo';
 import ProductCard from '../components/ProductCard';
 import QuantitySelector from '../components/QuantitySelector';
 import ShopOraImage from '../components/ShopOraImage';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { useProductCatalog } from '../context/ProductCatalogContext';
+import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { getDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
+import { getSupportLinks } from '../utils/supportLinks';
 
 export default function CartPage() {
   const { products } = useProductCatalog();
+  const { currentUser, savedProductIds } = useAuth();
   const { items, subtotal, increaseItem, decreaseItem, removeItem, clearCart } = useCart();
   const departmentLinks = useMemo(() => getDepartmentLinks(), []);
+  const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const supportLinks = getSupportLinks(currentUser);
+  const accountLink = currentUser ? '/account' : '/login';
+  const accountLabel = currentUser ? 'View account' : 'Sign in';
+  const safeSavedProductIds = Array.isArray(savedProductIds) ? savedProductIds : [];
   const recommendedProducts = useMemo(
     () =>
       getRecommendedProducts(products, items, {
@@ -72,6 +82,8 @@ export default function CartPage() {
                         quantity={item.quantity}
                         onDecrease={() => decreaseItem(item.key)}
                         onIncrease={() => increaseItem(item.key)}
+                        decreaseLabel={`Decrease quantity of ${item.name}`}
+                        increaseLabel={`Increase quantity of ${item.name}`}
                       />
                       <strong>${(item.unitPrice * item.quantity).toFixed(2)}</strong>
                     </div>
@@ -94,6 +106,11 @@ export default function CartPage() {
                 <span>Total</span>
                 <strong>${subtotal.toFixed(2)}</strong>
               </div>
+              <p className="account-page-note">
+                {currentUser
+                  ? `Signed in? ${safeSavedProductIds.length ? 'Your saved items and orders stay tied to your account.' : 'Your orders stay tied to your account, and you can save favorites as you browse.'}`
+                  : 'Sign in to keep saved items and order history together in one account view.'}
+              </p>
               <Link to="/checkout" className="btn btn-dark full-width">
                 Proceed to Checkout
               </Link>
@@ -139,10 +156,19 @@ export default function CartPage() {
         <>
           <div className="empty-state cart-empty">
             <h2>Your cart is empty.</h2>
-            <p>Browse the latest styles, then return here to review your full order.</p>
+            <p>
+              Browse the latest styles, save a few favorites, and return here when you are ready to review your full
+              order. Sign in to keep favorites and recent orders together in one account view.
+            </p>
             <div className="empty-state-actions">
-              <Link to="/" className="btn btn-dark">
-                Continue shopping
+              <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
+                {retentionLinks.continueShopping.label}
+              </Link>
+              <Link to={accountLink} className="btn btn-ghost">
+                {accountLabel}
+              </Link>
+              <Link to={retentionLinks.browseSale.to} className="btn btn-ghost">
+                {retentionLinks.browseSale.label}
               </Link>
             </div>
             <div className="recommendation-links" aria-label="Shop by department">
@@ -170,6 +196,12 @@ export default function CartPage() {
           ) : null}
         </>
       )}
+
+      <SupportLinkStrip
+        title="Need help before checkout?"
+        description="Review shipping, returns, privacy, and account details or contact support before you place the order."
+        links={supportLinks}
+      />
     </section>
   );
 }

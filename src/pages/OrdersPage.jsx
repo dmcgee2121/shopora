@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
 import ShopOraImage from '../components/ShopOraImage';
+import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import { getCustomerRetentionLinks } from '../utils/customerRetention';
+import { getSupportLinks } from '../utils/supportLinks';
 import { getOrderItemImage } from '../utils/orderItemUtils';
-import {
-  getOrderStatusClass,
-  getOrderStatusLabel,
-  getPaymentStatusLabel,
-} from '../utils/statusUtils';
+import { getOrderStatusClass, getOrderStatusLabel, getPaymentStatusLabel } from '../utils/statusUtils';
 
 function formatDate(value) {
   if (!value) return '';
@@ -52,6 +51,9 @@ export default function OrdersPage() {
   const { currentUser, authSource } = useAuth();
   const { getOrdersByUser, isOrdersLoading, ordersError } = useOrders();
   const orders = currentUser ? getOrdersByUser(currentUser.id) : [];
+  const retentionLinks = getCustomerRetentionLinks(currentUser);
+  const supportLinks = getSupportLinks(currentUser);
+  const searchLinks = retentionLinks.searchLinks.slice(0, 2);
 
   if (isOrdersLoading && authSource === 'supabase') {
     return (
@@ -73,26 +75,52 @@ export default function OrdersPage() {
   return (
     <section className="container account-page">
       <div className="section-heading">
-          <div className="page-heading-brand-wrap">
-            <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
-            <div>
-              <p className="eyebrow">Account</p>
-              <h1>Orders</h1>
-              <p>
-                {currentUser
-                  ? `Order history for ${currentUser.firstName || 'your account'}.`
-                  : 'Completed orders will appear here.'}
-              </p>
-            </div>
+        <div className="page-heading-brand-wrap">
+          <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
+          <div>
+            <p className="eyebrow">Account</p>
+            <h1>Orders</h1>
+            <p>
+              {currentUser
+                ? `Order history for ${currentUser.firstName || 'your account'}.`
+                : 'Completed orders will appear here.'}
+            </p>
           </div>
+        </div>
         <span className="count-badge">
           {orders.length} order{orders.length === 1 ? '' : 's'}
         </span>
       </div>
 
       <p className="account-page-note">
-        Use this page to scan recent purchases, check fulfillment status, and jump into a receipt.
+        Use this page to scan recent purchases, check fulfillment status, jump into a receipt, or head back to
+        browsing. ShopOra keeps order history visible for quick reference and support.
       </p>
+
+      <div className="account-toolbar">
+        <div className="catalog-context">
+          <span className="query-chip">Continue from your order history</span>
+          <span className="query-chip">Saved items stay close by</span>
+          <span className="query-chip">ShopOra member experience</span>
+        </div>
+        <div className="empty-state-actions">
+          <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
+            {retentionLinks.continueShopping.label}
+          </Link>
+          <Link to={retentionLinks.browseSale.to} className="btn btn-ghost btn-small">
+            {retentionLinks.browseSale.label}
+          </Link>
+          <Link to={retentionLinks.savedItems.to} className="btn btn-ghost btn-small">
+            {retentionLinks.savedItems.label}
+          </Link>
+        </div>
+      </div>
+
+      <SupportLinkStrip
+        title="Need help with this order history?"
+        description="Keep the receipt or order number handy, then use these support shortcuts if you need shipping, returns, privacy, or account help."
+        links={supportLinks}
+      />
 
       {ordersError ? <div className="auth-message auth-message-error">{ordersError}</div> : null}
 
@@ -118,7 +146,7 @@ export default function OrdersPage() {
                   <div>
                     <span className="account-order-number">{order.orderNumber}</span>
                     <p>
-                      {orderDate || 'Order date unavailable'} • {itemCount} item{itemCount === 1 ? '' : 's'}
+                      {orderDate || 'Order date unavailable'} / {itemCount} item{itemCount === 1 ? '' : 's'}
                     </p>
                   </div>
                   <div className="account-order-tags">
@@ -194,16 +222,26 @@ export default function OrdersPage() {
           <h2>{authSource === 'supabase' ? 'No orders yet.' : 'No demo orders yet.'}</h2>
           <p>
             {authSource === 'supabase'
-              ? 'Your orders will appear here after checkout.'
-              : 'Demo orders on this device will appear here after checkout.'}
+              ? 'Your orders will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale. Receipts will stay tied to your account for quick review later.'
+              : 'Demo orders on this device will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale. Receipts will stay tied to this demo account for quick review later.'}
           </p>
           <div className="empty-state-actions">
-            <Link to="/women" className="btn btn-dark">
-              Start shopping
+            <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
+              {retentionLinks.continueShopping.label}
             </Link>
-            <Link to="/account/saved" className="btn btn-ghost">
-              View saved items
+            <Link to={retentionLinks.browseSale.to} className="btn btn-ghost">
+              {retentionLinks.browseSale.label}
             </Link>
+            <Link to={retentionLinks.savedItems.to} className="btn btn-ghost">
+              {retentionLinks.savedItems.label}
+            </Link>
+          </div>
+          <div className="recommendation-links account-empty-links" aria-label="Search shortcuts">
+            {searchLinks.map((link) => (
+              <Link key={link.to} to={link.to} className="query-chip">
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
       )}

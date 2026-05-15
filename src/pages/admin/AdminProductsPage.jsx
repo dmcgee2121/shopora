@@ -4,6 +4,12 @@ import CatalogStatusNote from '../../components/CatalogStatusNote';
 import ShopOraImage from '../../components/ShopOraImage';
 import { useProductCatalog } from '../../context/ProductCatalogContext';
 import AdminPageHeader from '../../components/admin/AdminPageHeader';
+import {
+  getCatalogAttentionProducts,
+  getCatalogReadinessSummary,
+  getProductMerchandisingReadiness,
+  getProductVisibilityInfo,
+} from '../../utils/catalogReadiness';
 
 function safeText(value, fallback = '-') {
   const text = typeof value === 'string' ? value.trim() : '';
@@ -13,16 +19,6 @@ function safeText(value, fallback = '-') {
 function formatMoney(value) {
   const amount = Number(value);
   return Number.isFinite(amount) ? `$${amount.toFixed(2)}` : '-';
-}
-
-function formatTitle(value) {
-  const text = safeText(value, '');
-  if (!text) return 'Active';
-  return text
-    .split(/[\s_-]+/)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-    .join(' ');
 }
 
 function matchesQuery(product, query) {
@@ -41,37 +37,6 @@ function matchesQuery(product, query) {
     .includes(value);
 }
 
-function getProductVisibility(product) {
-  const explicitStatus = safeText(product.status, '') || safeText(product.visibility, '');
-  const normalizedStatus = explicitStatus.toLowerCase();
-
-  if (normalizedStatus === 'archived' || product.archived || product.isArchived) {
-    return { label: 'Archived', className: 'status-archived', helper: 'Hidden from the storefront.' };
-  }
-
-  if (
-    normalizedStatus === 'draft' ||
-    normalizedStatus === 'hidden' ||
-    normalizedStatus === 'inactive' ||
-    normalizedStatus === 'unlisted' ||
-    product.draft ||
-    product.isDraft ||
-    product.isActive === false
-  ) {
-    return { label: 'Draft', className: 'status-draft', helper: 'Saved in admin, not shown to shoppers.' };
-  }
-
-  if (normalizedStatus) {
-    return {
-      label: formatTitle(explicitStatus),
-      className: 'status-active',
-      helper: 'Custom catalog status from stored product data.',
-    };
-  }
-
-  return { label: 'Active', className: 'status-active', helper: 'Visible in the storefront.' };
-}
-
 export default function AdminProductsPage() {
   const {
     products,
@@ -88,21 +53,8 @@ export default function AdminProductsPage() {
   const resetAvailable = catalogSource !== 'supabase';
   const hasProducts = products.length > 0;
   const hasFilters = Boolean(query.trim() || departmentFilter !== 'all' || categoryFilter !== 'all' || stockFilter !== 'all');
-  const summary = useMemo(() => {
-    const lowStock = products.filter((product) => {
-      const stockCount = Number(product.stockCount ?? 0);
-      return stockCount > 0 && stockCount <= 7;
-    }).length;
-    const outOfStock = products.filter((product) => Number(product.stockCount ?? 0) <= 0).length;
-    const saleItems = products.filter((product) => product.isSale || Number(product.salePrice ?? 0) > 0).length;
-
-    return {
-      totalProducts: products.length,
-      saleItems,
-      lowStock,
-      outOfStock,
-    };
-  }, [products]);
+  const summary = useMemo(() => getCatalogReadinessSummary(products), [products]);
+  const attentionProducts = useMemo(() => getCatalogAttentionProducts(products, { limit: 5 }), [products]);
 
   const departments = useMemo(() => {
     return Array.from(new Set(products.map((product) => product.department).filter(Boolean)));
@@ -122,7 +74,8 @@ export default function AdminProductsPage() {
   const filtered = useMemo(
     () =>
       products.filter((product) => {
-        const stockCount = Number(product.stockCount ?? 0);
+        const stockCountValue = Number(product.stockCount);
+        const hasStockCount = Number.isFinite(stockCountValue);
         const departmentMatches =
           departmentFilter === 'all' || product.department === departmentFilter;
         const categoryMatches = categoryFilter === 'all' || product.category === categoryFilter;
@@ -130,10 +83,10 @@ export default function AdminProductsPage() {
           stockFilter === 'all'
             ? true
             : stockFilter === 'low'
-              ? stockCount > 0 && stockCount <= 7
+              ? hasStockCount && stockCountValue > 0 && stockCountValue <= 7
               : stockFilter === 'out'
-                ? stockCount <= 0
-                : stockCount >= 8;
+                ? hasStockCount && stockCountValue <= 0
+                : hasStockCount && stockCountValue >= 8;
         return departmentMatches && categoryMatches && stockMatches && matchesQuery(product, query);
       }),
     [products, query, departmentFilter, categoryFilter, stockFilter],
@@ -142,7 +95,11 @@ export default function AdminProductsPage() {
   const getStockState = (stockCount) => {
     const count = Number(stockCount);
 
-    if (!Number.isFinite(count) || count <= 0) {
+    if (!Number.isFinite(count)) {
+      return { label: 'Stock not set', className: 'admin-issue-missing' };
+    }
+
+    if (count <= 0) {
       return { label: 'Out of stock', className: 'stock-out' };
     }
 
@@ -201,28 +158,120 @@ export default function AdminProductsPage() {
         <p className="admin-catalog-helper">Reset catalog is available for local demo mode only.</p>
       ) : null}
 
-      <div className="admin-status-grid">
-        <div className="admin-status-card">
+      <div className="admin-readiness-grid">
+        <div className="admin-status-card admin-readiness-card">
           <span>Total products</span>
           <strong>{summary.totalProducts}</strong>
-          <p>Everything currently available in the catalog.</p>
+          <p>All catalog records currently loaded in the admin session.</p>
         </div>
-        <div className="admin-status-card">
-          <span>Sale items</span>
-          <strong>{summary.saleItems}</strong>
-          <p>Products with a sale badge or sale price.</p>
+        <div className="admin-status-card admin-readiness-card">
+          <span>Active products</span>
+          <strong>{summary.activeProducts}</strong>
+          <p>Visible in the storefront and ready for shoppers.</p>
         </div>
-        <div className="admin-status-card">
+        <div className="admin-status-card admin-readiness-card">
+          <span>Draft / inactive</span>
+          <strong>{summary.inactiveProducts}</strong>
+          <p>
+            {summary.archivedProducts
+              ? `${summary.inactiveProducts} draft or inactive and ${summary.archivedProducts} archived records.`
+              : 'Products hidden from the storefront or marked inactive.'}
+          </p>
+        </div>
+        <div className="admin-status-card admin-readiness-card">
           <span>Low stock</span>
-          <strong>{summary.lowStock}</strong>
-          <p>Items that need restock attention soon.</p>
+          <strong>{summary.lowStockProducts}</strong>
+          <p>Items that should be restocked before demos or screenshots.</p>
         </div>
-        <div className="admin-status-card">
+        <div className="admin-status-card admin-readiness-card">
           <span>Out of stock</span>
-          <strong>{summary.outOfStock}</strong>
-          <p>Items currently hidden from purchase flow.</p>
+          <strong>{summary.outOfStockProducts}</strong>
+          <p>Items currently unavailable for purchase.</p>
+        </div>
+        <div className="admin-status-card admin-readiness-card">
+          <span>Catalog gaps</span>
+          <strong>{summary.missingMerchandisingInfo}</strong>
+          <p>Products missing images, copy, price, SKU, brand, or stock data.</p>
+        </div>
+        <div className="admin-status-card admin-readiness-card">
+          <span>Sale / featured</span>
+          <strong>
+            {summary.saleProducts}
+            <span className="admin-readiness-divider">/</span>
+            {summary.featuredProducts}
+          </strong>
+          <p>Products flagged for sale pricing or featured merchandising.</p>
         </div>
       </div>
+
+      <section className="admin-catalog-readiness-panel">
+        <div className="admin-catalog-readiness-header">
+          <div className="admin-dashboard-section-heading compact">
+            <span>Catalog readiness</span>
+            <p>
+              {summary.productsNeedingAttention
+                ? `${summary.productsNeedingAttention} product${summary.productsNeedingAttention === 1 ? '' : 's'} need attention before screenshots or demos.`
+                : 'No catalog issues are currently flagged in the admin product list.'}
+            </p>
+          </div>
+          <div className="admin-catalog-readiness-summary">
+            <div className="admin-catalog-readiness-stat">
+              <strong>{summary.productsNeedingAttention}</strong>
+              <span>Need attention</span>
+            </div>
+            <div className="admin-catalog-readiness-stat">
+              <strong>{summary.missingMerchandisingInfo}</strong>
+              <span>Missing merchandising info</span>
+            </div>
+            <div className="admin-catalog-readiness-stat">
+              <strong>{attentionProducts.length}</strong>
+              <span>Priority items shown</span>
+            </div>
+          </div>
+        </div>
+
+        {attentionProducts.length ? (
+          <div className="admin-attention-list">
+            {attentionProducts.map(({ product, issues, issueCount }) => (
+              <article key={product.id} className="admin-attention-item">
+                <div className="admin-attention-item-header">
+                  <div>
+                    <strong>{safeText(product.name, 'Untitled product')}</strong>
+                    <p>
+                      {safeText(product.brand, 'Unbranded')}
+                      {' \u2022 '}
+                      {safeText(product.sku, 'No SKU assigned')}
+                    </p>
+                  </div>
+                  <span className="admin-attention-count">{issueCount} issue{issueCount === 1 ? '' : 's'}</span>
+                </div>
+
+                <div className="status-badges admin-issue-badges">
+                  {issues.slice(0, 3).map((issue) => (
+                    <span key={issue.key} className={`status-badge ${issue.tone}`}>
+                      {issue.label}
+                    </span>
+                  ))}
+                  {issues.length > 3 ? <span className="status-badge status-badge-muted">+{issues.length - 3} more</span> : null}
+                </div>
+
+                <p className="admin-attention-detail">{issues[0]?.detail ?? 'Review the product record for missing catalog data.'}</p>
+
+                <div className="admin-attention-actions">
+                  <Link to={`/admin/products/${product.id}/edit`} className="text-button">
+                    Review product
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="admin-empty-state-tight admin-readiness-empty">
+            <h3>Everything in this catalog is demo-ready.</h3>
+            <p>All tracked products have the core merchandising fields needed for screenshots and future admin work.</p>
+          </div>
+        )}
+      </section>
 
       <div className="admin-toolbar">
         <div className="admin-toolbar-left">
@@ -309,186 +358,207 @@ export default function AdminProductsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((product) => (
-                  <tr key={product.id}>
-                    <td>
-                      <div className="admin-product-cell">
-                        <ShopOraImage
-                          src={product.image}
-                          alt={safeText(product.name, 'Product image')}
-                          className="admin-product-thumb"
-                          fallbackText="ShopOra"
-                        />
-                        <div className="admin-product-cell-copy">
-                          <strong>{safeText(product.name, 'Untitled product')}</strong>
-                          <p>{safeText(product.sku, 'No SKU assigned')}</p>
-                          <div className="status-badges">
-                            {product.isNew ? <span className="status-badge status-badge-muted">New</span> : null}
-                            {product.isSale || Number(product.salePrice ?? 0) > 0 ? (
-                              <span className="status-badge status-badge-sale">Sale</span>
-                            ) : null}
+                {filtered.map((product) => {
+                  const visibility = getProductVisibilityInfo(product);
+                  const merchandisingReadiness = getProductMerchandisingReadiness(product);
+                  const stockCountValue = Number(product.stockCount);
+                  const stockCount = Number.isFinite(stockCountValue) ? stockCountValue : null;
+                  const stockState = getStockState(stockCount);
+                  const saleActive = product.isSale || Number(product.salePrice ?? 0) > 0;
+                  const featuredActive = Boolean(product.isNew || product.featured);
+
+                  return (
+                    <tr key={product.id}>
+                      <td>
+                        <div className="admin-product-cell">
+                          <ShopOraImage
+                            src={product.image}
+                            alt={safeText(product.name, 'Product image')}
+                            className="admin-product-thumb"
+                            fallbackText="ShopOra"
+                          />
+                          <div className="admin-product-cell-copy">
+                            <strong>{safeText(product.name, 'Untitled product')}</strong>
+                            <p>{safeText(product.sku, 'No SKU assigned')}</p>
+                            <div className="status-badges">
+                              {featuredActive ? <span className="status-badge status-badge-muted">Featured</span> : null}
+                              {saleActive ? <span className="status-badge status-badge-sale">Sale</span> : null}
+                            </div>
+                            <div className="status-badges admin-readiness-badges">
+                              {merchandisingReadiness.badges.map((badge) => (
+                                <span key={badge.label} className={`status-badge ${badge.tone}`.trim()}>
+                                  {badge.label}
+                                </span>
+                              ))}
+                            </div>
+                            <p className="admin-product-readiness-detail">{merchandisingReadiness.detail}</p>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>{safeText(product.brand, 'Unbranded')}</td>
-                    <td>{safeText(product.department, 'Unassigned')}</td>
-                    <td>{safeText(product.category, 'Unassigned')}</td>
-                    <td>
-                      {product.salePrice ? (
-                        <>
-                          <span className="price">{formatMoney(product.salePrice)}</span>{' '}
-                          <span className="compare-price">{formatMoney(product.price)}</span>
-                        </>
-                      ) : (
-                        <span className="price">{formatMoney(product.price)}</span>
-                      )}
-                    </td>
-                    <td>
-                      <div className="status-badges admin-status-stack">
-                        <span className={`status-badge ${getProductVisibility(product).className}`}>
-                          {getProductVisibility(product).label}
-                        </span>
-                        <span className="admin-status-caption">{getProductVisibility(product).helper}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="admin-stock-cell">
-                        <span className={`status-badge ${getStockState(product.stockCount).className}`}>
-                          {getStockState(product.stockCount).label}
-                        </span>
-                        <span className="admin-stock-count">{Number(product.stockCount ?? 0)}</span>
-                      </div>
-                      <div className="admin-status-subtext">
-                        {Number(product.stockCount ?? 0) <= 0
-                          ? 'Shoppers cannot add this item to cart.'
-                          : Number(product.stockCount ?? 0) <= 7
-                            ? 'Low stock warning is shown automatically.'
-                            : 'Healthy stock level for the storefront.'}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="admin-row-actions">
-                        <Link
-                          to={`/admin/products/${product.id}/edit`}
-                          className={isCatalogSaving ? 'text-button is-disabled' : 'text-button'}
-                          aria-disabled={isCatalogSaving}
-                          onClick={(event) => {
-                            if (isCatalogSaving) {
-                              event.preventDefault();
-                            }
-                          }}
-                        >
-                          Quick edit
-                        </Link>
-                        <button
-                          type="button"
-                          className="text-button danger"
-                          disabled={isCatalogSaving}
-                          onClick={() => handleDelete(product)}
-                        >
-                          Delete product
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td>{safeText(product.brand, 'Unbranded')}</td>
+                      <td>{safeText(product.department, 'Unassigned')}</td>
+                      <td>{safeText(product.category, 'Unassigned')}</td>
+                      <td>
+                        {product.salePrice ? (
+                          <>
+                            <span className="price">{formatMoney(product.salePrice)}</span>{' '}
+                            <span className="compare-price">{formatMoney(product.price)}</span>
+                          </>
+                        ) : (
+                          <span className="price">{formatMoney(product.price)}</span>
+                        )}
+                      </td>
+                      <td>
+                        <div className="status-badges admin-status-stack">
+                          <span className={`status-badge ${visibility.className}`}>{visibility.label}</span>
+                          <span className="admin-status-caption">{visibility.helper}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="admin-stock-cell">
+                          <span className={`status-badge ${stockState.className}`}>{stockState.label}</span>
+                          <span className="admin-stock-count">{stockCount ?? '—'}</span>
+                        </div>
+                        <div className="admin-status-subtext">
+                          {stockCount === null
+                            ? 'Inventory count is not set yet.'
+                            : stockCount <= 0
+                              ? 'Shoppers cannot add this item to cart.'
+                              : stockCount <= 7
+                              ? 'Low stock warning is shown automatically.'
+                              : 'Healthy stock level for the storefront.'}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="admin-row-actions">
+                          <Link
+                            to={`/admin/products/${product.id}/edit`}
+                            className={isCatalogSaving ? 'text-button is-disabled' : 'text-button'}
+                            aria-disabled={isCatalogSaving}
+                            onClick={(event) => {
+                              if (isCatalogSaving) {
+                                event.preventDefault();
+                              }
+                            }}
+                          >
+                            Quick edit
+                          </Link>
+                          <button
+                            type="button"
+                            className="text-button danger"
+                            disabled={isCatalogSaving}
+                            onClick={() => handleDelete(product)}
+                          >
+                            Delete product
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
           <div className="admin-product-cards">
-            {filtered.map((product) => (
-              <article key={product.id} className="admin-product-card">
-                <div className="admin-product-card-top">
-                  <ShopOraImage
-                    src={product.image}
-                    alt={safeText(product.name, 'Product image')}
-                    className="admin-product-thumb"
-                    fallbackText="ShopOra"
-                  />
-                  <div className="admin-product-card-meta">
-                    <h3>{safeText(product.name, 'Untitled product')}</h3>
-                    <p>{safeText(product.brand, 'Unbranded')}</p>
-                    <p>
-                      {safeText(product.sku, 'No SKU assigned')}
+                {filtered.map((product) => {
+                  const visibility = getProductVisibilityInfo(product);
+                  const merchandisingReadiness = getProductMerchandisingReadiness(product);
+                  const stockCountValue = Number(product.stockCount);
+                  const stockCount = Number.isFinite(stockCountValue) ? stockCountValue : null;
+                  const stockState = getStockState(stockCount);
+                  const saleActive = product.isSale || Number(product.salePrice ?? 0) > 0;
+                  const featuredActive = Boolean(product.isNew || product.featured);
+
+              return (
+                <article key={product.id} className="admin-product-card">
+                  <div className="admin-product-card-top">
+                    <ShopOraImage
+                      src={product.image}
+                      alt={safeText(product.name, 'Product image')}
+                      className="admin-product-thumb"
+                      fallbackText="ShopOra"
+                    />
+                      <div className="admin-product-card-meta">
+                        <h3>{safeText(product.name, 'Untitled product')}</h3>
+                        <p>{safeText(product.brand, 'Unbranded')}</p>
+                        <p>{safeText(product.sku, 'No SKU assigned')}</p>
+                        <p>
+                          {safeText(product.department, 'Unassigned')} / {safeText(product.category, 'Unassigned')}
+                        </p>
+                        <div className="status-badges">
+                          <span className={`status-badge ${visibility.className}`}>{visibility.label}</span>
+                          {featuredActive ? <span className="status-badge status-badge-muted">Featured</span> : null}
+                          {saleActive ? <span className="status-badge status-badge-sale">Sale</span> : null}
+                        </div>
+                        <div className="status-badges admin-readiness-badges">
+                          {merchandisingReadiness.badges.map((badge) => (
+                            <span key={badge.label} className={`status-badge ${badge.tone}`.trim()}>
+                              {badge.label}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="admin-product-readiness-detail">{merchandisingReadiness.detail}</p>
+                      </div>
+                    </div>
+
+                  <div className="admin-product-card-body">
+                    <div className="admin-product-card-row">
+                      <div>
+                        {product.salePrice ? (
+                          <>
+                            <span className="price">{formatMoney(product.salePrice)}</span>{' '}
+                            <span className="compare-price">{formatMoney(product.price)}</span>
+                          </>
+                        ) : (
+                          <span className="price">{formatMoney(product.price)}</span>
+                        )}
+                      </div>
+                      <span className={`status-badge ${stockState.className}`}>{stockState.label}</span>
+                    </div>
+
+                    <p className="admin-status-subtext">
+                      {stockCount === null
+                        ? 'Stock count is not set yet.'
+                        : `Stock count: ${stockCount}. ${stockCount <= 0 ? 'Out of stock.' : stockCount <= 7 ? 'Low stock.' : 'Available.'}`}
                     </p>
-                    <p>
-                      {safeText(product.department, 'Unassigned')} / {safeText(product.category, 'Unassigned')}
-                    </p>
-                    <div className="status-badges">
-                      <span className={`status-badge ${getProductVisibility(product).className}`}>
-                        {getProductVisibility(product).label}
-                      </span>
-                      {product.isNew ? <span className="status-badge status-badge-muted">New</span> : null}
-                      {product.isSale || Number(product.salePrice ?? 0) > 0 ? (
-                        <span className="status-badge status-badge-sale">Sale</span>
-                      ) : null}
+
+                    <div className="admin-product-card-actions">
+                      <Link
+                        to={`/admin/products/${product.id}/edit`}
+                        className={isCatalogSaving ? 'btn btn-ghost btn-small is-disabled' : 'btn btn-ghost btn-small'}
+                        aria-disabled={isCatalogSaving}
+                        onClick={(event) => {
+                          if (isCatalogSaving) {
+                            event.preventDefault();
+                          }
+                        }}
+                      >
+                        Quick edit
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-small"
+                        disabled={isCatalogSaving}
+                        onClick={() => handleDelete(product)}
+                      >
+                        Delete product
+                      </button>
                     </div>
                   </div>
-                </div>
-
-                <div className="admin-product-card-body">
-                  <div className="admin-product-card-row">
-                    <div>
-                      {product.salePrice ? (
-                        <>
-                          <span className="price">{formatMoney(product.salePrice)}</span>{' '}
-                          <span className="compare-price">{formatMoney(product.price)}</span>
-                        </>
-                      ) : (
-                        <span className="price">{formatMoney(product.price)}</span>
-                      )}
-                    </div>
-                    <span className={`status-badge ${getStockState(product.stockCount).className}`}>
-                      {getStockState(product.stockCount).label}
-                    </span>
-                  </div>
-
-                  <p className="admin-status-subtext">
-                    Stock count: {Number(product.stockCount ?? 0)}.{' '}
-                    {Number(product.stockCount ?? 0) <= 0
-                      ? 'Out of stock.'
-                      : Number(product.stockCount ?? 0) <= 7
-                        ? 'Low stock.'
-                        : 'Available.'}
-                  </p>
-
-                  <div className="admin-product-card-actions">
-                    <Link
-                      to={`/admin/products/${product.id}/edit`}
-                      className={isCatalogSaving ? 'btn btn-ghost btn-small is-disabled' : 'btn btn-ghost btn-small'}
-                      aria-disabled={isCatalogSaving}
-                      onClick={(event) => {
-                        if (isCatalogSaving) {
-                          event.preventDefault();
-                        }
-                      }}
-                    >
-                      Quick edit
-                    </Link>
-                    <button
-                      type="button"
-                      className="btn btn-outline btn-small"
-                      disabled={isCatalogSaving}
-                      onClick={() => handleDelete(product)}
-                    >
-                      Delete product
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </>
       ) : null}
 
       {!filtered.length ? (
         <div className="admin-empty-state">
-          <h3>{hasProducts ? 'No matching products.' : 'Your catalog is empty.'}</h3>
+          <h3>{hasProducts ? 'No products match this view.' : 'Your catalog is empty.'}</h3>
           <p>
             {hasProducts
-              ? 'Try a different product name, brand, category, department, or stock filter.'
+              ? 'Try a different product name, brand, category, department, or stock filter. The readiness panel still reflects the full catalog.'
               : 'Add a product to start building the catalog, or reset the demo catalog if you want the seeded products back.'}
           </p>
           <div className="admin-empty-state-actions">

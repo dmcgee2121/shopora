@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.69-admin-qa-dashboard-polish
+- v0.70-local-release-checkpoint
 
 Current state:
 - v0.64 deployed successfully and the production smoke test passed
@@ -16,9 +16,10 @@ Current state:
 - v0.67 completed mobile/responsive polish
 - v0.68 completed storefront content and SEO polish
 - v0.69 completed admin QA/dashboard polish
-- v0.69 is not docs-only versus `origin/main`
-- The branch is a small admin QA/dashboard readability pass focused on dashboard guidance, catalog review copy, and product editor helper text
-- The changes are display-only admin QA/dashboard polish
+- v0.70 is a local release checkpoint summarizing the v0.65-v0.69 trail
+- v0.70 is not docs-only versus `origin/main`
+- The branch is a local release checkpoint focused on summarizing the accumulated release trail and preparing for either continued local feature work or a later controlled release
+- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.69
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
 
@@ -35,7 +36,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a small admin QA/dashboard polish pass on top of the successful v0.64 release and the earlier v0.66/v0.67/v0.68 UI cleanup.
+2. Reconfirm the branch scope as a local release checkpoint on top of the successful v0.64 release and the earlier v0.65-v0.69 UI/doc trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -44,6 +45,7 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
+   - `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md`
    - `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
    - `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md`
    - `docs/SHOPORA_HANDOFF.md`
@@ -53,6 +55,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md`
 - `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
 - `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md`
 - `docs/SHOPORA_V0_67_MOBILE_RESPONSIVE_POLISH.md`
@@ -62,4 +65,4 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Run a local browser smoke test on the admin surfaces, then consider an optional small follow-up PR if the polish still looks good.
+- Continue local feature work, prepare a future release PR, or pause here and use v0.70 as a clean handoff checkpoint.

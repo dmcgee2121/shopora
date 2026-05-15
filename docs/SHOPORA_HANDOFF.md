@@ -6,16 +6,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.69-admin-qa-dashboard-polish`
+- `v0.70-local-release-checkpoint`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
 - v0.66 completed small post-deploy UI/support polish plus QA documentation.
 - v0.67 completed mobile/responsive polish.
 - v0.68 completed storefront content and SEO polish.
-- v0.69 is not docs-only versus `origin/main`.
-- The branch is a small admin QA/dashboard polish pass focused on readability, readiness guidance, and display-only cleanup.
-- The current `src` scope is limited to `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProductsPage.jsx`, and `src/pages/admin/ProductFormPage.jsx`.
-- The changes do not introduce a new feature area or backend behavior change.
+- v0.69 completed admin QA/dashboard polish.
+- v0.70 is not docs-only versus `origin/main`.
+- The branch is a local release checkpoint that summarizes the v0.65-v0.69 trail and prepares the project for either continued local feature work or a later controlled release.
+- The branch still carries the accumulated UI/customer/admin src changes from the v0.66-v0.69 trail and no new production-risk logic changes were introduced in this checkpoint.
 
 ## Current Stack
 
@@ -61,6 +61,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.67 mobile and responsive polish was started locally and documented in `docs/SHOPORA_V0_67_MOBILE_RESPONSIVE_POLISH.md`
 - v0.68 storefront content and SEO polish was started locally and documented in `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md`
 - v0.69 admin QA dashboard polish was started locally and documented in `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
+- v0.70 local release checkpoint was started locally and documented in `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md`
 
 ## v0.68 Storefront Content And SEO Polish
 
@@ -82,6 +83,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build verification passed locally with `npm run build`.
 - Added `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md` to capture the branch scope, files changed, admin QA/dashboard areas improved, intentionally untouched areas, smoke-test checklist, accessibility notes, limitations, and recommendation.
 - Recommended next action: run a local browser smoke test on the admin surfaces, then decide whether to keep polishing or treat v0.69 as a handoff checkpoint.
+
+## v0.70 Local Release Checkpoint
+
+- Started `v0.70-local-release-checkpoint` as a local release checkpoint that summarizes the v0.65-v0.69 trail.
+- Recorded the current branch status, the accumulated app-code diff versus `origin/main`, the docs trail, the no-touch areas, and the known non-blocking Windows line-ending warnings.
+- Kept the checkpoint itself documentation-only: no checkout submission, order creation, cart business logic, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, package/dependency changes, or app behavior changes.
+- Added `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md` to capture the branch state, build status, smoke-test status, diff status, app files different from `origin/main`, docs different from `origin/main`, preserved no-touch areas, warnings, and next-step options.
+- Recommended next action: continue local feature work, prepare a future release PR, or pause here and use v0.70 as a clean handoff checkpoint.
 
 ## v0.67 Mobile And Responsive Polish
 

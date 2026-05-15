@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.72-storefront-polish-lite`
+- `v0.73-local-feature-batch-checkpoint`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
 - v0.66 completed small post-deploy UI/support polish plus QA documentation.
@@ -14,7 +14,9 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.68 completed storefront content and SEO polish.
 - v0.69 completed admin QA/dashboard polish.
 - v0.70 completed the local release checkpoint.
-- v0.72 is not docs-only versus `origin/main`.
+- v0.71 clarified the local branch scope after the v0.70 checkpoint.
+- v0.72 completed storefront polish lite.
+- v0.73 is not docs-only versus `origin/main`.
 - The branch stack is local-only source plus documentation work, not docs-only.
 - The branch still carries the accumulated UI/customer/admin src changes from the v0.65-v0.72 trail and no new production-risk logic changes were introduced in this checkpoint.
 
@@ -113,6 +115,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Build verification passed locally with `npm run build`.
 - Added `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md` to capture the branch state, files changed, storefront areas improved, intentionally untouched areas, smoke-test checklist, accessibility notes, limitations, and recommendation.
 - Recommended next action: continue local feature work, prepare a future release PR, or pause here and use v0.72 as a clean handoff checkpoint.
+
+## v0.73 Local Feature Batch Checkpoint
+
+- Started `v0.73-local-feature-batch-checkpoint` as a documentation checkpoint for the accumulated local-only v0.65-v0.72 trail.
+- Recorded the current branch, top commit, build status, smoke-test status, diff status versus `origin/main`, the app files and docs currently different from `origin/main`, the no-touch areas, the known non-blocking warnings, and the next-step options.
+- Kept the checkpoint itself documentation-only: no checkout submission, order creation, cart business logic, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, package/dependency changes, or app behavior changes.
+- Added `docs/SHOPORA_V0_73_LOCAL_FEATURE_BATCH_CHECKPOINT.md` to capture the branch state, v0.65-v0.72 summary, build and smoke-test status, diff status, preserved no-touch areas, warnings, and recommended next options.
+- Recommended next action: continue local feature work, prepare a future release PR, or pause here and use v0.73 as a clean handoff checkpoint.
 
 ## v0.67 Mobile And Responsive Polish
 
@@ -517,4 +527,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as a small storefront content and SEO polish pass plus QA documentation, not as a docs-only merge branch.
+The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on presentation polish, admin visibility, and production hardening without disturbing the existing checkout/auth/order flows. This branch should be treated as a local feature batch checkpoint plus QA documentation, not as a docs-only merge branch.

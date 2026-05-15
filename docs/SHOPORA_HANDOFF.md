@@ -375,6 +375,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - `npm run build` passed locally after the v0.61 edits.
 - Next recommended branch: `v0.62-customer-account-polish`.
 
+## v0.62 Deployment Readiness Review
+
+- Started `v0.62-deployment-readiness-review` as a documentation-only deployment readiness review on top of the v0.57-v0.61 branch sequence.
+- Added `docs/SHOPORA_V0_62_DEPLOYMENT_READINESS_REVIEW.md` to record the current branch, clean working tree, build status, diff status, review commands, no-touch areas, and rollback guidance.
+- Confirmed the branch is clean and `npm run build` still passes locally.
+- Kept the no-touch areas preserved: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, and env files/secrets.
+- Recommended next branch/state: docs-only merge prep or deliberate deployment-prep review, depending on release scope.
+
 ## v0.51-v0.53 Local Session Wrap-Up
 
 - Completed the local session through `v0.53-product-review-display-lite` with the latest completed feature commit at `b32316e`.

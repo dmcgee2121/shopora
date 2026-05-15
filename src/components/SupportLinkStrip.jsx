@@ -21,7 +21,12 @@ export default function SupportLinkStrip({
 
       <nav className="support-link-strip-links" aria-label={title || eyebrow || 'Support links'}>
         {links.map((link) => (
-          <Link key={link.to} to={link.to} className="support-link-card">
+          <Link
+            key={link.to}
+            to={link.to}
+            className="support-link-card"
+            aria-label={link.note ? `${link.label}. ${link.note}` : link.label}
+          >
             <strong>{link.label}</strong>
             {link.note ? <span>{link.note}</span> : null}
           </Link>

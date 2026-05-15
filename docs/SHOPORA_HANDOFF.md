@@ -6,10 +6,11 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.65-post-deploy-smoke-and-stability-notes`
+- `v0.66-production-qa-polish`
 - v0.64 deployed successfully and the production smoke test passed.
-- v0.65 is a documentation-only post-deploy checkpoint.
-- The next work should be treated as stability tracking or a future safe feature branch, not as new release behavior.
+- v0.65 captured the post-deploy stability checkpoint.
+- v0.66 is a small production QA polish pass focused on copy, layout, and accessibility cleanup only.
+- The branch does not introduce a new feature area or backend behavior change.
 
 ## Current Stack
 
@@ -51,6 +52,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.63 docs-only merge prep was completed locally and documented in `docs/SHOPORA_V0_63_DOCS_ONLY_MERGE_PREP.md`
 - v0.64 docs merge and deploy prep was completed locally and documented in `docs/SHOPORA_V0_64_DOCS_MERGE_AND_DEPLOY_PREP.md`
 - v0.65 post-deploy smoke and stability notes were started locally and documented in `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
+- v0.66 production QA polish was started locally and documented in `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
+
+## v0.66 Production QA Polish
+
+- Started `v0.66-production-qa-polish` as a small post-deploy polish pass focused on UI copy, layout, and accessibility cleanup.
+- Improved product cards so the no-review state is no longer repeated for shoppers.
+- Improved shared support links with clearer accessible labels and shortened footer support labels for cleaner narrow-screen layout.
+- Kept all no-touch areas intact: checkout submission, order creation, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, and package/dependency changes.
+- Added `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md` to record the files changed, production polish areas, intentionally untouched areas, smoke-test checklist, follow-up checklist, accessibility notes, limitations, and recommendation.
+- Recommended next action: use v0.66 as a lightweight production QA checkpoint or move to the next safe feature branch after verification.
 
 ## v0.65 Post-Deploy Smoke And Stability
 

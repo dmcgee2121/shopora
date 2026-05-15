@@ -155,7 +155,8 @@ export default function ProductCard({ product }) {
   const merchandisingBadges = getProductMerchandisingBadges(safeProduct);
   const reviewDisplay = getProductReviewDisplay(safeProduct);
   const discoveryCue = getDiscoveryCue(safeProduct, stockState, reviewDisplay, price);
-  const supportCue = safeProduct.shippingNote || safeProduct.returnNote || reviewDisplay.summary;
+  const supportCue =
+    safeProduct.shippingNote || safeProduct.returnNote || (reviewDisplay.hasReviews ? reviewDisplay.summary : '');
   const leftBadges = merchandisingBadges.filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured');
   const rightBadges = merchandisingBadges.filter((badge) => !leftBadges.includes(badge));
 

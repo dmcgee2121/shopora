@@ -25,14 +25,14 @@ export function getSupportLinks(currentUser) {
   return [
     ...baseSupportLinks,
     {
-    to: currentUser ? '/account/orders' : '/login',
-    label: currentUser ? 'Review orders' : 'Sign in for orders',
-    note: 'Keep order details handy while you reach out',
-  },
-  {
-    to: currentUser ? '/account' : '/login',
-    label: currentUser ? 'Open account' : 'Sign in',
-    note: 'Profile and saved items live together here',
-  },
-];
+      to: currentUser ? '/account/orders' : '/login',
+      label: currentUser ? 'Review orders' : 'Sign in for orders',
+      note: 'Keep order details handy while you reach out',
+    },
+    {
+      to: currentUser ? '/account' : '/login',
+      label: currentUser ? 'View account' : 'Sign in',
+      note: 'Profile and saved items live together here',
+    },
+  ];
 }

@@ -45,11 +45,11 @@ export default function SavedItemsPage() {
         <>
           <div className="account-toolbar">
             <div className="catalog-context">
-              <span className="query-chip">Save favorites, then come back to compare</span>
+              <span className="query-chip">Save favorites, then compare later</span>
               <span className="query-chip">
                 {savedProducts.length} favorite{savedProducts.length === 1 ? '' : 's'} ready to browse
               </span>
-              <span className="query-chip">Member perks coming soon</span>
+              <span className="query-chip">Wishlist stays tied to this account</span>
             </div>
             <div className="empty-state-actions">
               <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">

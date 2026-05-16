@@ -95,15 +95,15 @@ export default function OrdersPage() {
       </div>
 
       <p className="account-page-note">
-        Use this page to scan recent purchases, check fulfillment status, jump into a receipt, or head back to
+        Use this page to review recent purchases, check fulfillment status, open a receipt, or head back to
         browsing. ShopOra keeps order history visible for quick reference and support.
       </p>
 
       <div className="account-toolbar">
         <div className="catalog-context">
-          <span className="query-chip">Continue from your order history</span>
-          <span className="query-chip">Saved items stay close by</span>
-          <span className="query-chip">ShopOra member experience</span>
+          <span className="query-chip">Keep receipts close by</span>
+          <span className="query-chip">Saved items and orders stay together</span>
+          <span className="query-chip">ShopOra account view</span>
         </div>
         <div className="empty-state-actions">
           <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
@@ -120,7 +120,7 @@ export default function OrdersPage() {
 
       <SupportLinkStrip
         title="Need help with this order history?"
-        description="Keep the receipt or order number handy, then use these support shortcuts if you need shipping, returns, privacy, or account help."
+        description="Keep the receipt or order number handy, then use these support shortcuts for shipping, returns, privacy, or account help."
         links={supportLinks}
       />
 

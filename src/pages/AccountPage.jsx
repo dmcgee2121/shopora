@@ -285,14 +285,14 @@ export default function AccountPage() {
     ? 'Jump back into styles you checked out earlier.'
     : 'A small edit based on saved styles and popular ShopOra favorites.';
   const preferredDepartmentsLabel = preferenceBuckets.departments.length
-    ? preferenceBuckets.departments.map((item) => item.label).join(' · ')
+    ? preferenceBuckets.departments.map((item) => item.label).join(', ')
     : 'Browse a few products to shape this preview.';
   const preferredCategoriesLabel = preferenceBuckets.categories.length
-    ? preferenceBuckets.categories.map((item) => item.label).join(' · ')
+    ? preferenceBuckets.categories.map((item) => item.label).join(', ')
     : 'Saved items and recent views will surface style hints here.';
   const preferredBrandsLabel = preferenceBuckets.brands.length
-    ? preferenceBuckets.brands.map((item) => item.label).join(' · ')
-    : 'No brand pattern has been formed yet.';
+    ? preferenceBuckets.brands.map((item) => item.label).join(', ')
+    : 'Save or view a few styles to shape this preview.';
   const nextBestAction = getCustomerNextBestAction({
     currentUser,
     savedCount: safeSavedProductIds.length,
@@ -339,7 +339,7 @@ export default function AccountPage() {
   const memberJourneyReadyCount = memberJourneySteps.filter((step) => step.done).length;
   const memberJourneyProgressLabel =
     memberJourneyReadyCount === memberJourneySteps.length
-      ? 'Your account is ready for fast repeat shopping.'
+      ? 'Your account is ready for faster repeat shopping.'
       : 'A few small details will make this account feel more complete.';
   const memberBenefits = [
     {
@@ -388,7 +388,7 @@ export default function AccountPage() {
           <div>
             <p className="eyebrow">Account</p>
             <h1>Welcome{currentUser ? `, ${currentUser.firstName}` : ''}</h1>
-            <p>Manage your profile, saved styles, order history, shopping preferences, and shipping details.</p>
+            <p>Manage your profile, saved styles, order history, and shipping details from one place.</p>
           </div>
         </div>
         <button type="button" className="btn btn-ghost" onClick={handleLogout}>
@@ -401,7 +401,7 @@ export default function AccountPage() {
           <p className="eyebrow">Account dashboard</p>
           <h2 id="account-dashboard-title">Your ShopOra snapshot</h2>
           <p>
-            Keep orders, saved styles, profile details, and shopping shortcuts together in one polished account view.
+            Keep saved styles, orders, profile details, and support shortcuts together in one polished account view.
           </p>
           <div className="account-dashboard-stats" aria-label="Account summary">
             <div>
@@ -526,7 +526,7 @@ export default function AccountPage() {
 
       <SupportLinkStrip
         title="Need help with your account?"
-        description="Use these shortcuts if you want help with orders, shipping, returns, privacy, or profile details before reaching out."
+        description="Use these shortcuts for orders, shipping, returns, privacy, or profile details before you reach out."
         links={supportLinks}
       />
 
@@ -536,8 +536,8 @@ export default function AccountPage() {
             <span className="account-card-label">Member benefits</span>
             <h2 id="account-member-title">Your ShopOra member experience</h2>
             <p>
-              Frontend-only member cues that make the account feel more personal. There are no points, store credit,
-              or redemption balances here.
+              Frontend-only member cues that keep the account simple and reassuring. There are no points, store
+              credit, or redemption balances here.
             </p>
           </div>
           <div className="recommendation-links account-member-links" aria-label="Member shortcuts">
@@ -868,18 +868,18 @@ export default function AccountPage() {
         <aside className="account-sidebar">
           <div className="form-card account-summary-card">
             <h2>Quick actions</h2>
-            <p className="account-summary-note">Common account shortcuts for demo browsing.</p>
+            <p className="account-summary-note">Common account shortcuts for a faster return visit.</p>
             <Link to="/account/orders" className="btn btn-ghost full-width">
-              View Orders
+              View orders
             </Link>
             <Link to="/account/saved" className="btn btn-ghost full-width">
-              View Saved Items
+              View saved items
             </Link>
             <Link to="/women" className="btn btn-dark full-width">
-              Continue Shopping
+              Continue shopping
             </Link>
             <Link to="/sale" className="btn btn-ghost full-width">
-              View Sale
+              View sale
             </Link>
           </div>
         </aside>

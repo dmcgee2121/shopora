@@ -1,4 +1,7 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
 export default function AboutPage() {
+  useDocumentTitle('About ShopOra | ShopOra');
   return (
     <section className="container content-page">
       <div className="content-split">
@@ -12,8 +15,7 @@ export default function AboutPage() {
           </p>
           <p>
             The experience focuses on clear merchandising, trustworthy support copy, and a lightweight
-            customer journey that can support a small business or a growing retail brand without
-            overstating what the store can do today.
+            customer journey that helps shoppers move from browsing to support without feeling lost.
           </p>
         </div>
         <div className="info-card">

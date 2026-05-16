@@ -997,10 +997,12 @@ main {
 .card-actions {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .card-actions .btn {
   flex: 1;
+  min-width: 0;
 }
 
 .card-actions .btn:disabled {
@@ -1151,6 +1153,7 @@ main {
 .support-link-card {
   display: grid;
   gap: 6px;
+  min-width: 0;
   min-height: 100%;
   padding: 16px;
   border-radius: 18px;
@@ -1178,6 +1181,7 @@ main {
 
 .support-link-card strong {
   font-size: 1rem;
+  line-height: 1.35;
 }
 
 .support-link-card span {
@@ -3538,6 +3542,46 @@ main {
     width: min(72vw, 220px);
   }
 
+  .support-link-strip {
+    padding: 18px;
+  }
+
+  .support-link-strip-copy p {
+    max-width: none;
+  }
+
+  .support-link-strip-links {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-toolbar,
+  .catalog-context,
+  .active-filter-row,
+  .empty-state-actions,
+  .recommendation-links {
+    justify-content: flex-start;
+  }
+
+  .catalog-toolbar {
+    gap: 12px;
+  }
+
+  .toolbar-group {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .toolbar-label {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .toolbar-label select {
+    width: 100%;
+  }
+
   .home-page .section-block {
     margin: 54px 0;
   }
@@ -3567,6 +3611,17 @@ main {
 
   .campaign-actions {
     flex-direction: column;
+  }
+
+  .campaign-actions .btn,
+  .empty-state-actions .btn,
+  .catalog-toolbar .btn {
+    width: 100%;
+  }
+
+  .recommendation-links .query-chip,
+  .catalog-context .query-chip {
+    width: 100%;
   }
 
   .home-continue-strip {
@@ -5335,6 +5390,28 @@ body.modal-open {
 
   .footer-link-group {
     min-width: 0;
+  }
+
+  .footer-links,
+  .footer-brand-block,
+  .footer-copy {
+    width: 100%;
+  }
+
+  .support-link-card {
+    padding: 14px;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .card-actions .btn {
+    width: 100%;
+  }
+
+  .empty-state-actions {
+    width: 100%;
   }
 
   .detail-subline {

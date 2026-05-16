@@ -13,6 +13,7 @@ import { idsMatch } from '../utils/idUtils';
 import { getProductMerchandisingBadges, getProductReviewDisplay, getProductShelfLabel } from '../utils/merchandising';
 import { getRecommendedProducts } from '../utils/recommendations';
 import { addRecentlyViewedId, filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 function CloseIcon() {
   return (
@@ -151,6 +152,7 @@ export default function ProductPage() {
   const { id } = useParams();
   const catalogProducts = products.length ? products : fallbackProducts;
   const product = catalogProducts.find((item) => idsMatch(item.id, id));
+  useDocumentTitle(`ShopOra | ${product?.name || 'Product'}`);
   const { addItem } = useCart();
   const { isAuthenticated, isSavedItem, toggleSavedItem } = useAuth();
   const { openMiniCart } = useMiniCart();
@@ -208,7 +210,7 @@ export default function ProductPage() {
     return (
       <section className="container empty-product">
         <h1>Product not found</h1>
-        <p>The style you are looking for does not exist in the current catalog.</p>
+        <p>The style you are looking for is not available in the current catalog.</p>
         <Link to="/" className="btn btn-dark">
           Return home
         </Link>
@@ -335,7 +337,7 @@ export default function ProductPage() {
             <span className="price">${price.toFixed(2)}</span>
             {hasSalePrice ? <span className="compare-price">${basePrice.toFixed(2)}</span> : null}
           </div>
-          <p className="price-note">A clear, demo-ready view of the price shoppers will pay today.</p>
+          <p className="price-note">A clear view of the price shoppers will pay today.</p>
           <p className={`stock-note stock-note-${isOutOfStock ? 'out' : stockCount <= 7 ? 'low' : 'in'}`}>
             {stockMessage}
           </p>
@@ -472,7 +474,7 @@ export default function ProductPage() {
               </Link>
             </div>
             <p className="product-support-note">
-              Secure checkout, easy returns, and shipping updates are ready for a polished demo experience.
+              Secure checkout, easy returns, and shipping updates are ready when you are.
             </p>
           </div>
 

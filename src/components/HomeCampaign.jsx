@@ -13,13 +13,13 @@ export default function HomeCampaign({ products = [] }) {
 
   return (
     <section className="home-campaign">
-      <div className="campaign-copy">
-        <p className="campaign-kicker">Seasonal edit</p>
+        <div className="campaign-copy">
+          <p className="campaign-kicker">Seasonal edit</p>
         <h2>Fresh arrivals, trending finds, and easy staples in one calm edit.</h2>
         <p>
           ShopOra is arranged like a modern department floor: new statements up front, trending
-          pieces in the middle, and dependable essentials close at hand. The result feels
-          editorial, useful, and easy to browse from the first scroll.
+          pieces in the middle, dependable essentials close at hand, and support pages that stay
+          easy to find when shoppers want shipping, returns, or privacy details.
         </p>
         <div className="campaign-actions">
           <Link className="btn btn-dark" to="/women">

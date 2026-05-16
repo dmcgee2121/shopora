@@ -1,17 +1,17 @@
 const baseSupportLinks = [
   {
     to: '/contact',
-    label: 'Contact support',
+    label: 'Contact us',
     note: 'Questions about orders, products, shipping, or account help',
   },
   {
     to: '/shipping',
-    label: 'Shipping policy',
+    label: 'Shipping info',
     note: 'Review timing, tracking, and fulfillment basics',
   },
   {
     to: '/returns',
-    label: 'Returns policy',
+    label: 'Returns help',
     note: 'See how exchanges, refunds, and damaged items are handled',
   },
   {
@@ -31,7 +31,7 @@ export function getSupportLinks(currentUser) {
     },
     {
       to: currentUser ? '/account' : '/login',
-      label: currentUser ? 'Open account' : 'Sign in',
+      label: currentUser ? 'View account' : 'Sign in',
       note: 'Profile and saved items live together here',
     },
   ];

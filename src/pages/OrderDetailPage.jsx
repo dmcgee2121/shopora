@@ -5,6 +5,7 @@ import ShopOraImage from '../components/ShopOraImage';
 import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { idsMatch } from '../utils/idUtils';
 import { getOrderItemImage } from '../utils/orderItemUtils';
@@ -136,6 +137,7 @@ export default function OrderDetailPage() {
   const [resolvedOrder, setResolvedOrder] = useState(() => getOrderById(orderId));
   const retentionLinks = getCustomerRetentionLinks(currentUser);
   const supportLinks = getSupportLinks(currentUser);
+  useDocumentTitle(`ShopOra | ${resolvedOrder?.orderNumber || 'Order receipt'}`);
 
   useEffect(() => {
     let cancelled = false;

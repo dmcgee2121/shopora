@@ -4,6 +4,7 @@ import ShopOraImage from '../components/ShopOraImage';
 import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { getSupportLinks } from '../utils/supportLinks';
 import { getOrderItemImage } from '../utils/orderItemUtils';
@@ -49,6 +50,7 @@ function getItemDetails(item) {
 
 export default function OrdersPage() {
   const { currentUser, authSource } = useAuth();
+  useDocumentTitle('ShopOra | Orders');
   const { getOrdersByUser, isOrdersLoading, ordersError } = useOrders();
   const orders = currentUser ? getOrdersByUser(currentUser.id) : [];
   const retentionLinks = getCustomerRetentionLinks(currentUser);
@@ -93,15 +95,15 @@ export default function OrdersPage() {
       </div>
 
       <p className="account-page-note">
-        Use this page to scan recent purchases, check fulfillment status, jump into a receipt, or head back to
+        Use this page to review recent purchases, check fulfillment status, open a receipt, or head back to
         browsing. ShopOra keeps order history visible for quick reference and support.
       </p>
 
       <div className="account-toolbar">
         <div className="catalog-context">
-          <span className="query-chip">Continue from your order history</span>
-          <span className="query-chip">Saved items stay close by</span>
-          <span className="query-chip">ShopOra member experience</span>
+          <span className="query-chip">Keep receipts close by</span>
+          <span className="query-chip">Saved items and orders stay together</span>
+          <span className="query-chip">ShopOra account view</span>
         </div>
         <div className="empty-state-actions">
           <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
@@ -118,7 +120,7 @@ export default function OrdersPage() {
 
       <SupportLinkStrip
         title="Need help with this order history?"
-        description="Keep the receipt or order number handy, then use these support shortcuts if you need shipping, returns, privacy, or account help."
+        description="Keep the receipt or order number handy, then use these support shortcuts for shipping, returns, privacy, or account help."
         links={supportLinks}
       />
 

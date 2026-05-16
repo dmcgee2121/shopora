@@ -12,6 +12,7 @@ import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
 import CatalogStatusNote from '../components/CatalogStatusNote';
 import { useProductCatalog } from '../context/ProductCatalogContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { filterRecentlyViewedProducts, readRecentlyViewedIds } from '../utils/recentlyViewed';
 import { getHomepageDepartmentLinks, getRecommendedProducts } from '../utils/recommendations';
 import {
@@ -85,6 +86,7 @@ function HomeDiscoverySection({ title, description, products, action, links, loa
 
 export default function HomePage() {
   const { products, isCatalogLoading } = useProductCatalog();
+  useDocumentTitle('ShopOra | Curated department-store shopping');
   const isInitialCatalogLoading = isCatalogLoading && products.length === 0;
   const catalogProducts = useMemo(() => uniqueProducts(products), [products]);
   const homepageDepartmentLinks = useMemo(() => getHomepageDepartmentLinks(), []);
@@ -139,8 +141,8 @@ export default function HomePage() {
   const discoveryDescription = isInitialCatalogLoading
     ? 'Loading a few styles for your next stop.'
     : recentlyViewedProducts.length
-      ? 'Pick up where you left off.'
-      : 'Start with a few ShopOra favorites.';
+      ? 'Pick up where you left off with the styles you were already comparing.'
+      : 'Start with a few ShopOra favorites, then keep moving through the store.';
   const discoveryAction = (
     <span className="count-badge">{isInitialCatalogLoading ? 'Loading' : `${discoveryProducts.length} picks`}</span>
   );
@@ -170,12 +172,12 @@ export default function HomePage() {
         <MerchSection
           id="new-arrivals"
           title="New Arrivals"
-          description="Freshly added styles selected to balance wardrobe staples with sharper seasonal pieces and easy outfit builders."
+          description="Freshly added styles selected to balance wardrobe staples with seasonal pieces and easy outfit builders."
           action={<Link to="/women">Browse Women's Edit</Link>}
           products={newArrivals}
           loading={isInitialCatalogLoading}
           emptyTitle="New arrivals are on the way."
-          emptyText="We are building the latest edit now. Check back shortly for fresh product drops."
+          emptyText="We are building the latest edit now. Check back shortly for fresh product drops and new outfit ideas."
         />
 
         <MerchSection
@@ -186,7 +188,7 @@ export default function HomePage() {
           products={salePicks}
           loading={isInitialCatalogLoading}
           emptyTitle="Sale picks are temporarily empty."
-          emptyText="There are no markdowns in the current catalog. Browse the full store for more styles."
+          emptyText="There are no markdowns in the current catalog right now. Browse the full store for more styles."
         />
 
         <FeaturedBrands />
@@ -200,7 +202,7 @@ export default function HomePage() {
           products={trendingProducts}
           loading={isInitialCatalogLoading}
           emptyTitle="Trending styles are loading."
-          emptyText="We are getting the latest catalog ready for browsing."
+          emptyText="We are getting the latest catalog ready so you can keep browsing."
         />
 
         <MerchSection
@@ -211,7 +213,7 @@ export default function HomePage() {
           products={everydayEssentials}
           loading={isInitialCatalogLoading}
           emptyTitle="Everyday essentials are loading."
-          emptyText="We are getting the core wardrobe edit ready for browsing."
+          emptyText="We are getting the core wardrobe edit ready for browsing and easy outfit building."
         />
 
         <WhyShopOra />

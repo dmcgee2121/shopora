@@ -7,15 +7,27 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.64-docs-merge-and-deploy-prep
+- v0.80-final-local-qa-before-pr
 
 Current state:
-- The v0.64 prep pass is final release/deploy prep for accumulated UI/customer/admin feature changes, not a docs-only merge branch
-- Top commit at the start of this prep was `0572dbc Add v0.63 docs-only merge prep`
-- The working tree was clean when the v0.64 prep began
-- `npm run build` passed locally before the docs update
-- Important branch-scope note: the `src` review surfaces called out for this branch are `src/components/CatalogStatusNote.jsx`, `src/components/CategoryPage.jsx`, `src/components/FilterSidebar.jsx`, `src/components/Footer.jsx`, `src/components/HomeCampaign.jsx`, `src/components/ProductCard.jsx`, `src/components/QuantitySelector.jsx`, `src/components/SupportLinkStrip.jsx`, and `src/pages/AccountPage.jsx`
-- These are UI/customer/admin surface changes, so do not describe the branch as docs-only
+- v0.64 deployed successfully and the production smoke test passed
+- v0.65 captured the post-deploy stability checkpoint
+- v0.66 completed small post-deploy UI/support polish plus QA documentation
+- v0.67 completed mobile/responsive polish
+- v0.68 completed storefront content and SEO polish
+- v0.69 completed admin QA/dashboard polish
+- v0.70 completed the local release checkpoint
+- v0.71 clarified the local branch scope after the v0.70 checkpoint
+- v0.72 completed storefront polish lite
+- v0.73 completed the local feature batch checkpoint for the v0.65-v0.72 trail
+- v0.74 prepared the local v0.65-v0.73 feature batch for a future controlled release PR
+- v0.75 made the local roadmap and release decision after the v0.65-v0.74 batch
+- v0.76 added a small customer/account lite polish pass after the roadmap decision
+- v0.77 made a release-candidate review checkpoint after the v0.65-v0.76 batch
+- v0.79 prepared the local v0.65-v0.77 batch for a future controlled release PR
+- v0.80 is the final local QA checkpoint before any future PR decision
+- The branch stack is local-only source plus documentation work, not docs-only
+- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.77
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
 
@@ -32,7 +44,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope against `origin/main` and treat it as final release/deploy prep for accumulated UI/customer/admin feature changes.
+2. Reconfirm the branch scope as a local storefront polish-lite pass on top of the successful v0.64 release and the earlier v0.65-v0.71 UI/doc trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -41,15 +53,43 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
-   - `docs/SHOPORA_V0_64_DOCS_MERGE_AND_DEPLOY_PREP.md`
+   - `docs/SHOPORA_V0_79_FUTURE_RELEASE_PR_PREP.md`
+   - `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
+   - `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
+   - `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
+   - `docs/SHOPORA_V0_74_FUTURE_RELEASE_PR_PREP.md`
+   - `docs/SHOPORA_V0_73_LOCAL_FEATURE_BATCH_CHECKPOINT.md`
+   - `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md`
+   - `docs/SHOPORA_V0_71_LOCAL_BRANCH_SCOPE_CLARIFICATION.md`
+   - `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md`
+   - `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
+   - `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md`
    - `docs/SHOPORA_HANDOFF.md`
-   - `docs/SHOPORA_V0_63_DOCS_ONLY_MERGE_PREP.md`
-5. If continuing the merge/deploy review, keep the no-touch areas untouched and do not modify `src`.
+   - `docs/SHOPORA_V0_67_MOBILE_RESPONSIVE_POLISH.md`
+   - `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
+   - `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
+5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
-- `docs/SHOPORA_V0_64_DOCS_MERGE_AND_DEPLOY_PREP.md`
+- `docs/SHOPORA_V0_80_FINAL_LOCAL_QA_BEFORE_PR.md`
+- `docs/SHOPORA_V0_79_FUTURE_RELEASE_PR_PREP.md`
+- `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
+- `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
+- `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
+- `docs/SHOPORA_V0_74_FUTURE_RELEASE_PR_PREP.md`
+- `docs/SHOPORA_V0_73_LOCAL_FEATURE_BATCH_CHECKPOINT.md`
+- `docs/SHOPORA_V0_72_STOREFRONT_POLISH_LITE.md`
+- `docs/SHOPORA_V0_71_LOCAL_BRANCH_SCOPE_CLARIFICATION.md`
+- `docs/SHOPORA_V0_70_LOCAL_RELEASE_CHECKPOINT.md`
+- `docs/SHOPORA_V0_69_ADMIN_QA_DASHBOARD_POLISH.md`
+- `docs/SHOPORA_V0_68_STOREFRONT_CONTENT_SEO_POLISH.md`
+- `docs/SHOPORA_V0_67_MOBILE_RESPONSIVE_POLISH.md`
+- `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
+- `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
 - `docs/SHOPORA_HANDOFF.md`
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Ready for final release/deploy prep after one final build and diff check, then decide whether to proceed with merge/deploy review.
+- The batch is ready to prepare for a future controlled PR.
+- If you want one more pass, keep it very small and QA-focused.
+- Hold here if you want to hand off the branch in its current state.

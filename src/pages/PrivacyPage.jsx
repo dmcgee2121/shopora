@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 export default function PrivacyPage() {
+  useDocumentTitle('Privacy policy | ShopOra');
   return (
     <section className="container content-page">
       <div className="content-split">

@@ -5,6 +5,7 @@ import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useOrders } from '../context/OrdersContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { createStripeCheckoutSession } from '../services/stripeCheckoutService';
 import { getSupportLinks } from '../utils/supportLinks';
 
@@ -47,6 +48,7 @@ function isLocalDebugMode() {
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
+  useDocumentTitle('ShopOra | Checkout');
   const { isAuthenticated, currentUser, authSource } = useAuth();
   const { createOrder } = useOrders();
   const navigate = useNavigate();

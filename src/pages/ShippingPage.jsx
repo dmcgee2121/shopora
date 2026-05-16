@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import SupportLinkStrip from '../components/SupportLinkStrip';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { getSupportLinks } from '../utils/supportLinks';
 
 export default function ShippingPage() {
   const supportLinks = getSupportLinks();
+  useDocumentTitle('Shipping information | ShopOra');
 
   return (
     <section className="container content-page">

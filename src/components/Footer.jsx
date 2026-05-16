@@ -11,9 +11,9 @@ const shopLinks = [
 ];
 
 const supportLinks = [
-  { to: '/contact', label: 'Contact support' },
-  { to: '/shipping', label: 'Shipping policy' },
-  { to: '/returns', label: 'Returns policy' },
+  { to: '/contact', label: 'Contact us' },
+  { to: '/shipping', label: 'Shipping info' },
+  { to: '/returns', label: 'Returns help' },
   { to: '/privacy', label: 'Privacy policy' },
 ];
 
@@ -47,7 +47,7 @@ export default function Footer() {
           </div>
           <p className="footer-copy">
             A calm, curated storefront for modern clothing and lifestyle shopping with secure checkout,
-            easy returns, and straightforward support.
+            clear shipping and returns guidance, and straightforward support when you need it.
           </p>
         </div>
 

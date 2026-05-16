@@ -2229,6 +2229,20 @@
     min-height: 64px;
   }
 
+  .admin-page-header-actions,
+  .admin-toolbar-actions,
+  .admin-empty-state-actions,
+  .admin-product-card-actions {
+    width: 100%;
+  }
+
+  .admin-page-header-actions .btn,
+  .admin-toolbar-actions .btn,
+  .admin-empty-state-actions .btn,
+  .admin-product-card-actions .btn {
+    flex: 1 1 160px;
+  }
+
   .admin-table-wrap {
     display: none;
   }
@@ -2296,6 +2310,21 @@
   .admin-readiness-grid,
   .admin-catalog-readiness-summary {
     grid-template-columns: 1fr;
+  }
+
+  .admin-page-header-actions,
+  .admin-toolbar-actions,
+  .admin-empty-state-actions,
+  .admin-product-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-page-header-actions .btn,
+  .admin-toolbar-actions .btn,
+  .admin-empty-state-actions .btn,
+  .admin-product-card-actions .btn {
+    width: 100%;
   }
 }
 

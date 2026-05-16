@@ -148,8 +148,8 @@ export default function AdminDashboard() {
       : '';
   const dashboardSubtitle =
     ordersSource === 'supabase'
-      ? 'A clean snapshot of live Supabase order activity and catalog health for the current admin session.'
-      : 'A clean snapshot of sales, catalog health, and recent order movement using local demo data.';
+      ? 'A clean snapshot of live Supabase order activity, catalog health, and admin QA signals for the current session.'
+      : 'A clean snapshot of sales, catalog health, and admin QA signals using local demo data.';
   const catalogReadiness = useMemo(() => getCatalogReadinessSummary(products), [products]);
   const attentionProducts = useMemo(() => getCatalogAttentionProducts(products, { limit: 4 }), [products]);
   const storefrontReady = catalogReadiness.totalProducts > 0 && catalogReadiness.productsNeedingAttention === 0;
@@ -266,14 +266,14 @@ export default function AdminDashboard() {
 
       <section className="admin-dashboard-overview">
         <div className="admin-dashboard-overview-main">
-          <div className="admin-dashboard-section-heading">
-            <span>Revenue and order activity</span>
-            <p>
-              {ordersSource === 'supabase'
-                ? 'Core numbers and order movement pulled from the current live Supabase admin session.'
-                : 'Core numbers and live demo signals pulled from the current local product and order state.'}
-            </p>
-          </div>
+            <div className="admin-dashboard-section-heading">
+              <span>Revenue and order activity</span>
+              <p>
+                {ordersSource === 'supabase'
+                  ? 'Core numbers and order movement pulled from the current live Supabase admin session.'
+                  : 'Core numbers and demo signals pulled from the current local product and order state.'}
+              </p>
+            </div>
 
           <div className="admin-dashboard-metric-grid">
             <DashboardMetric
@@ -303,7 +303,7 @@ export default function AdminDashboard() {
               <span>Store readiness</span>
               <p>
                 {catalogReadiness.totalProducts
-                  ? 'A compact view of catalog health before demos, screenshots, or future launches. Look for missing images, copy, taxonomy, stock, and detail data first.'
+                  ? 'A compact view of catalog health before demos, screenshots, or release checks. Start with missing images, copy, taxonomy, stock, and detail data first.'
                   : 'No products are in the catalog yet, so readiness signals will populate after the first item is added.'}
               </p>
             </div>
@@ -334,7 +334,7 @@ export default function AdminDashboard() {
               <SummaryRow
                 label="Needs attention"
                 value={catalogReadiness.productsNeedingAttention}
-                note="Products with issues to fix before demos."
+                note="Products with missing or incomplete merchandising data."
                 toneClass="admin-issue-missing"
               />
               <SummaryRow
@@ -351,7 +351,7 @@ export default function AdminDashboard() {
               </span>
               <p>
                 {storefrontReady
-                  ? 'Storefront-facing data is in good shape.'
+                  ? 'Storefront-facing data is in good shape for a demo or smoke review.'
                   : `${catalogReadiness.productsNeedingAttention} product${catalogReadiness.productsNeedingAttention === 1 ? '' : 's'} still need work before the catalog feels demo-ready.`}
               </p>
             </div>
@@ -359,10 +359,10 @@ export default function AdminDashboard() {
 
           <div className="admin-dashboard-mini-grid">
             <div className="admin-dashboard-panel admin-dashboard-panel-soft">
-              <div className="admin-dashboard-section-heading compact">
-                <span>Order activity</span>
-                <p>Where the queue is concentrated right now.</p>
-              </div>
+            <div className="admin-dashboard-section-heading compact">
+              <span>Order activity</span>
+              <p>Where the queue is concentrated right now and what should be checked first.</p>
+            </div>
 
               <div className="admin-progress-list">
                 <ProgressRow
@@ -390,10 +390,10 @@ export default function AdminDashboard() {
             </div>
 
             <div className="admin-dashboard-panel admin-dashboard-panel-soft">
-              <div className="admin-dashboard-section-heading compact">
-                <span>Catalog health</span>
-                <p>Products needing attention versus healthy stock.</p>
-              </div>
+            <div className="admin-dashboard-section-heading compact">
+              <span>Catalog health</span>
+              <p>Products needing attention versus healthy stock, at a glance.</p>
+            </div>
 
               <div className="admin-progress-list">
                 <ProgressRow
@@ -461,7 +461,7 @@ export default function AdminDashboard() {
               <QuickActionLink
                 to="/admin/products"
                 label="Check Storefront Readiness"
-                description="Review catalog health and attention items."
+                description="Review catalog health and attention items before screenshots."
               />
               <QuickActionLink to="/" label="View Storefront" description="See the public shop experience." />
             </div>
@@ -472,7 +472,7 @@ export default function AdminDashboard() {
               <span>Needs attention</span>
               <p>
                 {attentionProducts.length
-                  ? 'A short list of product fixes to handle before screenshots, demos, or future launch prep. Each card points to the most obvious merchandising gap first.'
+                  ? 'A short list of product fixes to handle before screenshots, demos, or release prep. Each card points to the most obvious merchandising gap first.'
                   : storefrontReady
                     ? 'Storefront is in good shape. No immediate catalog issues are flagged right now.'
                     : 'No products were matched for issues yet, but the catalog still has readiness gaps.'}

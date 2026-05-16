@@ -13,6 +13,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.64-v0.80 established the current storefront, account, admin, and QA trail.
 - The branch stack is local-first and documentation-led at this checkpoint.
 - No new production-risk logic changes are introduced in this foundation step.
+- v0.91 is the performance and image review checkpoint on top of the same baseline.
 
 ## Current Stack
 
@@ -566,4 +567,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for the next phase planning step. v0.80 is the new baseline, and v0.90 should focus on confirming the production baseline, reviewing performance and readiness gaps, and planning the next safe work streams before any implementation begins.
+The app is in a good place for the next phase planning step. v0.80 is the new baseline, v0.90 established the foundation checkpoint, and v0.91 is now focused on reviewing performance and image optimization risks before any implementation begins.

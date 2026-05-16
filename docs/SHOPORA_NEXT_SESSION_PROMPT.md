@@ -13,6 +13,7 @@ Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
 - v0.80 is now the new baseline for the next phase
 - v0.90 is the next-phase foundation checkpoint
+- v0.91 is the performance and image review checkpoint
 - This checkpoint is planning/foundation only
 - No app behavior should change in this checkpoint
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
@@ -59,6 +60,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_91_PERFORMANCE_IMAGE_REVIEW.md`
 - `docs/SHOPORA_V0_90_NEXT_PHASE_FOUNDATION.md`
 - `docs/SHOPORA_V0_80_FINAL_LOCAL_QA_BEFORE_PR.md`
 - `docs/SHOPORA_V0_79_FUTURE_RELEASE_PR_PREP.md`
@@ -79,6 +81,6 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Confirm the production baseline first.
-- Then review performance/image optimization, admin order-management readiness, customer account/backend hardening, checkout/Stripe confidence, and portfolio/demo polish planning.
-- Keep the first v0.90 phase foundation-only until the scope is clearly defined.
+- Confirm the performance/image findings against any visual QA.
+- If the brand assets remain the main concern, prepare a future safe asset-size task first.
+- Keep all no-touch areas untouched until a separate scoped milestone is opened.

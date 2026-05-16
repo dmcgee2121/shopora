@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.79-future-release-pr-prep`
+- `v0.80-final-local-qa-before-pr`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
 - v0.66 completed small post-deploy UI/support polish plus QA documentation.
@@ -17,12 +17,12 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.71 clarified the local branch scope after the v0.70 checkpoint.
 - v0.72 completed storefront polish lite.
 - v0.73 completed the local feature batch checkpoint.
-- v0.74 is a future release PR prep checkpoint.
-- v0.75 is a local roadmap and release decision checkpoint.
-- v0.76 is a small customer/account polish checkpoint.
-- v0.77 is a release-candidate review checkpoint.
-- v0.79 is a future release PR prep checkpoint.
-- v0.79 is not docs-only versus `origin/main`.
+- v0.74 prepared a future release PR checkpoint.
+- v0.75 made the local roadmap and release decision.
+- v0.76 completed a small customer/account polish pass.
+- v0.77 completed a release-candidate review checkpoint.
+- v0.79 prepared the local batch for a future controlled release PR.
+- v0.80 is the final local QA checkpoint before any future PR decision.
 - The branch stack is local-only source plus documentation work, not docs-only.
 - The branch still carries the accumulated UI/customer/admin src changes from the v0.65-v0.77 trail and no new production-risk logic changes were introduced in this checkpoint.
 
@@ -578,4 +578,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on controlled release prep rather than more feature growth. This branch should be treated as a future release PR prep checkpoint plus QA documentation, not as a docs-only merge branch.
+The app is in a good place for controlled release prep. The highest-priority code paths are stable, the merchandising layer is stronger, and the branch should now be treated as a final local QA checkpoint plus release packaging documentation rather than more feature growth.

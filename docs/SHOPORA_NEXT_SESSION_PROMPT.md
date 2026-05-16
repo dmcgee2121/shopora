@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.79-future-release-pr-prep
+- v0.80-final-local-qa-before-pr
 
 Current state:
 - v0.64 deployed successfully and the production smoke test passed
@@ -20,12 +20,12 @@ Current state:
 - v0.71 clarified the local branch scope after the v0.70 checkpoint
 - v0.72 completed storefront polish lite
 - v0.73 completed the local feature batch checkpoint for the v0.65-v0.72 trail
-- v0.74 prepares the local v0.65-v0.73 feature batch for a future controlled release PR
-- v0.75 makes the local roadmap and release decision after the v0.65-v0.74 batch
-- v0.76 adds a small customer/account lite polish pass after the roadmap decision
-- v0.77 makes a release-candidate review checkpoint after the v0.65-v0.76 batch
-- v0.79 prepares the local v0.65-v0.77 batch for a future controlled release PR
-- v0.79 is not docs-only versus `origin/main`
+- v0.74 prepared the local v0.65-v0.73 feature batch for a future controlled release PR
+- v0.75 made the local roadmap and release decision after the v0.65-v0.74 batch
+- v0.76 added a small customer/account lite polish pass after the roadmap decision
+- v0.77 made a release-candidate review checkpoint after the v0.65-v0.76 batch
+- v0.79 prepared the local v0.65-v0.77 batch for a future controlled release PR
+- v0.80 is the final local QA checkpoint before any future PR decision
 - The branch stack is local-only source plus documentation work, not docs-only
 - The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.77
 - Workflow is local-first
@@ -71,6 +71,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_80_FINAL_LOCAL_QA_BEFORE_PR.md`
 - `docs/SHOPORA_V0_79_FUTURE_RELEASE_PR_PREP.md`
 - `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
 - `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
@@ -89,6 +90,6 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- The batch is ready to push later if you want to freeze scope now.
-- One more very small local QA pass is still reasonable if you want slightly more confidence first.
+- The batch is ready to prepare for a future controlled PR.
+- If you want one more pass, keep it very small and QA-focused.
 - Hold here if you want to hand off the branch in its current state.

@@ -19,6 +19,7 @@ Current state:
 - v0.94 is the admin order-management readiness checkpoint
 - v0.95 is the customer account/backend readiness checkpoint
 - v0.96 is the checkout and Stripe confidence review checkpoint
+- v0.97 is the next-phase roadmap wrap-up checkpoint
 - This checkpoint is planning/foundation only
 - No app behavior should change in this checkpoint
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
@@ -65,6 +66,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_97_NEXT_PHASE_ROADMAP_WRAP_UP.md`
 - `docs/SHOPORA_V0_96_CHECKOUT_STRIPE_CONFIDENCE_REVIEW.md`
 - `docs/SHOPORA_V0_95_CUSTOMER_ACCOUNT_BACKEND_READINESS.md`
 - `docs/SHOPORA_V0_94_ADMIN_ORDER_MANAGEMENT_READINESS.md`
@@ -91,5 +93,5 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Keep checkout and Stripe work scoped to documentation and readiness planning until a dedicated production checkout task is opened.
-- Keep all no-touch areas untouched until a separate scoped milestone is opened.
+- Open a review PR for `v0.90-v0.97` into `main` after the final build passes.
+- Do not merge or deploy until the PR is reviewed and approved.

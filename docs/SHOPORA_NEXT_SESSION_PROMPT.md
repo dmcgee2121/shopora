@@ -17,6 +17,7 @@ Current state:
 - v0.92 is the image usage optimization prep pass
 - v0.93 is the performance follow-up checkpoint
 - v0.94 is the admin order-management readiness checkpoint
+- v0.95 is the customer account/backend readiness checkpoint
 - This checkpoint is planning/foundation only
 - No app behavior should change in this checkpoint
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
@@ -63,6 +64,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_95_CUSTOMER_ACCOUNT_BACKEND_READINESS.md`
 - `docs/SHOPORA_V0_94_ADMIN_ORDER_MANAGEMENT_READINESS.md`
 - `docs/SHOPORA_V0_93_PERFORMANCE_FOLLOW_UP.md`
 - `docs/SHOPORA_V0_92_IMAGE_USAGE_OPTIMIZATION_PREP.md`
@@ -87,5 +89,5 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Keep admin order-management work scoped to documentation and readiness planning until a dedicated backend / RLS task is opened.
+- Keep customer account hardening work scoped to documentation and readiness planning until a dedicated auth / RLS / backend task is opened.
 - Keep all no-touch areas untouched until a separate scoped milestone is opened.

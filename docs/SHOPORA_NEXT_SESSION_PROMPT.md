@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.77-release-candidate-review
+- v0.79-future-release-pr-prep
 
 Current state:
 - v0.64 deployed successfully and the production smoke test passed
@@ -24,9 +24,10 @@ Current state:
 - v0.75 makes the local roadmap and release decision after the v0.65-v0.74 batch
 - v0.76 adds a small customer/account lite polish pass after the roadmap decision
 - v0.77 makes a release-candidate review checkpoint after the v0.65-v0.76 batch
-- v0.77 is not docs-only versus `origin/main`
+- v0.79 prepares the local v0.65-v0.77 batch for a future controlled release PR
+- v0.79 is not docs-only versus `origin/main`
 - The branch stack is local-only source plus documentation work, not docs-only
-- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.76
+- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.77
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
 
@@ -52,6 +53,7 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
+   - `docs/SHOPORA_V0_79_FUTURE_RELEASE_PR_PREP.md`
    - `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
    - `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
    - `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
@@ -69,6 +71,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_79_FUTURE_RELEASE_PR_PREP.md`
 - `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
 - `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
 - `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
@@ -86,6 +89,6 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- The batch is ready for future PR prep if you want to freeze scope.
-- Continue local QA only if you intend a tiny follow-up before review.
+- The batch is ready to push later if you want to freeze scope now.
+- One more very small local QA pass is still reasonable if you want slightly more confidence first.
 - Hold here if you want to hand off the branch in its current state.

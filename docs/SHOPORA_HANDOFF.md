@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.77-release-candidate-review`
+- `v0.79-future-release-pr-prep`
 - v0.64 deployed successfully and the production smoke test passed.
 - v0.65 captured the post-deploy stability checkpoint.
 - v0.66 completed small post-deploy UI/support polish plus QA documentation.
@@ -21,9 +21,10 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.75 is a local roadmap and release decision checkpoint.
 - v0.76 is a small customer/account polish checkpoint.
 - v0.77 is a release-candidate review checkpoint.
-- v0.77 is not docs-only versus `origin/main`.
+- v0.79 is a future release PR prep checkpoint.
+- v0.79 is not docs-only versus `origin/main`.
 - The branch stack is local-only source plus documentation work, not docs-only.
-- The branch still carries the accumulated UI/customer/admin src changes from the v0.65-v0.76 trail and no new production-risk logic changes were introduced in this checkpoint.
+- The branch still carries the accumulated UI/customer/admin src changes from the v0.65-v0.77 trail and no new production-risk logic changes were introduced in this checkpoint.
 
 ## Current Stack
 
@@ -76,6 +77,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.74 future release PR prep was started locally and documented in `docs/SHOPORA_V0_74_FUTURE_RELEASE_PR_PREP.md`
 - v0.75 local roadmap and release decision was started locally and documented in `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
 - v0.76 customer account lite polish was started locally and documented in `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
+- v0.77 release candidate review was started locally and documented in `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
 
 ## v0.68 Storefront Content And SEO Polish
 
@@ -164,6 +166,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Kept the checkpoint itself documentation-only: no checkout submission, order creation, cart business logic, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, package/dependency changes, or app behavior changes.
 - Added `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md` to capture the branch state, review criteria, and future PR readiness notes.
 - Recommended next action: this batch is ready for future PR prep if you want to freeze scope, continue local QA only if you intend a tiny follow-up, or hold as a clean handoff checkpoint.
+
+## v0.79 Future Release PR Prep
+
+- Started `v0.79-future-release-pr-prep` as a documentation checkpoint to prepare the local v0.65-v0.77 batch for a future controlled release PR.
+- Recorded the current branch and top commit, the deployed v0.64 baseline, the local-only v0.65-v0.77 summary, the current source and docs deltas versus `origin/main`, the build and smoke-test status, the no-touch areas, the PR scope summary, the recommended PR title and description, the GitHub review checklist, the pre-merge and post-merge checklists, the rollback note, and the recommendation.
+- Kept the checkpoint itself documentation-only: no checkout submission, order creation, cart business logic, Stripe functions, Netlify functions/env, Supabase RLS, auth behavior, env files/secrets, package/dependency changes, or app behavior changes.
+- Added `docs/SHOPORA_V0_79_FUTURE_RELEASE_PR_PREP.md` to capture the branch state, the controlled-release prep checklist, and the future PR readiness notes.
+- Recommended next action: the batch is ready to push later if you want to freeze scope now, but one more very small local QA pass is still reasonable if you want slightly more confidence first.
 
 ## v0.67 Mobile And Responsive Polish
 
@@ -568,4 +578,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on release-candidate review discipline rather than more feature growth. This branch should be treated as a release-candidate review checkpoint plus QA documentation, not as a docs-only merge branch.
+The app is in a good place for continued storefront refinement. The highest-priority code paths are stable, the merchandising layer is stronger, and the next phase should focus on controlled release prep rather than more feature growth. This branch should be treated as a future release PR prep checkpoint plus QA documentation, not as a docs-only merge branch.

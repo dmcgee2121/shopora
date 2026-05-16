@@ -18,6 +18,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.93 is the performance follow-up checkpoint and stays docs-only.
 - v0.94 is the admin order-management readiness checkpoint and stays docs-only.
 - v0.95 is the customer account/backend readiness checkpoint and stays docs-only.
+- v0.96 is the checkout and Stripe confidence review checkpoint and stays docs-only.
 
 ## Current Stack
 
@@ -571,4 +572,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for the next phase planning step. v0.80 is the new baseline, v0.90 established the foundation checkpoint, v0.91 reviewed performance and image optimization, v0.92 added safe image usage prep, v0.93 recorded the follow-up, v0.94 clarified admin order-management readiness, and v0.95 clarifies customer account/backend readiness without changing app behavior.
+The app is in a good place for the next phase planning step. v0.80 is the new baseline, v0.90 established the foundation checkpoint, v0.91 reviewed performance and image optimization, v0.92 added safe image usage prep, v0.93 recorded the follow-up, v0.94 clarified admin order-management readiness, v0.95 clarified customer account/backend readiness, and v0.96 clarifies checkout and Stripe confidence without changing app behavior.

@@ -7,21 +7,15 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.90-next-phase-foundation
+- v0.98-image-asset-optimization
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
-- v0.80 is now the new baseline for the next phase
-- v0.90 is the next-phase foundation checkpoint
-- v0.91 is the performance and image review checkpoint
-- v0.92 is the image usage optimization prep pass
-- v0.93 is the performance follow-up checkpoint
-- v0.94 is the admin order-management readiness checkpoint
-- v0.95 is the customer account/backend readiness checkpoint
-- v0.96 is the checkout and Stripe confidence review checkpoint
-- v0.97 is the next-phase roadmap wrap-up checkpoint
-- This checkpoint is planning/foundation only
-- No app behavior should change in this checkpoint
+- PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch
+- v0.98 is a safe image asset optimization pass
+- Optimized PNG copies were added for the shared ShopOra bag and wordmark logos
+- `BrandLogo` now points to the optimized copies while the originals remain in place
+- This checkpoint should not change app behavior
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -66,6 +60,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_98_IMAGE_ASSET_OPTIMIZATION.md`
 - `docs/SHOPORA_V0_97_NEXT_PHASE_ROADMAP_WRAP_UP.md`
 - `docs/SHOPORA_V0_96_CHECKOUT_STRIPE_CONFIDENCE_REVIEW.md`
 - `docs/SHOPORA_V0_95_CUSTOMER_ACCOUNT_BACKEND_READINESS.md`
@@ -93,5 +88,5 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Open a review PR for `v0.90-v0.97` into `main` after the final build passes.
-- Do not merge or deploy until the PR is reviewed and approved.
+- Run a quick visual QA pass across all surfaces that use `BrandLogo`.
+- If the optimized assets look clean, keep them and move to the next scoped work branch.

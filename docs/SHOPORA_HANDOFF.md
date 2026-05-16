@@ -6,20 +6,12 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.90-next-phase-foundation`
+- `v0.98-image-asset-optimization`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
-- v0.80 is now the new main baseline.
-- v0.90 starts the next phase as a planning/foundation-only checkpoint.
-- v0.64-v0.80 established the current storefront, account, admin, and QA trail.
-- The branch stack is local-first and documentation-led at this checkpoint.
-- No new production-risk logic changes are introduced in this foundation step.
-- v0.91 is the performance and image review checkpoint on top of the same baseline.
-- v0.92 is the image usage optimization prep pass on top of the same baseline.
-- v0.93 is the performance follow-up checkpoint and stays docs-only.
-- v0.94 is the admin order-management readiness checkpoint and stays docs-only.
-- v0.95 is the customer account/backend readiness checkpoint and stays docs-only.
-- v0.96 is the checkout and Stripe confidence review checkpoint and stays docs-only.
-- v0.97 is the next-phase roadmap wrap-up checkpoint and stays docs-only.
+- PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
+- v0.98 starts the next real work sequence with a safe brand image asset optimization pass.
+- The current change keeps the original logo assets in place and only repoints `BrandLogo` to optimized PNG copies.
+- No new production-risk logic changes are introduced in this step.
 
 ## Current Stack
 
@@ -573,4 +565,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for the next phase planning step. v0.80 is the new baseline, v0.90 established the foundation checkpoint, v0.91 reviewed performance and image optimization, v0.92 added safe image usage prep, v0.93 recorded the follow-up, v0.94 clarified admin order-management readiness, v0.95 clarified customer account/backend readiness, v0.96 clarified checkout and Stripe confidence, and v0.97 wraps up the next-phase roadmap without changing app behavior.
+The app is in a good place for a narrow optimization pass. v0.80 is the main baseline, PR #8 covers the v0.90-v0.97 foundation and roadmap work, and v0.98 now reduces the emitted brand image payload without changing app behavior.

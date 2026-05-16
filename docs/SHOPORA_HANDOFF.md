@@ -6,13 +6,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.99-admin-order-management-prototype-planning`
+- `v1.00-admin-order-management-prototype-ui`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
-- v0.99 is a local-first admin order-management prototype planning pass.
-- The current admin orders UI remains prototype-safe and read-only for live Supabase orders.
-- The only app code change in this pass is a small copy clarification that labels the admin orders surface as prototype/read-only where appropriate.
+- v0.99 was the local-first admin order-management prototype planning pass.
+- v1.00 is a local-first admin order-management prototype UI pass.
+- The admin orders UI now includes prototype workflow preview sections for fulfillment readiness, customer contact context, order attention flags, internal notes, and next-step planning.
+- Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
 ## Current Stack
@@ -67,6 +68,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.75 local roadmap and release decision was started locally and documented in `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
 - v0.76 customer account lite polish was started locally and documented in `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
 - v0.77 release candidate review was started locally and documented in `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
+
+## v1.00 Admin Order Management Prototype UI
+
+- Started `v1.00-admin-order-management-prototype-ui` as a local-first admin workflow preview pass on top of the v0.99 planning checkpoint.
+- Added a prototype workflow preview panel to the admin orders page with fulfillment readiness, customer contact context, order attention flags, internal notes placeholder, and next operational step cards.
+- Expanded the selected-order quick view so the same prototype-safe workflow information is visible in the modal.
+- Kept the work prototype-safe and read-only: live Supabase order writes, backend schema changes, and admin mutation behavior are still out of scope.
+- Added `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md` to capture the UI additions, prototype-only boundaries, no-touch areas, and next-step recommendation.
+- Build verification passed locally with `npm run build`.
+- Recommended next action: keep the admin workflow preview read-only until a deliberate backend/admin-write milestone is approved.
 
 ## v0.68 Storefront Content And SEO Polish
 
@@ -385,6 +396,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Local Stripe testing can still be cumbersome; deployed Netlify is the reliable Stripe QA path
 - Admin/demo auth is prototype-level and should not be treated as production security
 - Admin order writes are still prototype-only for local demo storage and read-only for live Supabase orders
+- Admin workflow preview sections are descriptive only and do not persist notes or change order state
 - Future production hardening should revisit admin auth, RLS, Stripe webhook confidence, and final policy/legal copy
 - Admin live order visibility now depends on the `get_admin_orders()` Supabase RPC plus an admin profile role in `public.profiles`
 - The demo checklist lives at `docs/SHOPORA_DEMO_QA_CHECKLIST.md`

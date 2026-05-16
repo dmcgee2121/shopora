@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.76-customer-account-lite-polish
+- v0.77-release-candidate-review
 
 Current state:
 - v0.64 deployed successfully and the production smoke test passed
@@ -23,9 +23,10 @@ Current state:
 - v0.74 prepares the local v0.65-v0.73 feature batch for a future controlled release PR
 - v0.75 makes the local roadmap and release decision after the v0.65-v0.74 batch
 - v0.76 adds a small customer/account lite polish pass after the roadmap decision
-- v0.76 is not docs-only versus `origin/main`
+- v0.77 makes a release-candidate review checkpoint after the v0.65-v0.76 batch
+- v0.77 is not docs-only versus `origin/main`
 - The branch stack is local-only source plus documentation work, not docs-only
-- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.75
+- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.76
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
 
@@ -51,6 +52,7 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
+   - `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
    - `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
    - `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
    - `docs/SHOPORA_V0_74_FUTURE_RELEASE_PR_PREP.md`
@@ -67,6 +69,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
 - `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
 - `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
 - `docs/SHOPORA_V0_74_FUTURE_RELEASE_PR_PREP.md`
@@ -83,6 +86,6 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- If the source diff remains manageable, continue with one more small customer/account branch.
-- If the source diff grows further, move to release-candidate review instead.
-- Pause here only if you want to hand off the branch in its current state.
+- The batch is ready for future PR prep if you want to freeze scope.
+- Continue local QA only if you intend a tiny follow-up before review.
+- Hold here if you want to hand off the branch in its current state.

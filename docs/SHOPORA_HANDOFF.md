@@ -6,25 +6,13 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.80-final-local-qa-before-pr`
-- v0.64 deployed successfully and the production smoke test passed.
-- v0.65 captured the post-deploy stability checkpoint.
-- v0.66 completed small post-deploy UI/support polish plus QA documentation.
-- v0.67 completed mobile/responsive polish.
-- v0.68 completed storefront content and SEO polish.
-- v0.69 completed admin QA/dashboard polish.
-- v0.70 completed the local release checkpoint.
-- v0.71 clarified the local branch scope after the v0.70 checkpoint.
-- v0.72 completed storefront polish lite.
-- v0.73 completed the local feature batch checkpoint.
-- v0.74 prepared a future release PR checkpoint.
-- v0.75 made the local roadmap and release decision.
-- v0.76 completed a small customer/account polish pass.
-- v0.77 completed a release-candidate review checkpoint.
-- v0.79 prepared the local batch for a future controlled release PR.
-- v0.80 is the final local QA checkpoint before any future PR decision.
-- The branch stack is local-only source plus documentation work, not docs-only.
-- The branch still carries the accumulated UI/customer/admin src changes from the v0.65-v0.77 trail and no new production-risk logic changes were introduced in this checkpoint.
+- `v0.90-next-phase-foundation`
+- v0.80 Local QA release batch was merged into `main` through PR #7.
+- v0.80 is now the new main baseline.
+- v0.90 starts the next phase as a planning/foundation-only checkpoint.
+- v0.64-v0.80 established the current storefront, account, admin, and QA trail.
+- The branch stack is local-first and documentation-led at this checkpoint.
+- No new production-risk logic changes are introduced in this foundation step.
 
 ## Current Stack
 
@@ -578,4 +566,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for controlled release prep. The highest-priority code paths are stable, the merchandising layer is stronger, and the branch should now be treated as a final local QA checkpoint plus release packaging documentation rather than more feature growth.
+The app is in a good place for the next phase planning step. v0.80 is the new baseline, and v0.90 should focus on confirming the production baseline, reviewing performance and readiness gaps, and planning the next safe work streams before any implementation begins.

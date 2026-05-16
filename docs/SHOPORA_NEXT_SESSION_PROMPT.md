@@ -7,27 +7,15 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v0.80-final-local-qa-before-pr
+- v0.90-next-phase-foundation
 
 Current state:
-- v0.64 deployed successfully and the production smoke test passed
-- v0.65 captured the post-deploy stability checkpoint
-- v0.66 completed small post-deploy UI/support polish plus QA documentation
-- v0.67 completed mobile/responsive polish
-- v0.68 completed storefront content and SEO polish
-- v0.69 completed admin QA/dashboard polish
-- v0.70 completed the local release checkpoint
-- v0.71 clarified the local branch scope after the v0.70 checkpoint
-- v0.72 completed storefront polish lite
-- v0.73 completed the local feature batch checkpoint for the v0.65-v0.72 trail
-- v0.74 prepared the local v0.65-v0.73 feature batch for a future controlled release PR
-- v0.75 made the local roadmap and release decision after the v0.65-v0.74 batch
-- v0.76 added a small customer/account lite polish pass after the roadmap decision
-- v0.77 made a release-candidate review checkpoint after the v0.65-v0.76 batch
-- v0.79 prepared the local v0.65-v0.77 batch for a future controlled release PR
-- v0.80 is the final local QA checkpoint before any future PR decision
-- The branch stack is local-only source plus documentation work, not docs-only
-- The changes in the branch history are the accumulated UI/customer/admin polish trail from v0.65-v0.77
+- v0.80 Local QA release batch has been merged into `main` through PR #7
+- v0.80 is now the new baseline for the next phase
+- v0.90 is the next-phase foundation checkpoint
+- This checkpoint is planning/foundation only
+- No app behavior should change in this checkpoint
+- No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
 
@@ -71,6 +59,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_90_NEXT_PHASE_FOUNDATION.md`
 - `docs/SHOPORA_V0_80_FINAL_LOCAL_QA_BEFORE_PR.md`
 - `docs/SHOPORA_V0_79_FUTURE_RELEASE_PR_PREP.md`
 - `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
@@ -90,6 +79,6 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- The batch is ready to prepare for a future controlled PR.
-- If you want one more pass, keep it very small and QA-focused.
-- Hold here if you want to hand off the branch in its current state.
+- Confirm the production baseline first.
+- Then review performance/image optimization, admin order-management readiness, customer account/backend hardening, checkout/Stripe confidence, and portfolio/demo polish planning.
+- Keep the first v0.90 phase foundation-only until the scope is clearly defined.

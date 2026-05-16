@@ -14,6 +14,7 @@ Current state:
 - v0.80 is now the new baseline for the next phase
 - v0.90 is the next-phase foundation checkpoint
 - v0.91 is the performance and image review checkpoint
+- v0.92 is the image usage optimization prep pass
 - This checkpoint is planning/foundation only
 - No app behavior should change in this checkpoint
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
@@ -60,6 +61,7 @@ Tasks for the next chat:
 5. If continuing the polish review, keep the no-touch areas untouched and do not modify `src` beyond safe storefront content and title changes.
 
 Current docs created or updated:
+- `docs/SHOPORA_V0_92_IMAGE_USAGE_OPTIMIZATION_PREP.md`
 - `docs/SHOPORA_V0_91_PERFORMANCE_IMAGE_REVIEW.md`
 - `docs/SHOPORA_V0_90_NEXT_PHASE_FOUNDATION.md`
 - `docs/SHOPORA_V0_80_FINAL_LOCAL_QA_BEFORE_PR.md`
@@ -81,6 +83,5 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 
 Recommended next action:
-- Confirm the performance/image findings against any visual QA.
-- If the brand assets remain the main concern, prepare a future safe asset-size task first.
+- Confirm the logo sizing change visually and keep the brand assets as the first future compression target.
 - Keep all no-touch areas untouched until a separate scoped milestone is opened.

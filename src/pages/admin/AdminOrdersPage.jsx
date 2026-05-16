@@ -133,14 +133,14 @@ export default function AdminOrdersPage() {
   const orderSourceNote =
     currentUser?.role === 'admin'
       ? ordersSource === 'supabase'
-        ? 'Live Supabase orders are visible here. Status updates stay read-only in this prototype until admin write support is added.'
-        : 'This prototype admin order list is reading browser-local demo orders only. Those local demo orders can still be adjusted from this admin view.'
+        ? 'Prototype note: live Supabase orders are visible here, but status updates remain read-only until admin write support is added.'
+        : 'Prototype note: this admin order list is reading browser-local demo orders only. Those local demo orders can be adjusted in browser storage.'
       : '';
   const canUpdateOrderStatus = ordersSource === 'local';
   const ordersSubtitle =
     ordersSource === 'supabase'
-      ? 'Review live Supabase orders, spot fulfillment gaps, and open receipts without leaving the admin area.'
-      : 'Review completed orders, update status, and open receipts without leaving the admin area.';
+      ? 'Review live Supabase orders, spot fulfillment gaps, and open receipts while status changes remain read-only in this prototype.'
+      : 'Review completed demo orders, simulate status changes locally, and open receipts without leaving the admin area.';
 
   const ordered = useMemo(
     () =>
@@ -232,7 +232,7 @@ export default function AdminOrdersPage() {
         <div className="admin-status-card">
           <span>Total orders</span>
           <strong>{operationsSummary.totalOrders}</strong>
-          <p>{sourceLabel} currently visible in this session.</p>
+          <p>{sourceLabel} currently visible in this session. Local status edits are simulation-only.</p>
         </div>
         <div className="admin-status-card">
           <span>Paid / payment pending</span>
@@ -707,7 +707,7 @@ export default function AdminOrdersPage() {
                 <p className="admin-status-subtext">
                   {ordersSource === 'supabase'
                     ? 'Live Supabase orders are visible here. Status updates remain read-only until backend support is added.'
-                    : 'Local demo orders can be updated from this admin view.'}
+                    : 'Local demo orders can be updated in browser storage only. This is a prototype simulation, not a live order workflow.'}
                 </p>
               </section>
 

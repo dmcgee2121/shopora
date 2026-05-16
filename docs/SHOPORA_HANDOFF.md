@@ -6,11 +6,13 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.98-image-asset-optimization`
+- `v0.99-admin-order-management-prototype-planning`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
-- v0.98 starts the next real work sequence with a safe brand image asset optimization pass.
-- The current change keeps the original logo assets in place and only repoints `BrandLogo` to optimized PNG copies.
+- v0.98 completed the safe brand image asset optimization pass.
+- v0.99 is a local-first admin order-management prototype planning pass.
+- The current admin orders UI remains prototype-safe and read-only for live Supabase orders.
+- The only app code change in this pass is a small copy clarification that labels the admin orders surface as prototype/read-only where appropriate.
 - No new production-risk logic changes are introduced in this step.
 
 ## Current Stack
@@ -382,6 +384,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Vite may still show non-blocking chunk-size warnings depending on build output
 - Local Stripe testing can still be cumbersome; deployed Netlify is the reliable Stripe QA path
 - Admin/demo auth is prototype-level and should not be treated as production security
+- Admin order writes are still prototype-only for local demo storage and read-only for live Supabase orders
 - Future production hardening should revisit admin auth, RLS, Stripe webhook confidence, and final policy/legal copy
 - Admin live order visibility now depends on the `get_admin_orders()` Supabase RPC plus an admin profile role in `public.profiles`
 - The demo checklist lives at `docs/SHOPORA_DEMO_QA_CHECKLIST.md`

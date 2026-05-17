@@ -154,7 +154,7 @@ export default function ProductPage() {
   const product = catalogProducts.find((item) => idsMatch(item.id, id));
   useDocumentTitle(`ShopOra | ${product?.name || 'Product'}`);
   const { addItem } = useCart();
-  const { isAuthenticated, isSavedItem, toggleSavedItem } = useAuth();
+  const { authError, isAuthenticated, isSavedItem, isSavingSavedItem, toggleSavedItem } = useAuth();
   const { openMiniCart } = useMiniCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -177,6 +177,8 @@ export default function ProductPage() {
   const price = hasSalePrice ? Number(product.salePrice) : basePrice;
   const stockMessage =
     stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? `Only ${stockCount} left` : 'In stock and ready to ship';
+  const isSaved = typeof isSavedItem === 'function' ? Boolean(isSavedItem(product.id)) : false;
+  const isSaving = typeof isSavingSavedItem === 'function' ? Boolean(isSavingSavedItem(product.id)) : false;
 
   useEffect(() => {
     setSelectedSize(sizes[0] ?? '');
@@ -466,13 +468,21 @@ export default function ProductPage() {
               <button type="button" className="btn btn-dark" onClick={handleAddToCart} disabled={isOutOfStock}>
                 {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
               </button>
-              <button type="button" className="btn btn-ghost" onClick={handleSave}>
-                {typeof isSavedItem === 'function' && isSavedItem(product.id) ? 'Saved' : 'Save Item'}
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={handleSave}
+                aria-busy={isSaving}
+                disabled={isSaving}
+                title={isSaving ? 'Updating saved items...' : isSaved ? 'Remove item from saved items' : 'Save item'}
+              >
+                {isSaving ? (isSaved ? 'Removing...' : 'Saving...') : isSaved ? 'Saved' : 'Save Item'}
               </button>
               <Link to="/cart" className="btn btn-outline">
                 View Cart
               </Link>
             </div>
+            {authError && isAuthenticated ? <div className="auth-message auth-message-error">{authError}</div> : null}
             <p className="product-support-note">
               Secure checkout, easy returns, and shipping updates are ready when you are.
             </p>

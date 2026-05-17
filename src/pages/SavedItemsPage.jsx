@@ -7,7 +7,7 @@ import { getCustomerRetentionLinks } from '../utils/customerRetention';
 import { idsMatch } from '../utils/idUtils';
 
 export default function SavedItemsPage() {
-  const { currentUser, savedProductIds } = useAuth();
+  const { authError, currentUser, savedProductIds } = useAuth();
   const { products } = useProductCatalog();
   const safeSavedProductIds = Array.isArray(savedProductIds) ? savedProductIds : [];
   const savedProducts = products.filter((product) =>
@@ -40,6 +40,7 @@ export default function SavedItemsPage() {
         Saved items work like a simple wishlist. Compare favorite finds, revisit styles later, and keep a lightweight
         ShopOra member trail without any points, rewards, or redemption balance.
       </p>
+      {authError && currentUser ? <div className="auth-message auth-message-error">{authError}</div> : null}
 
       {savedProducts.length ? (
         <>

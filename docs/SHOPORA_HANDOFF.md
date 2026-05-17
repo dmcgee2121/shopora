@@ -6,14 +6,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.01-admin-order-detail-prototype-polish`
+- `v1.02-customer-account-persistence-planning`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
 - v0.99 was the local-first admin order-management prototype planning pass.
 - v1.00 is a local-first admin order-management prototype UI pass.
 - v1.01 is a local-first admin order-detail prototype polish pass.
+- v1.02 is a local-first customer account persistence planning checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
+- The customer account page currently mixes Supabase-backed profile/saved-item/order flows with local/demo fallback data and frontend-only recent activity and preference hints.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
@@ -88,6 +90,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Added `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md` to capture the UI additions, prototype-only boundaries, no-touch areas, and next-step recommendation.
 - Build verification passed locally with `npm run build`.
 - Recommended next action: keep the detail view read-only until a deliberate backend/admin-write milestone is approved.
+
+## v1.02 Customer Account Persistence Planning
+
+- Started `v1.02-customer-account-persistence-planning` as a documentation-first checkpoint for customer account persistence.
+- Reconfirmed that the current account surfaces mix Supabase-backed profile, saved-item, and order flows with local/demo fallback behavior and frontend-only recent activity plus preference hints.
+- Captured the current persistence gaps for profile fields, default shipping address ownership, saved items, order history, recently viewed products, and account preferences.
+- Kept the checkpoint documentation-only: no auth changes, no new mutations, no backend/schema work, and no changes to checkout submission, order creation, Stripe, Netlify functions/env, Supabase RLS, or cart behavior.
+- Added `docs/SHOPORA_V1_02_CUSTOMER_ACCOUNT_PERSISTENCE_PLANNING.md` to capture the current behavior, gaps, future phases, no-touch areas, and risk notes.
+- Recommended next action: keep customer account persistence planning separate from any dedicated auth/RLS/backend implementation milestone.
 
 ## v0.68 Storefront Content And SEO Polish
 

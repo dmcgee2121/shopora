@@ -335,8 +335,8 @@ export default function AccountPage() {
     {
       label: 'Order history',
       detail: recentOrders.length
-        ? `You have ${pluralize(recentOrders.length, 'recent order')} on file.`
-        : 'Your order history will appear after checkout.',
+        ? `You have ${pluralize(recentOrders.length, 'read-only recent order')} on file.`
+        : 'Your read-only order history will appear after checkout.',
       done: recentOrders.length > 0,
     },
   ];
@@ -368,7 +368,7 @@ export default function AccountPage() {
       label: 'Order history',
       headline: 'Receipts at a glance',
       text: recentOrders.length
-        ? `${pluralize(recentOrders.length, 'recent order')} are stored for easy review.`
+        ? `${pluralize(recentOrders.length, 'read-only recent order')} are stored for easy review.`
         : 'Your receipts and order history will appear after checkout.',
       action: 'View orders',
       to: '/account/orders',
@@ -409,7 +409,8 @@ export default function AccountPage() {
           <h2 id="account-dashboard-title">Your ShopOra snapshot</h2>
             <p>
               Keep saved styles, orders, profile details, and support shortcuts together in one account view. This
-              snapshot mixes persisted account data with local browser activity where noted.
+              snapshot mixes persisted account data with local browser activity where noted. Order receipts stay
+              read-only.
             </p>
           <div className="account-dashboard-stats" aria-label="Account summary">
             <div>
@@ -690,9 +691,9 @@ export default function AccountPage() {
               })}
             </div>
           ) : (
-              <p className="account-overview-note">
-                Your latest orders will show here after checkout and stay tied to the current account.
-              </p>
+            <p className="account-overview-note">
+              Your latest read-only orders will show here after checkout and stay tied to the current account.
+            </p>
           )}
           <Link to="/account/orders" className="text-button">
             View all orders
@@ -725,7 +726,7 @@ export default function AccountPage() {
           ) : (
             <EmptyAccountCard
               title="No orders yet."
-              text="Start with a current edit, then your order history and receipts will collect here in this account."
+              text="Start with a current edit, then your read-only order history and receipts will collect here in this account."
               primaryLink="/women"
               primaryLabel="Shop new arrivals"
               secondaryLink="/sale"

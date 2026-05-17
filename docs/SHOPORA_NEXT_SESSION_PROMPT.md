@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.15-release-batch-planning-netlify-credit-strategy
+- v1.16-order-history-ui-polish-local-batch
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -31,12 +31,14 @@ Current state:
 - v1.13 is an order-history local QA and release-hold checkpoint
 - v1.14 is a checkout and Stripe production test checklist checkpoint
 - v1.15 is a release batch planning and Netlify credit strategy checkpoint
+- v1.16 is a copy-only order-history UI polish local batch checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
 - Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
 - v1.12 local QA passed and draft PR #13 is intentionally still unmerged because Netlify credits are limited
 - The current checkpoint is documentation-only and records the checkout and Stripe test strategy
 - Netlify credits are limited, so future merges and deploys should be batched intentionally
+- v1.16 tightens the order-history UI copy while keeping read-only receipts, local/demo fallback, and admin order behavior unchanged
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested

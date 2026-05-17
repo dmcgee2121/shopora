@@ -201,8 +201,8 @@ export default function OrderDetailPage() {
             <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
             <div>
               <p className="eyebrow">ShopOra</p>
-              <h1>Loading order</h1>
-              <p>We are loading your order details right now.</p>
+              <h1>Loading receipt</h1>
+              <p>We are loading this read-only receipt right now.</p>
             </div>
           </div>
         </div>
@@ -218,9 +218,9 @@ export default function OrderDetailPage() {
             <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
             <div>
               <p className="eyebrow">ShopOra</p>
-              <h1>Order unavailable</h1>
+              <h1>Receipt unavailable</h1>
               <p>
-                We could not load that order for this account. It may not exist or it may belong to a different
+                We could not load that receipt for this account. It may not exist or it may belong to a different
                 customer. Receipts stay scoped to the signed-in account for privacy.
               </p>
             </div>
@@ -231,8 +231,8 @@ export default function OrderDetailPage() {
           <div className="empty-state order-detail-empty">
             <h2>Receipt not available</h2>
             <p>
-              This order can only be viewed by the account that placed it. Your saved items and order history are still
-              ready from the account area.
+              This receipt can only be viewed by the account that placed it. Your saved items and order history are
+              still ready from the account area.
             </p>
             <div className="order-detail-actions">
               <Link to="/account/orders" className="btn btn-dark">
@@ -261,8 +261,8 @@ export default function OrderDetailPage() {
             <h1>Order receipt</h1>
             <p>
               {order.demoMode
-                ? 'Detailed receipt view for a demo order.'
-                : 'Detailed receipt view for your order. Keep it for support, reorders, or a quick account check.'}
+                ? 'Detailed receipt view for a demo order. Demo receipts stay local to this browser.'
+                : 'Detailed receipt view for your order. This read-only receipt is ready for support, reorders, or a quick account check.'}
             </p>
           </div>
         </div>
@@ -395,7 +395,7 @@ export default function OrderDetailPage() {
               <p>
                 {orderItems.length} item{orderItems.length === 1 ? '' : 's'}
               </p>
-              <p>{order.demoMode ? 'Demo order saved locally' : 'Customer order receipt'}</p>
+              <p>{order.demoMode ? 'Demo receipt saved locally' : 'Customer receipt'}</p>
             </section>
           </div>
 
@@ -458,8 +458,8 @@ export default function OrderDetailPage() {
           </section>
 
           <SupportLinkStrip
-            title="Need help with this order?"
-            description="Have the order number, receipt, or shipping address ready if you need support with tracking, returns, privacy, or account details."
+            title="Need help with this receipt?"
+            description="Have the order number, receipt, or shipping address ready if you need help with tracking, returns, privacy, or account details."
             links={supportLinks}
             className="order-support-strip"
           />

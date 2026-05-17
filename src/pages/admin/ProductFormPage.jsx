@@ -79,6 +79,147 @@ function splitLines(value) {
     .filter(Boolean);
 }
 
+const editorGuidanceToneByLabel = {
+  Ready: 'status-active',
+  'Needs attention': 'status-draft',
+  'Optional polish': 'status-badge-sale',
+  'Missing required merchandising': 'admin-issue-missing',
+};
+
+const editorGuidanceOrder = [
+  'Ready',
+  'Needs attention',
+  'Optional polish',
+  'Missing required merchandising',
+];
+
+const optionalGuidanceKeys = new Set(['sale', 'gallery', 'merchandising', 'details']);
+const requiredGuidanceKeys = new Set(['name', 'brand', 'sku', 'taxonomy', 'pricing', 'stock', 'description', 'image']);
+
+function getEditorGuidanceTone(status) {
+  return editorGuidanceToneByLabel[status] ?? 'status-badge-muted';
+}
+
+function getEditorGuidanceStatus(item, product) {
+  if (!item?.ready) {
+    if (item?.key === 'sale') {
+      return item.note?.includes('No sale price set') ? 'Optional polish' : 'Needs attention';
+    }
+
+    if (item?.key === 'stock') {
+      const stockCount = Number(product.stockCount);
+      if (!Number.isFinite(stockCount) || stockCount <= 0) {
+        return 'Missing required merchandising';
+      }
+
+      if (stockCount <= 7) {
+        return 'Needs attention';
+      }
+    }
+
+    if (optionalGuidanceKeys.has(item?.key)) {
+      return 'Optional polish';
+    }
+
+    if (requiredGuidanceKeys.has(item?.key)) {
+      return 'Missing required merchandising';
+    }
+  }
+
+  if (item?.key === 'sale' && item.note?.includes('Sale price must stay below')) {
+    return 'Needs attention';
+  }
+
+  if (item?.key === 'stock') {
+    const stockCount = Number(product.stockCount);
+
+    if (!Number.isFinite(stockCount) || stockCount <= 0) {
+      return 'Missing required merchandising';
+    }
+
+    if (stockCount <= 7) {
+      return 'Needs attention';
+    }
+  }
+
+  if (item?.key === 'visibility' && !item.ready) {
+    return 'Needs attention';
+  }
+
+  if (optionalGuidanceKeys.has(item?.key)) {
+    return 'Optional polish';
+  }
+
+  return 'Ready';
+}
+
+function getEditorGuidanceOrder(key) {
+  const index = editorGuidanceOrder.indexOf(key);
+  return index === -1 ? editorGuidanceOrder.length : index;
+}
+
+function getEditorGuidanceCopy(status) {
+  switch (status) {
+    case 'Ready':
+      return 'The field is in good shape for a storefront launch.';
+    case 'Needs attention':
+      return 'This is close, but the product should be reviewed before a pitch or save.';
+    case 'Optional polish':
+      return 'Nice to have for stronger merchandising, but not required to save.';
+    case 'Missing required merchandising':
+      return 'This field blocks a confident launch story until it is filled in.';
+    default:
+      return 'Use this guidance to refine the product before a release batch.';
+  }
+}
+
+function EditorGuidanceItem({ item, guidanceStatus }) {
+  return (
+    <div className={`admin-editor-guidance-item ${guidanceStatus === 'Ready' ? 'is-ready' : 'needs-attention'}`}>
+      <div className="admin-editor-guidance-item-row">
+        <strong>{item.label}</strong>
+        <span className={`status-badge ${getEditorGuidanceTone(guidanceStatus)}`.trim()}>{guidanceStatus}</span>
+      </div>
+      <p>{item.note}</p>
+      <p className="admin-editor-guidance-copy">{getEditorGuidanceCopy(guidanceStatus)}</p>
+    </div>
+  );
+}
+
+function EditorGuidanceGroup({ title, status, note, items, product }) {
+  if (!items.length) return null;
+
+  return (
+    <section className="admin-editor-guidance-group">
+      <div className="admin-dashboard-section-heading compact">
+        <span>{title}</span>
+        <p>{note}</p>
+      </div>
+
+      <div className="admin-editor-guidance-group-header">
+        <span className={`status-badge ${getEditorGuidanceTone(status)}`.trim()}>{status}</span>
+        <span className="admin-status-caption">{items.length} item{items.length === 1 ? '' : 's'}</span>
+      </div>
+
+      <div className="admin-editor-guidance-list">
+        {items.slice(0, 4).map((item) => (
+          <EditorGuidanceItem
+            key={item.key}
+            item={item}
+            guidanceStatus={getEditorGuidanceStatus(item, product)}
+          />
+        ))}
+      </div>
+
+      {items.length > 4 ? (
+        <p className="admin-editor-guidance-more">
+          +{items.length - 4} more item{items.length - 4 === 1 ? '' : 's'} are visible in the checklist below.
+        </p>
+      ) : null}
+    </section>
+  );
+}
+
 export default function ProductFormPage({ mode }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -304,8 +445,33 @@ export default function ProductFormPage({ mode }) {
     () => getProductReadinessIssues(editorProduct),
     [editorProduct],
   );
-  const readinessReadyCount = readinessChecklist.filter((item) => item.ready).length;
-  const readinessNeedsCount = readinessChecklist.length - readinessReadyCount;
+  const guidanceChecklist = useMemo(() => {
+    return readinessChecklist
+      .map((item) => ({
+        ...item,
+        guidanceStatus: getEditorGuidanceStatus(item, editorProduct),
+      }))
+      .sort((left, right) => {
+        const leftStatusIndex = getEditorGuidanceOrder(left.guidanceStatus);
+        const rightStatusIndex = getEditorGuidanceOrder(right.guidanceStatus);
+
+        if (leftStatusIndex !== rightStatusIndex) {
+          return leftStatusIndex - rightStatusIndex;
+        }
+
+        return left.label.localeCompare(right.label);
+      });
+  }, [editorProduct, readinessChecklist]);
+  const guidanceGroups = useMemo(() => {
+    return editorGuidanceOrder.reduce((acc, status) => {
+      acc[status] = guidanceChecklist.filter((item) => item.guidanceStatus === status);
+      return acc;
+    }, {});
+  }, [guidanceChecklist]);
+  const readinessReadyCount = guidanceGroups.Ready.length;
+  const readinessAttentionCount = guidanceGroups['Needs attention'].length;
+  const readinessOptionalCount = guidanceGroups['Optional polish'].length;
+  const readinessMissingCount = guidanceGroups['Missing required merchandising'].length;
   const merchandisingSummary = useMemo(() => {
     const stockCount = Number(form.stockCount);
     const stockLabel = !Number.isFinite(stockCount)
@@ -331,12 +497,18 @@ export default function ProductFormPage({ mode }) {
     };
   }, [editorProduct, form.brand, form.name, form.price, form.salePrice, form.stockCount, galleryImages.length, sizeValues.length]);
 
+  const readinessCTA = [
+    { label: 'Review Catalog', to: '/admin/products', className: 'btn btn-dark' },
+    { label: 'Add Product', to: '/admin/products/new', className: 'btn btn-ghost' },
+    { label: 'Check Storefront', to: '/', className: 'btn btn-outline' },
+  ];
+
   return (
     <section className="admin-form-page">
       <AdminPageHeader
         eyebrow="Catalog editor"
         title={mode === 'edit' ? 'Edit Product' : 'Add Product'}
-        subtitle="Update product merchandising, pricing, inventory flags, and content in one place while keeping the write flow unchanged."
+        subtitle="Update product merchandising, pricing, inventory flags, and content in one place while keeping the write flow unchanged and showing advisory readiness guidance."
         actionLabel="Back to Products"
         actionTo="/admin/products"
         actionClassName="btn btn-ghost"
@@ -385,44 +557,79 @@ export default function ProductFormPage({ mode }) {
 
         <aside className="admin-editor-readiness-panel">
           <div className="admin-dashboard-section-heading compact">
-            <span>Product readiness</span>
+            <span>Editor readiness guidance</span>
             <p>
-              {readinessNeedsCount
-                ? `${readinessNeedsCount} checklist item${readinessNeedsCount === 1 ? '' : 's'} still need attention before this item feels storefront-ready.`
-                : 'This draft is ready for the storefront QA checklist.'}
+              {readinessMissingCount
+                ? `${readinessMissingCount} item${readinessMissingCount === 1 ? '' : 's'} still need required merchandising before this product feels launch-ready.`
+                : readinessAttentionCount
+                  ? `${readinessAttentionCount} item${readinessAttentionCount === 1 ? '' : 's'} still need attention before this product is pitched as ready to sell.`
+                  : 'This draft is ready for the storefront QA checklist, with optional polish still available if you want a stronger pitch.'}
             </p>
           </div>
 
-          <div className="admin-editor-readiness-summary">
+          <div className="admin-editor-guidance-summary">
             <div className="admin-editor-readiness-stat">
               <strong>{readinessReadyCount}</strong>
               <span>Ready</span>
             </div>
             <div className="admin-editor-readiness-stat">
-              <strong>{readinessNeedsCount}</strong>
+              <strong>{readinessAttentionCount}</strong>
               <span>Needs attention</span>
             </div>
             <div className="admin-editor-readiness-stat">
-              <strong>{readinessIssues.length}</strong>
-              <span>Core issues</span>
+              <strong>{readinessOptionalCount}</strong>
+              <span>Optional polish</span>
+            </div>
+            <div className="admin-editor-readiness-stat">
+              <strong>{readinessMissingCount}</strong>
+              <span>Missing required merchandising</span>
             </div>
           </div>
 
-          <div className="admin-editor-readiness-list">
-            {readinessChecklist.map((item) => (
-              <div
-                key={item.key}
-                className={`admin-editor-readiness-item ${item.ready ? 'is-ready' : 'needs-attention'}`}
-              >
-                <div className="admin-editor-readiness-item-row">
-                  <strong>{item.label}</strong>
-                  <span className={`status-badge ${item.ready ? 'status-active' : 'admin-issue-missing'}`}>
-                    {item.ready ? 'Ready' : 'Needs attention'}
-                  </span>
-                </div>
-                <p>{item.note}</p>
-              </div>
-            ))}
+          <div className="admin-editor-guidance-groups">
+            <EditorGuidanceGroup
+              title="Launch-ready basics"
+              status="Ready"
+              note="These items are already in good shape for a storefront pitch."
+              items={guidanceGroups.Ready}
+              product={editorProduct}
+            />
+            <EditorGuidanceGroup
+              title="Needs attention"
+              status="Needs attention"
+              note="These items should be reviewed before you save or present the product."
+              items={guidanceGroups['Needs attention']}
+              product={editorProduct}
+            />
+            <EditorGuidanceGroup
+              title="Optional polish"
+              status="Optional polish"
+              note="These enrichments are not required, but they make the listing feel more complete."
+              items={guidanceGroups['Optional polish']}
+              product={editorProduct}
+            />
+            <EditorGuidanceGroup
+              title="Missing required merchandising"
+              status="Missing required merchandising"
+              note="These gaps block a confident launch story and should be fixed first."
+              items={guidanceGroups['Missing required merchandising']}
+              product={editorProduct}
+            />
+          </div>
+
+          <div className="admin-editor-readiness-footer">
+            <p>
+              This guidance is advisory only. Saving stays enabled, the product still uses the existing validation and
+              save flow, and the current draft has {readinessIssues.length} core merchandising
+              {readinessIssues.length === 1 ? ' issue' : ' issues'} flagged by the catalog helper.
+            </p>
+            <div className="admin-cta-row">
+              {readinessCTA.map((action) => (
+                <Link key={action.to} to={action.to} className={action.className}>
+                  {action.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </aside>
       </div>

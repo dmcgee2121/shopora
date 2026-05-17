@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.35-admin-launch-visual-qa-checklist`
+- `v1.36-admin-launch-draft-pr-prep`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -47,6 +47,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.33 is a documentation-first admin launch batch handoff checkpoint.
 - v1.34 is a documentation-first admin launch local QA checkpoint.
 - v1.35 is a documentation-first admin launch visual QA checklist checkpoint.
+- v1.36 is a documentation-first admin launch draft PR prep checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -79,6 +80,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.33 packages the v1.29-v1.32 launch-readiness batch without changing backend behavior.
 - v1.34 records the local QA checkpoint for the parked v1.29-v1.33 launch-readiness batch without changing backend behavior.
 - v1.35 records the visual QA checklist checkpoint for the parked v1.29-v1.34 launch-readiness batch without changing backend behavior.
+- v1.36 packages draft PR prep notes for the parked v1.29-v1.35 launch-readiness batch without changing backend behavior.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

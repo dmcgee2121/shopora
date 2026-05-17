@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.19-admin-order-operations-qa-checklist`
+- `v1.20-local-release-batch-wrap-up`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -31,6 +31,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.17 is a docs-only account/orders release batch QA checklist checkpoint.
 - v1.18 is a docs-only admin live order-status planning checkpoint.
 - v1.19 is a docs-only admin order-operations QA checklist checkpoint.
+- v1.20 is a docs-only local release batch wrap-up checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -47,6 +48,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior.
 - v1.18 records the current admin status model and the future live-write planning questions without changing runtime behavior.
 - v1.19 packages the admin order-operations QA checklist without changing runtime behavior.
+- v1.20 wraps up the current local release batch without changing runtime behavior.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

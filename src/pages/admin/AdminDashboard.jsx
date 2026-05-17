@@ -511,6 +511,132 @@ export default function AdminDashboard() {
     products,
   ]);
 
+  const sellerLaunchCommandCenter = useMemo(() => {
+    const hasProducts = catalogReadiness.totalProducts > 0;
+    const productLaunchReady =
+      hasProducts &&
+      catalogReadiness.productsNeedingAttention === 0 &&
+      catalogReadiness.lowStockProducts === 0 &&
+      catalogReadiness.outOfStockProducts === 0;
+    const customerPersistenceReady = analytics.customerCount > 0;
+    const savedItemsReady = analytics.savedTotal > 0;
+
+    const cards = [
+      {
+        key: 'store',
+        label: 'Store readiness',
+        status: storeReadiness.overallStatus,
+        note: storeReadiness.overallNote,
+        context: 'Admin dashboard summary',
+      },
+      {
+        key: 'products',
+        label: 'Product launch readiness',
+        status: productLaunchReady ? 'Ready' : 'Needs review',
+        note: productLaunchReady
+          ? 'Catalog, pricing, merchandising, and stock signals are lined up for a seller launch story.'
+          : hasProducts
+            ? `${catalogReadiness.productsNeedingAttention} product${catalogReadiness.productsNeedingAttention === 1 ? '' : 's'} still need launch review before the catalog feels pitch-ready.`
+            : 'Add products before the product-launch story can feel complete.',
+        context: 'Admin products and editor',
+      },
+      {
+        key: 'preview',
+        label: 'Storefront preview readiness',
+        status: storefrontPreview.overallStatus,
+        note: storefrontPreview.overallNote,
+        context: 'Buyer-side routes',
+      },
+      {
+        key: 'checkout',
+        label: 'Checkout / test-mode readiness',
+        status: 'Future backend work',
+        note:
+          'Checkout renders today, but it should stay test-mode or render-only until a deliberate production-confidence pass is approved.',
+        context: 'Checkout route and Stripe checklist',
+      },
+      {
+        key: 'account',
+        label: 'Account/customer persistence readiness',
+        status: customerPersistenceReady ? 'Ready' : 'Needs review',
+        note: customerPersistenceReady
+          ? `${analytics.customerCount} customer account${analytics.customerCount === 1 ? '' : 's'} are available for profile and account demos.`
+          : 'No customer accounts are present yet, so the seller story needs more demo data.',
+        context: 'Profile and account routes',
+      },
+      {
+        key: 'saved-items',
+        label: 'Saved-items persistence readiness',
+        status: savedItemsReady ? 'Ready' : 'Needs review',
+        note: savedItemsReady
+          ? `${analytics.savedTotal} saved item${analytics.savedTotal === 1 ? '' : 's'} confirm persistence is showing up in the demo data.`
+          : 'Saved-items persistence is implemented, but the current data set has no saved items to show.',
+        context: 'Saved items and account touchpoints',
+      },
+      {
+        key: 'order-history',
+        label: 'Order history / read-only readiness',
+        status: 'Prototype/read-only',
+        note:
+          orders.length > 0
+            ? 'Customer and admin order history are visible for review, but the surface remains read-only.'
+            : 'The order-history surface is in place, but there are no demo orders yet.',
+        context: ordersSource === 'supabase' ? 'Live Supabase reads' : 'Local demo reads',
+      },
+      {
+        key: 'admin-orders',
+        label: 'Admin order operations status',
+        status: 'Prototype/read-only',
+        note:
+          'The admin order tools are preview-only. Live status changes, refunds, and fulfillment actions are future backend work.',
+        context: 'Admin orders route',
+      },
+    ];
+
+    const readyCount = cards.filter((card) => card.status === 'Ready').length;
+    const reviewCount = cards.filter((card) => card.status === 'Needs review').length;
+    const prototypeCount = cards.filter((card) => card.status === 'Prototype/read-only').length;
+    const futureCount = cards.filter((card) => card.status === 'Future backend work').length;
+
+    const overallStatus = reviewCount
+      ? 'Needs review'
+      : prototypeCount
+        ? 'Prototype/read-only'
+        : futureCount
+          ? 'Future backend work'
+          : 'Ready';
+
+    const overallNote =
+      overallStatus === 'Ready'
+        ? 'The seller launch command center reads as ready for a business-owner walkthrough.'
+        : overallStatus === 'Prototype/read-only'
+          ? 'The storefront is ready to pitch, but order operations remain intentionally read-only.'
+          : overallStatus === 'Future backend work'
+            ? 'The storefront is close, but checkout still needs deliberate production-confidence work.'
+            : 'The launch story still has product or storefront gaps that should be cleaned up before a pitch.';
+
+    return {
+      cards,
+      readyCount,
+      reviewCount,
+      prototypeCount,
+      futureCount,
+      overallStatus,
+      overallNote,
+    };
+  }, [
+    analytics.customerCount,
+    analytics.savedTotal,
+    catalogReadiness.lowStockProducts,
+    catalogReadiness.outOfStockProducts,
+    catalogReadiness.productsNeedingAttention,
+    catalogReadiness.totalProducts,
+    orders.length,
+    ordersSource,
+    storefrontPreview,
+    storeReadiness,
+  ]);
+
   return (
     <div className="admin-page-stack admin-dashboard-page">
       <AdminPageHeader
@@ -539,6 +665,63 @@ export default function AdminDashboard() {
           <p>{orderSourceNote}</p>
         </div>
       ) : null}
+
+      <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-launch-command-center-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Seller launch command center</span>
+          <p>
+            One place for a store owner to see what is ready, what needs review, what is still prototype-only,
+            and what still needs future backend work before a launch.
+          </p>
+        </div>
+
+        <div className="admin-readiness-grid admin-launch-command-center-grid">
+          {sellerLaunchCommandCenter.cards.map((item) => (
+            <ReadinessCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+            />
+          ))}
+        </div>
+
+        <div className="admin-launch-command-center-footer">
+          <div className="admin-launch-command-center-summary">
+            <span className={`status-badge ${getReadinessTone(sellerLaunchCommandCenter.overallStatus)}`.trim()}>
+              {sellerLaunchCommandCenter.overallStatus}
+            </span>
+            <p>{sellerLaunchCommandCenter.overallNote}</p>
+          </div>
+
+          <p className="admin-launch-command-center-note">
+            Recommended next steps: clean up any flagged products, walk the storefront from the buyer side,
+            and keep checkout plus order operations in test-mode or read-only review until backend work is approved.
+          </p>
+
+          <div className="admin-launch-command-center-actions">
+            <Link to="/admin" className="btn btn-dark">
+              Open Dashboard
+            </Link>
+            <Link to="/admin/products" className="btn btn-ghost">
+              Manage Products
+            </Link>
+            <Link to="/admin/orders" className="btn btn-ghost">
+              Review Orders
+            </Link>
+            <Link to="/" className="btn btn-outline">
+              View Storefront
+            </Link>
+            <Link to="/search?q=sale" className="btn btn-outline">
+              Test Search
+            </Link>
+            <Link to="/women" className="btn btn-outline">
+              Browse Categories
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-store-readiness-panel">
         <div className="admin-dashboard-section-heading">

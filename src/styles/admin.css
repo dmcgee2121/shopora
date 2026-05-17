@@ -317,6 +317,41 @@
   gap: 8px;
 }
 
+.admin-launch-command-center-panel {
+  margin-top: 2px;
+}
+
+.admin-launch-command-center-footer {
+  display: grid;
+  gap: 12px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(228, 217, 204, 0.72);
+}
+
+.admin-launch-command-center-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-launch-command-center-summary p,
+.admin-launch-command-center-note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.admin-launch-command-center-note {
+  line-height: 1.55;
+}
+
+.admin-launch-command-center-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .admin-storefront-preview-panel {
   display: grid;
   gap: 18px;
@@ -2646,11 +2681,13 @@
   }
 
   .admin-store-readiness-footer,
+  .admin-launch-command-center-summary,
   .admin-summary-copy {
     align-items: flex-start;
     flex-direction: column;
   }
 
+  .admin-launch-command-center-footer,
   .admin-storefront-preview-footer {
     align-items: flex-start;
     flex-direction: column;
@@ -2842,6 +2879,7 @@
   .admin-empty-state-actions .btn,
   .admin-product-card-actions .btn,
   .admin-product-launch-actions .btn,
+  .admin-launch-command-center-actions .btn,
   .admin-storefront-preview-actions .btn {
     width: 100%;
   }

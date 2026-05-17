@@ -59,20 +59,6 @@ function DashboardMetric({ label, value, note }) {
   );
 }
 
-function SummaryRow({ label, value, note, toneClass = '' }) {
-  return (
-    <div className="admin-summary-row">
-      <div className="admin-summary-copy">
-        <strong>{label}</strong>
-        <span>{note}</span>
-      </div>
-      <div className={`admin-summary-value ${toneClass}`.trim()}>
-        <strong>{value}</strong>
-      </div>
-    </div>
-  );
-}
-
 function ProgressRow({ label, value, total, note, toneClass = '' }) {
   const percent = total > 0 ? Math.max(4, Math.round((value / total) * 100)) : 0;
 
@@ -89,6 +75,30 @@ function ProgressRow({ label, value, total, note, toneClass = '' }) {
       </div>
       <p>{note}</p>
     </div>
+  );
+}
+
+const readinessToneByLabel = {
+  Ready: 'status-active',
+  'Needs review': 'status-draft',
+  'Prototype/read-only': 'status-badge-muted',
+  'Future backend work': 'admin-issue-missing',
+};
+
+function getReadinessTone(label) {
+  return readinessToneByLabel[label] ?? 'status-badge-muted';
+}
+
+function ReadinessCard({ label, status, note, context }) {
+  return (
+    <article className="admin-status-card">
+      <span>{label}</span>
+      <div className="status-badges">
+        <span className={`status-badge ${getReadinessTone(status)}`.trim()}>{status}</span>
+        {context ? <span className="status-badge status-badge-muted">{context}</span> : null}
+      </div>
+      <p>{note}</p>
+    </article>
   );
 }
 
@@ -152,7 +162,6 @@ export default function AdminDashboard() {
       : 'A clean snapshot of sales, catalog health, and admin QA signals using local demo data.';
   const catalogReadiness = useMemo(() => getCatalogReadinessSummary(products), [products]);
   const attentionProducts = useMemo(() => getCatalogAttentionProducts(products, { limit: 4 }), [products]);
-  const storefrontReady = catalogReadiness.totalProducts > 0 && catalogReadiness.productsNeedingAttention === 0;
 
   const analytics = useMemo(() => {
     const orderedOrders = [...orders].sort(
@@ -229,6 +238,134 @@ export default function AdminDashboard() {
     };
   }, [orders, products, users]);
 
+  const storeReadiness = useMemo(() => {
+    const totalProducts = catalogReadiness.totalProducts;
+    const missingImageCount = products.filter((product) => !safeText(product.image)).length;
+    const missingPricingCount = products.filter((product) => {
+      const price = Number(product.price);
+      return !Number.isFinite(price) || price <= 0;
+    }).length;
+    const merchandiseHighlights = catalogReadiness.saleProducts + catalogReadiness.featuredProducts;
+    const customerCount = analytics.customerCount;
+    const savedItemCount = analytics.savedTotal;
+    const productCoverageNeedsReview =
+      totalProducts === 0 || catalogReadiness.productsNeedingAttention > 0 || missingImageCount > 0 || missingPricingCount > 0;
+    const stockNeedsReview = catalogReadiness.lowStockProducts > 0 || catalogReadiness.outOfStockProducts > 0;
+
+    const cards = [
+      {
+        key: 'catalog',
+        label: 'Catalog readiness',
+        status: totalProducts > 0 && !productCoverageNeedsReview ? 'Ready' : 'Needs review',
+        note:
+          totalProducts > 0 && !productCoverageNeedsReview
+            ? 'Products, copy, prices, images, and merchandising details are in good shape for a pitch.'
+            : totalProducts === 0
+              ? 'Add products before the store can feel ready to sell.'
+              : `${catalogReadiness.productsNeedingAttention} product${catalogReadiness.productsNeedingAttention === 1 ? '' : 's'} still need catalog work.`,
+        context: 'Existing product data only',
+      },
+      {
+        key: 'images',
+        label: 'Product image coverage',
+        status: totalProducts > 0 && missingImageCount === 0 ? 'Ready' : 'Needs review',
+        note:
+          totalProducts > 0 && missingImageCount === 0
+            ? 'Every product has a primary image for the storefront.'
+            : `${missingImageCount} product${missingImageCount === 1 ? '' : 's'} still need a primary image.`,
+        context: 'Primary image URLs',
+      },
+      {
+        key: 'pricing',
+        label: 'Product pricing coverage',
+        status: totalProducts > 0 && missingPricingCount === 0 ? 'Ready' : 'Needs review',
+        note:
+          totalProducts > 0 && missingPricingCount === 0
+            ? 'Prices are set for the visible catalog.'
+            : `${missingPricingCount} product${missingPricingCount === 1 ? '' : 's'} still need valid pricing.`,
+        context: 'Base price fields',
+      },
+      {
+        key: 'inventory',
+        label: 'Stock / inventory attention',
+        status: stockNeedsReview ? 'Needs review' : 'Ready',
+        note:
+          stockNeedsReview
+            ? `${catalogReadiness.lowStockProducts} low-stock and ${catalogReadiness.outOfStockProducts} out-of-stock items should be checked before a release batch.`
+            : 'Inventory looks healthy across the current catalog.',
+        context: 'Low-stock and out-of-stock counts',
+      },
+      {
+        key: 'merchandising',
+        label: 'Sale / featured merchandising',
+        status: merchandiseHighlights > 0 ? 'Ready' : 'Needs review',
+        note:
+          merchandiseHighlights > 0
+            ? `${catalogReadiness.saleProducts} sale item${catalogReadiness.saleProducts === 1 ? '' : 's'} and ${catalogReadiness.featuredProducts} featured item${catalogReadiness.featuredProducts === 1 ? '' : 's'} are helping the storefront feel merchandised.`
+            : 'Add a sale or featured product if you want stronger demo merchandising signals.',
+        context: 'Sale and featured flags',
+      },
+      {
+        key: 'customers',
+        label: 'Customer account readiness',
+        status: customerCount > 0 ? 'Ready' : 'Needs review',
+        note:
+          customerCount > 0
+            ? `${customerCount} customer account${customerCount === 1 ? '' : 's'} are present for profile and account demos.`
+            : 'Seed or connect customer accounts before a live pitch.',
+        context: 'Auth-backed customer data',
+      },
+      {
+        key: 'saved-items',
+        label: 'Saved-items / account persistence status',
+        status: 'Ready',
+        note:
+          savedItemCount > 0
+            ? `${savedItemCount} saved item${savedItemCount === 1 ? '' : 's'} demonstrate persistence for the current demo data.`
+            : 'Saved-items persistence is implemented, and demo/local fallback remains available even when the list is empty.',
+        context: 'Mixed local and Supabase-backed flow',
+      },
+      {
+        key: 'orders',
+        label: 'Order operations readiness',
+        status: 'Prototype/read-only',
+        note:
+          orders.length > 0
+            ? 'Live orders can be reviewed in the admin UI, but status mutation, refunds, and fulfillment remain read-only here.'
+            : 'The order operations view is ready for review, but live mutation is still not implemented.',
+        context: ordersSource === 'supabase' ? 'Live Supabase reads' : 'Local demo reads',
+      },
+      {
+        key: 'checkout',
+        label: 'Checkout readiness reminder',
+        status: 'Future backend work',
+        note:
+          'The checkout flow is in place, but public-facing production confidence still belongs in the next test-mode and release-batch review.',
+        context: 'Use the checkout checklist before release',
+      },
+    ];
+
+    const actionableCards = cards.filter((card) => card.key !== 'checkout');
+    const overallStatus = actionableCards.some((card) => card.status === 'Needs review')
+      ? 'Needs review'
+      : actionableCards.some((card) => card.status === 'Prototype/read-only')
+        ? 'Prototype/read-only'
+        : 'Ready';
+
+    const overallNote =
+      overallStatus === 'Ready'
+        ? 'The storefront and account surfaces are ready for a business-owner walkthrough.'
+        : overallStatus === 'Prototype/read-only'
+          ? 'The storefront can sell, but admin order operations are still intentionally read-only.'
+          : 'The store is close, but catalog cleanup and production confidence checks still need review.';
+
+    return {
+      cards,
+      overallStatus,
+      overallNote,
+    };
+  }, [analytics.customerCount, analytics.savedTotal, catalogReadiness, orders.length, ordersSource, products]);
+
   return (
     <div className="admin-page-stack admin-dashboard-page">
       <AdminPageHeader
@@ -257,6 +394,49 @@ export default function AdminDashboard() {
           <p>{orderSourceNote}</p>
         </div>
       ) : null}
+
+      <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-store-readiness-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Store readiness</span>
+          <p>
+            A store-owner view of whether the shop looks ready to sell, using existing catalog, account, and order data only.
+          </p>
+        </div>
+
+        <div className="admin-readiness-grid admin-store-readiness-grid">
+          {storeReadiness.cards.map((item) => (
+            <ReadinessCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+            />
+          ))}
+        </div>
+
+        <div className="admin-store-readiness-footer">
+          <span className={`status-badge ${getReadinessTone(storeReadiness.overallStatus)}`.trim()}>
+            {storeReadiness.overallStatus}
+          </span>
+          <p>{storeReadiness.overallNote}</p>
+        </div>
+
+        <div className="admin-cta-row">
+          <Link to="/admin/products" className="btn btn-dark">
+            Manage Products
+          </Link>
+          <Link to="/admin/orders" className="btn btn-ghost">
+            Review Orders
+          </Link>
+          <Link to="/admin/customers" className="btn btn-ghost">
+            View Customers
+          </Link>
+          <Link to="/" className="btn btn-outline">
+            Check Storefront
+          </Link>
+        </div>
+      </section>
 
       {isOrdersLoading && ordersSource === 'supabase' ? (
         <div className="admin-notice" role="status" aria-live="polite">
@@ -297,65 +477,6 @@ export default function AdminDashboard() {
               note={`${analytics.repeatCustomerCount} repeat shoppers in the demo data`}
             />
           </div>
-
-          <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-store-readiness-panel">
-            <div className="admin-dashboard-section-heading compact">
-              <span>Store readiness</span>
-              <p>
-                {catalogReadiness.totalProducts
-                  ? 'A compact view of catalog health before demos, screenshots, or release checks. Start with missing images, copy, taxonomy, stock, and detail data first.'
-                  : 'No products are in the catalog yet, so readiness signals will populate after the first item is added.'}
-              </p>
-            </div>
-
-            <div className="admin-store-readiness-grid">
-              <SummaryRow
-                label="Total products"
-                value={catalogReadiness.totalProducts}
-                note="All products currently in the catalog."
-              />
-              <SummaryRow
-                label="Active products"
-                value={catalogReadiness.activeProducts}
-                note="Visible on the storefront."
-              />
-              <SummaryRow
-                label="Low stock"
-                value={catalogReadiness.lowStockProducts}
-                note="Items that should be replenished soon."
-                toneClass="stock-low"
-              />
-              <SummaryRow
-                label="Out of stock"
-                value={catalogReadiness.outOfStockProducts}
-                note="Unavailable until inventory returns."
-                toneClass="stock-out"
-              />
-              <SummaryRow
-                label="Needs attention"
-                value={catalogReadiness.productsNeedingAttention}
-                note="Products with missing or incomplete merchandising data."
-                toneClass="admin-issue-missing"
-              />
-              <SummaryRow
-                label="Missing merchandising info"
-                value={catalogReadiness.missingMerchandisingInfo}
-                note="Missing images, copy, SKU, price, or stock details."
-                toneClass="status-badge-muted"
-              />
-            </div>
-
-            <div className="admin-store-readiness-footer">
-              <span className={`status-badge ${storefrontReady ? 'status-active' : 'status-draft'}`}>
-                {storefrontReady ? 'Catalog looks ready' : 'Catalog needs attention'}
-              </span>
-              <p>
-                {storefrontReady
-                  ? 'Storefront-facing data is in good shape for a demo or smoke review.'
-                  : `${catalogReadiness.productsNeedingAttention} product${catalogReadiness.productsNeedingAttention === 1 ? '' : 's'} still need work before the catalog feels demo-ready.`}
-              </p>
-            </div>
-          </section>
 
           <div className="admin-dashboard-mini-grid">
             <div className="admin-dashboard-panel admin-dashboard-panel-soft">
@@ -438,15 +559,10 @@ export default function AdminDashboard() {
 
             <div className="admin-quick-action-grid">
               <QuickActionLink
-                to="/admin/products/new"
-                label="Add Product"
-                description="Create a new catalog item."
-                className="btn btn-dark"
-              />
-              <QuickActionLink
                 to="/admin/products"
-                label="Review Catalog"
-                description="Check product readiness and issue details."
+                label="Manage Products"
+                description="Review catalog health and update listings."
+                className="btn btn-dark"
               />
               <QuickActionLink
                 to="/admin/orders"
@@ -459,11 +575,15 @@ export default function AdminDashboard() {
                 description="Open customer records and saved-item signals."
               />
               <QuickActionLink
-                to="/admin/products"
-                label="Check Storefront Readiness"
-                description="Review catalog health and attention items before screenshots."
+                to="/"
+                label="Check Storefront"
+                description="See the public shop experience."
               />
-              <QuickActionLink to="/" label="View Storefront" description="See the public shop experience." />
+              <QuickActionLink
+                to="/admin/products/new"
+                label="Add Product"
+                description="Create a new catalog item."
+              />
             </div>
           </section>
 
@@ -473,9 +593,11 @@ export default function AdminDashboard() {
               <p>
                 {attentionProducts.length
                   ? 'A short list of product fixes to handle before screenshots, demos, or release prep. Each card points to the most obvious merchandising gap first.'
-                  : storefrontReady
-                    ? 'Storefront is in good shape. No immediate catalog issues are flagged right now.'
-                    : 'No products were matched for issues yet, but the catalog still has readiness gaps.'}
+                  : catalogReadiness.totalProducts === 0
+                    ? 'No products are in the catalog yet, so the readiness panel will stay quiet until the first item is added.'
+                    : catalogReadiness.productsNeedingAttention === 0
+                      ? 'Storefront is in good shape. No immediate catalog issues are flagged right now.'
+                      : 'No products were matched for issues yet, but the catalog still has readiness gaps.'}
               </p>
             </div>
 

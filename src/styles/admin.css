@@ -312,6 +312,11 @@
   margin-top: 2px;
 }
 
+.admin-store-readiness-panel .admin-status-card {
+  display: grid;
+  gap: 8px;
+}
+
 .admin-store-readiness-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.24-final-local-handoff-and-next-work-plan
+- v1.25-admin-store-readiness-dashboard
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -40,6 +40,7 @@ Current state:
 - v1.22 is a docs-only portfolio/demo walkthrough script checkpoint
 - v1.23 is a docs-only portfolio case-study outline checkpoint
 - v1.24 is a docs-only final local handoff and next work plan checkpoint
+- v1.25 is a practical admin store-readiness dashboard feature checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
 - Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
@@ -52,6 +53,7 @@ Current state:
 - The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
 - The current checkpoint is documentation-only and records the portfolio case-study outline
 - The current checkpoint is documentation-only and records the final local handoff and next work plan
+- The current checkpoint is a practical frontend/admin store-readiness feature
 - Netlify credits are limited, so future merges and deploys should be batched intentionally
 - v1.16 tightens the order-history UI copy while keeping read-only receipts, local/demo fallback, and admin order behavior unchanged
 - v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior
@@ -62,6 +64,7 @@ Current state:
 - v1.22 provides the portfolio/demo walkthrough script without changing runtime behavior
 - v1.23 packages the portfolio case-study outline without changing runtime behavior
 - v1.24 closes the local handoff loop without changing runtime behavior
+- v1.25 improves admin store-readiness visibility without changing backend behavior
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -84,7 +87,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a docs-only final local handoff and next work plan checkpoint on top of the existing v1.00-v1.23 trail.
+2. Reconfirm the branch scope as a practical admin store-readiness feature checkpoint on top of the existing v1.00-v1.24 trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -93,6 +96,7 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
+   - `docs/SHOPORA_V1_25_ADMIN_STORE_READINESS_DASHBOARD.md`
    - `docs/SHOPORA_V1_24_FINAL_LOCAL_HANDOFF_AND_NEXT_WORK_PLAN.md`
    - `docs/SHOPORA_V1_23_PORTFOLIO_CASE_STUDY_OUTLINE.md`
    - `docs/SHOPORA_V1_22_PORTFOLIO_DEMO_WALKTHROUGH_SCRIPT.md`
@@ -103,6 +107,7 @@ Tasks for the next chat:
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
 
 Current docs created or updated:
+- `docs/SHOPORA_V1_25_ADMIN_STORE_READINESS_DASHBOARD.md`
 - `docs/SHOPORA_V1_24_FINAL_LOCAL_HANDOFF_AND_NEXT_WORK_PLAN.md`
 - `docs/SHOPORA_V1_23_PORTFOLIO_CASE_STUDY_OUTLINE.md`
 - `docs/SHOPORA_V1_22_PORTFOLIO_DEMO_WALKTHROUGH_SCRIPT.md`

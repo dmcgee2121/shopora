@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.22-portfolio-demo-walkthrough-script`
+- `v1.23-portfolio-case-study-outline`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -34,6 +34,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.20 is a docs-only local release batch wrap-up checkpoint.
 - v1.21 is a docs-only portfolio/demo readiness planning checkpoint.
 - v1.22 is a docs-only portfolio/demo walkthrough script checkpoint.
+- v1.23 is a docs-only portfolio case-study outline checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -53,6 +54,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.20 wraps up the current local release batch without changing runtime behavior.
 - v1.21 records the portfolio/demo readiness plan without changing runtime behavior.
 - v1.22 records the portfolio/demo walkthrough script without changing runtime behavior.
+- v1.23 records the portfolio case-study outline without changing runtime behavior.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

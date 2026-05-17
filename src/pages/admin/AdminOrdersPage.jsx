@@ -203,6 +203,18 @@ function getPrototypeWorkflowFlags(order, attention) {
   ];
 }
 
+function getDetailBannerLabels(order, attention, ordersSource) {
+  if (!order) return [];
+
+  return [
+    getOrderSourceLabel(ordersSource),
+    getOrderStatusLabel(order.status) || 'No status available',
+    getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode }),
+    attention?.label ?? 'No attention flag',
+    order.demoMode ? 'Prototype detail view' : 'Read-only live Supabase order',
+  ];
+}
+
 function OrderItemRow({ item }) {
   const image = getOrderItemImage(item);
   const quantity = Number(item?.quantity ?? 0);
@@ -278,6 +290,9 @@ export default function AdminOrdersPage() {
 
   const selectedOrder = ordered.find((order) => idsMatch(order.id, selectedOrderId)) ?? null;
   const selectedOrderAttention = selectedOrder ? getOrderAttentionInfo(selectedOrder) : null;
+  const selectedOrderDetailBannerLabels = selectedOrder
+    ? getDetailBannerLabels(selectedOrder, selectedOrderAttention, ordersSource)
+    : [];
   const workflowPreviewOrder = selectedOrder ?? ordered[0] ?? null;
   const workflowPreviewAttention = workflowPreviewOrder ? getOrderAttentionInfo(workflowPreviewOrder) : null;
   const workflowPreviewReadiness = getFulfillmentReadiness(workflowPreviewOrder, workflowPreviewAttention);
@@ -855,6 +870,28 @@ export default function AdminOrdersPage() {
                 x
               </button>
             </div>
+
+            <section className="admin-order-detail-banner" aria-label="Prototype order detail summary">
+              <div className="admin-order-detail-banner-copy">
+                <span>Prototype order detail</span>
+                <p>
+                  Read-only layout for reviewing order context, fulfillment readiness, and the next operational
+                  step before any future admin write path is defined.
+                </p>
+              </div>
+              <div className="admin-order-detail-banner-meta">
+                <strong>{safeText(selectedOrder.orderNumber, 'Order')}</strong>
+                <span>Placed {formatDateTime(selectedOrder.createdAt)}</span>
+                <span>Updated {formatDateTime(selectedOrder.updatedAt)}</span>
+              </div>
+              <div className="admin-order-detail-banner-badges">
+                {selectedOrderDetailBannerLabels.map((label, index) => (
+                  <span key={`${label}-${index}`} className="status-badge status-badge-muted">
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </section>
 
             <div className="admin-order-modal-grid">
               <section className="admin-order-modal-panel">

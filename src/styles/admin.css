@@ -1283,6 +1283,62 @@
   line-height: 0.95;
 }
 
+.admin-order-detail-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) auto;
+  gap: 14px;
+  align-items: start;
+  padding: 16px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(228, 217, 204, 0.82);
+  background:
+    linear-gradient(180deg, rgba(251, 247, 241, 0.92), rgba(245, 238, 230, 0.96)),
+    radial-gradient(circle at top right, rgba(180, 138, 77, 0.12), transparent 35%);
+}
+
+.admin-order-detail-banner-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-order-detail-banner-copy span {
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.admin-order-detail-banner-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.admin-order-detail-banner-meta {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+  text-align: right;
+}
+
+.admin-order-detail-banner-meta strong {
+  font-size: 1rem;
+}
+
+.admin-order-detail-banner-meta span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.admin-order-detail-banner-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  grid-column: 1 / -1;
+}
+
 .admin-order-modal-close {
   width: 42px;
   height: 42px;
@@ -2247,6 +2303,15 @@
   .admin-order-ops-panel,
   .admin-order-modal {
     padding: 16px;
+  }
+
+  .admin-order-detail-banner {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-order-detail-banner-meta {
+    justify-items: start;
+    text-align: left;
   }
 
   .admin-order-modal-grid {

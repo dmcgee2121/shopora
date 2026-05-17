@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.00-admin-order-management-prototype-ui
+- v1.01-admin-order-detail-prototype-polish
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -15,8 +15,9 @@ Current state:
 - v0.98 completed a safe image asset optimization pass
 - v0.99 was the local-first admin order-management prototype planning pass
 - v1.00 is a local-first admin order-management prototype UI pass
-- The admin orders page now includes prototype workflow preview sections for fulfillment readiness, customer contact context, order attention flags, internal notes, and next-step planning
-- The current checkpoint should not change app behavior beyond the new prototype-only UI
+- v1.01 is a local-first admin order-detail prototype polish pass
+- The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step
+- The current checkpoint should not change app behavior beyond the new prototype-only modal polish
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -36,7 +37,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a safe admin order-management prototype UI pass on top of the existing v0.94-v1.00 trail.
+2. Reconfirm the branch scope as a safe admin order-detail prototype polish pass on top of the existing v0.94-v1.01 trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -45,6 +46,7 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
+   - `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md`
    - `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md`
    - `docs/SHOPORA_V0_99_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_PLANNING.md`
    - `docs/SHOPORA_V0_94_ADMIN_ORDER_MANAGEMENT_READINESS.md`
@@ -57,6 +59,7 @@ Tasks for the next chat:
 5. Keep the no-touch areas untouched and do not modify `src` beyond safe prototype-safe copy changes unless explicitly requested.
 
 Current docs created or updated:
+- `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md`
 - `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md`
 - `docs/SHOPORA_V0_99_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_PLANNING.md`
 - `docs/SHOPORA_HANDOFF.md`

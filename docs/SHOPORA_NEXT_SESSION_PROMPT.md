@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.17-account-orders-release-batch-qa-checklist
+- v1.18-admin-live-order-status-planning
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -33,14 +33,17 @@ Current state:
 - v1.15 is a release batch planning and Netlify credit strategy checkpoint
 - v1.16 is a copy-only order-history UI polish local batch checkpoint
 - v1.17 is a docs-only account/orders release batch QA checklist checkpoint
+- v1.18 is a docs-only admin live order-status planning checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
 - Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
 - v1.12 local QA passed and draft PR #13 is intentionally still unmerged because Netlify credits are limited
 - The current checkpoint is documentation-only and records the account/orders release batch QA strategy
+- The current checkpoint is documentation-only and records the admin live order-status planning audit
 - Netlify credits are limited, so future merges and deploys should be batched intentionally
 - v1.16 tightens the order-history UI copy while keeping read-only receipts, local/demo fallback, and admin order behavior unchanged
 - v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior
+- v1.18 documents the live admin order-status planning constraints without changing runtime behavior
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -63,7 +66,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a docs-only account/orders release batch QA checkpoint on top of the existing v1.12-v1.16 trail.
+2. Reconfirm the branch scope as a docs-only admin live order-status planning checkpoint on top of the existing v1.00-v1.17 trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -72,16 +75,16 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
-   - `docs/SHOPORA_V1_17_ACCOUNT_ORDERS_RELEASE_BATCH_QA_CHECKLIST.md`
-   - `docs/SHOPORA_V1_16_ORDER_HISTORY_UI_POLISH_LOCAL_BATCH.md`
-   - `docs/SHOPORA_V1_15_RELEASE_BATCH_PLANNING_NETLIFY_CREDIT_STRATEGY.md`
-   - `docs/SHOPORA_V1_14_CHECKOUT_STRIPE_PRODUCTION_TEST_CHECKLIST.md`
-   - `docs/SHOPORA_V1_13_ORDER_HISTORY_LOCAL_QA_AND_RELEASE_HOLD.md`
-   - `docs/SHOPORA_V1_12_ORDER_HISTORY_READONLY_SUPABASE_HELPER.md`
+   - `docs/SHOPORA_V1_18_ADMIN_LIVE_ORDER_STATUS_PLANNING.md`
+   - `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md`
+   - `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md`
+   - `docs/SHOPORA_V0_94_ADMIN_ORDER_MANAGEMENT_READINESS.md`
+   - `docs/SHOPORA_HANDOFF.md`
    - `docs/SHOPORA_HANDOFF.md`
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
 
 Current docs created or updated:
+- `docs/SHOPORA_V1_18_ADMIN_LIVE_ORDER_STATUS_PLANNING.md`
 - `docs/SHOPORA_V1_17_ACCOUNT_ORDERS_RELEASE_BATCH_QA_CHECKLIST.md`
 - `docs/SHOPORA_V1_16_ORDER_HISTORY_UI_POLISH_LOCAL_BATCH.md`
 - `docs/SHOPORA_V1_15_RELEASE_BATCH_PLANNING_NETLIFY_CREDIT_STRATEGY.md`

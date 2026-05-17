@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.16-order-history-ui-polish-local-batch`
+- `v1.17-account-orders-release-batch-qa-checklist`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -28,6 +28,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.14 is a checkout and Stripe production test checklist checkpoint.
 - v1.15 is a release batch planning and Netlify credit strategy checkpoint.
 - v1.16 is a copy-only order-history UI polish local batch checkpoint.
+- v1.17 is a docs-only account/orders release batch QA checklist checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -41,6 +42,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Checkout and Stripe should be verified with a production-minded checklist before any future release batch is considered worth a deploy.
 - v1.15 captures the release batching rule: keep building locally, park work in draft PRs, and spend deploy credits only when the batch is worth it.
 - v1.16 tightens the order-history and receipt copy so loading, empty, unavailable, and local/demo states read more clearly without changing behavior.
+- v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

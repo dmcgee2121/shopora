@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.16-order-history-ui-polish-local-batch
+- v1.17-account-orders-release-batch-qa-checklist
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -32,13 +32,15 @@ Current state:
 - v1.14 is a checkout and Stripe production test checklist checkpoint
 - v1.15 is a release batch planning and Netlify credit strategy checkpoint
 - v1.16 is a copy-only order-history UI polish local batch checkpoint
+- v1.17 is a docs-only account/orders release batch QA checklist checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
 - Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
 - v1.12 local QA passed and draft PR #13 is intentionally still unmerged because Netlify credits are limited
-- The current checkpoint is documentation-only and records the checkout and Stripe test strategy
+- The current checkpoint is documentation-only and records the account/orders release batch QA strategy
 - Netlify credits are limited, so future merges and deploys should be batched intentionally
 - v1.16 tightens the order-history UI copy while keeping read-only receipts, local/demo fallback, and admin order behavior unchanged
+- v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -61,7 +63,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a safe admin order-detail prototype polish pass on top of the existing v0.94-v1.01 trail.
+2. Reconfirm the branch scope as a docs-only account/orders release batch QA checkpoint on top of the existing v1.12-v1.16 trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -70,19 +72,24 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
-   - `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md`
-   - `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md`
-   - `docs/SHOPORA_V0_99_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_PLANNING.md`
-   - `docs/SHOPORA_V0_94_ADMIN_ORDER_MANAGEMENT_READINESS.md`
-   - `docs/SHOPORA_V0_97_NEXT_PHASE_ROADMAP_WRAP_UP.md`
-   - `docs/SHOPORA_V0_96_CHECKOUT_STRIPE_CONFIDENCE_REVIEW.md`
-   - `docs/SHOPORA_V0_95_CUSTOMER_ACCOUNT_BACKEND_READINESS.md`
+   - `docs/SHOPORA_V1_17_ACCOUNT_ORDERS_RELEASE_BATCH_QA_CHECKLIST.md`
+   - `docs/SHOPORA_V1_16_ORDER_HISTORY_UI_POLISH_LOCAL_BATCH.md`
+   - `docs/SHOPORA_V1_15_RELEASE_BATCH_PLANNING_NETLIFY_CREDIT_STRATEGY.md`
+   - `docs/SHOPORA_V1_14_CHECKOUT_STRIPE_PRODUCTION_TEST_CHECKLIST.md`
+   - `docs/SHOPORA_V1_13_ORDER_HISTORY_LOCAL_QA_AND_RELEASE_HOLD.md`
+   - `docs/SHOPORA_V1_12_ORDER_HISTORY_READONLY_SUPABASE_HELPER.md`
    - `docs/SHOPORA_HANDOFF.md`
-   - `docs/SHOPORA_ADMIN_LOCAL_QA.md`
-   - `docs/SHOPORA_V0_98_IMAGE_ASSET_OPTIMIZATION.md`
-5. Keep the no-touch areas untouched and do not modify `src` beyond safe prototype-safe copy changes unless explicitly requested.
+5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
 
 Current docs created or updated:
+- `docs/SHOPORA_V1_17_ACCOUNT_ORDERS_RELEASE_BATCH_QA_CHECKLIST.md`
+- `docs/SHOPORA_V1_16_ORDER_HISTORY_UI_POLISH_LOCAL_BATCH.md`
+- `docs/SHOPORA_V1_15_RELEASE_BATCH_PLANNING_NETLIFY_CREDIT_STRATEGY.md`
+- `docs/SHOPORA_V1_14_CHECKOUT_STRIPE_PRODUCTION_TEST_CHECKLIST.md`
+- `docs/SHOPORA_V1_13_ORDER_HISTORY_LOCAL_QA_AND_RELEASE_HOLD.md`
+- `docs/SHOPORA_V1_12_ORDER_HISTORY_READONLY_SUPABASE_HELPER.md`
+- `docs/SHOPORA_HANDOFF.md`
+- `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 - `docs/SHOPORA_V1_08_SAVED_ITEMS_SUPABASE_PERSISTENCE_PLANNING.md`
 - `docs/SHOPORA_V1_06_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION.md`
 - `docs/SHOPORA_V1_05_SUPABASE_PROFILE_PERSISTENCE_AUDIT.md`
@@ -92,8 +99,6 @@ Current docs created or updated:
 - `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md`
 - `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md`
 - `docs/SHOPORA_V0_99_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_PLANNING.md`
-- `docs/SHOPORA_HANDOFF.md`
-- `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 - `docs/SHOPORA_V0_98_IMAGE_ASSET_OPTIMIZATION.md`
 - `docs/SHOPORA_V0_97_NEXT_PHASE_ROADMAP_WRAP_UP.md`
 - `docs/SHOPORA_V0_96_CHECKOUT_STRIPE_CONFIDENCE_REVIEW.md`
@@ -121,4 +126,4 @@ Current docs created or updated:
 
 Recommended next action:
 - Run `npm run build`.
-- If build stays clean, treat this as a planning checkpoint and move on to the next scoped implementation branch.
+- If build stays clean, keep this as a docs-only checkpoint and move on to the next scoped implementation branch when ready.

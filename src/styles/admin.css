@@ -415,6 +415,41 @@
   gap: 10px;
 }
 
+.admin-launch-release-notes-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-launch-release-note-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-launch-release-note-card {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-launch-release-note-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.admin-launch-release-notes-footer {
+  display: grid;
+  gap: 12px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(228, 217, 204, 0.72);
+}
+
+.admin-launch-release-notes-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .admin-storefront-preview-panel {
   display: grid;
   gap: 18px;
@@ -2926,6 +2961,7 @@
   .admin-storefront-preview-grid,
   .admin-launch-command-center-summary-grid,
   .admin-launch-qa-grid,
+  .admin-launch-release-note-grid,
   .admin-readiness-grid,
   .admin-catalog-readiness-summary {
     grid-template-columns: 1fr;
@@ -2946,6 +2982,7 @@
   .admin-product-launch-actions .btn,
   .admin-launch-command-center-actions .btn,
   .admin-launch-qa-actions .btn,
+  .admin-launch-release-notes-actions .btn,
   .admin-storefront-preview-actions .btn {
     width: 100%;
   }

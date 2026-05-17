@@ -183,6 +183,19 @@ function LaunchQANoteCard({ label, status, note, context }) {
   );
 }
 
+function LaunchReleaseNoteCard({ label, status, note, context }) {
+  return (
+    <article className="admin-status-card admin-launch-release-note-card">
+      <span>{label}</span>
+      <div className="status-badges">
+        <span className={`status-badge ${getReadinessTone(status)}`.trim()}>{status}</span>
+        {context ? <span className="status-badge status-badge-muted">{context}</span> : null}
+      </div>
+      <p>{note}</p>
+    </article>
+  );
+}
+
 export default function AdminDashboard() {
   const { users, currentUser } = useAuth();
   const { orders, ordersSource, isOrdersLoading } = useOrders();
@@ -752,6 +765,53 @@ export default function AdminDashboard() {
     storefrontPreview.overallStatus,
   ]);
 
+  const launchReleaseNotes = useMemo(() => {
+    const cards = [
+      {
+        key: 'buyer-facing',
+        label: 'Buyer-facing ready',
+        status: 'Ready',
+        note:
+          'Storefront browsing, product detail pages, saved-items touchpoints, and customer account surfaces are in place for a buyer-side walkthrough.',
+        context: 'Storefront, account, and saved-items routes',
+      },
+      {
+        key: 'seller-support',
+        label: 'Seller/admin readiness support',
+        status: 'Ready',
+        note:
+          'The store-readiness dashboard, product launch checklist, product editor guidance, seller launch command center, and QA notes all support launch prep.',
+        context: 'Admin dashboard and product routes',
+      },
+      {
+        key: 'prototype',
+        label: 'Prototype / read-only',
+        status: 'Prototype/read-only',
+        note:
+          'Order history and admin order operations are still review surfaces only; they are useful for demos but do not include live mutation or fulfillment controls.',
+        context: 'Account orders and admin orders',
+      },
+      {
+        key: 'future',
+        label: 'Future backend work',
+        status: 'Future backend work',
+        note:
+          'Checkout/test-mode confidence, live order mutation, refunds, and fulfillment remain future backend work and should stay out of launch promises for now.',
+        context: 'Checkout and Stripe readiness',
+      },
+    ];
+
+    const overallStatus = 'Ready';
+    const overallNote =
+      'Recent readiness work is centered on buyer-facing polish, seller launch support, and honest prototype boundaries so a batched release can be planned safely.';
+
+    return {
+      cards,
+      overallStatus,
+      overallNote,
+    };
+  }, []);
+
   return (
     <div className="admin-page-stack admin-dashboard-page">
       <AdminPageHeader
@@ -899,6 +959,57 @@ export default function AdminDashboard() {
             </Link>
             <Link to="/admin/orders" className="btn btn-outline">
               Admin Orders
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-launch-release-notes-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Launch release notes</span>
+          <p>
+            A short summary of what changed for launch readiness and where the work is intentionally still
+            advisory or read-only.
+          </p>
+        </div>
+
+        <div className="admin-launch-release-note-grid">
+          {launchReleaseNotes.cards.map((item) => (
+            <LaunchReleaseNoteCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+            />
+          ))}
+        </div>
+
+        <div className="admin-launch-release-notes-footer">
+          <div className="admin-launch-command-center-summary">
+            <span className={`status-badge ${getReadinessTone(launchReleaseNotes.overallStatus)}`.trim()}>
+              {launchReleaseNotes.overallStatus}
+            </span>
+            <p>{launchReleaseNotes.overallNote}</p>
+          </div>
+
+          <p className="admin-launch-command-center-note">
+            Use this as a quick reminder of the current launch posture before batching future PRs or spending
+            release credits.
+          </p>
+
+          <div className="admin-launch-release-notes-actions">
+            <Link to="/admin" className="btn btn-dark">
+              Open Dashboard
+            </Link>
+            <Link to="/admin/products" className="btn btn-ghost">
+              Product Readiness
+            </Link>
+            <Link to="/admin/orders" className="btn btn-ghost">
+              Review Orders
+            </Link>
+            <Link to="/" className="btn btn-outline">
+              View Storefront
             </Link>
           </div>
         </div>

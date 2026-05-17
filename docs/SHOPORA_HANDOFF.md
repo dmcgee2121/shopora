@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.25-admin-store-readiness-dashboard`
+- `v1.26-admin-product-launch-checklist`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -37,6 +37,8 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.23 is a docs-only portfolio case-study outline checkpoint.
 - v1.24 is a docs-only final local handoff and next work plan checkpoint.
 - v1.25 is a practical admin store-readiness dashboard feature checkpoint.
+- v1.26 is a practical admin product launch checklist feature checkpoint.
+- v1.26 is a practical admin product launch checklist feature checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -59,6 +61,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.23 records the portfolio case-study outline without changing runtime behavior.
 - v1.24 records the final local handoff and next work plan without changing runtime behavior.
 - v1.25 adds the admin store-readiness dashboard without changing backend behavior.
+- v1.26 adds the admin product launch checklist without changing backend behavior.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

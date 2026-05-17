@@ -7,7 +7,9 @@ import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import {
   getCatalogAttentionProducts,
   getCatalogReadinessSummary,
+  getProductEditorReadinessChecklist,
   getProductMerchandisingReadiness,
+  getProductReadinessIssues,
   getProductVisibilityInfo,
 } from '../../utils/catalogReadiness';
 
@@ -37,6 +39,189 @@ function matchesQuery(product, query) {
     .includes(value);
 }
 
+const launchStatusToneByLabel = {
+  'Ready to launch': 'status-active',
+  'Needs review': 'status-draft',
+  'Missing essentials': 'admin-issue-missing',
+  'Merchandising opportunity': 'status-badge-sale',
+};
+
+const launchStatusOrder = [
+  'Ready to launch',
+  'Merchandising opportunity',
+  'Needs review',
+  'Missing essentials',
+];
+
+const launchCoreChecklistKeys = new Set(['name', 'brand', 'sku', 'taxonomy', 'pricing', 'description', 'image', 'details']);
+const launchChecklistPreviewOrder = ['name', 'image', 'brand', 'sku', 'taxonomy', 'pricing', 'stock', 'description', 'details', 'gallery', 'merchandising', 'sale'];
+
+function getLaunchStatusTone(label) {
+  return launchStatusToneByLabel[label] ?? 'status-badge-muted';
+}
+
+function getLaunchChecklistOrder(key) {
+  const index = launchChecklistPreviewOrder.indexOf(key);
+  return index === -1 ? launchChecklistPreviewOrder.length : index;
+}
+
+function getLaunchStatusNote(status, product, visibility, checklistPreview, issues) {
+  if (status === 'Missing essentials') {
+    const missing = checklistPreview
+      .filter((item) => !item.ready)
+      .map((item) => item.label)
+      .slice(0, 3);
+    if (missing.length) {
+      return `${missing.join(', ')} still need attention before this product can be pitched as launch-ready.`;
+    }
+    return 'One or more core product fields still need attention.';
+  }
+
+  if (status === 'Needs review') {
+    if (visibility.state !== 'active') {
+      return `${visibility.label} products stay hidden from shoppers until they are activated.`;
+    }
+
+    const stockIssue = issues.find((issue) => issue.key === 'lowStock' || issue.key === 'outOfStock' || issue.key === 'stockCount');
+    if (stockIssue) {
+      return stockIssue.detail;
+    }
+
+    return 'The product is close, but inventory or merchandising details still need a review.';
+  }
+
+  if (status === 'Merchandising opportunity') {
+    return 'Core launch checks are complete, and sale or featured badges can help this product stand out in a pitch.';
+  }
+
+  return 'Core launch checks are complete and the product is ready to sell.';
+}
+
+function getLaunchChecklistStatus(product = {}) {
+  const visibility = getProductVisibilityInfo(product);
+  const checklist = getProductEditorReadinessChecklist(product);
+  const issues = getProductReadinessIssues(product);
+  const merchReadiness = getProductMerchandisingReadiness(product);
+  const stockCount = Number(product.stockCount);
+  const hasStockCount = Number.isFinite(stockCount);
+  const missingCoreFields = checklist.filter((item) => launchCoreChecklistKeys.has(item.key) && !item.ready);
+  const hasInventoryReview = hasStockCount && (stockCount <= 7 || stockCount <= 0);
+  const hasReviewItems = checklist.some((item) => ['sale', 'gallery', 'merchandising'].includes(item.key) && !item.ready);
+
+  let status = 'Ready to launch';
+
+  if (!hasStockCount || missingCoreFields.length > 0) {
+    status = 'Missing essentials';
+  } else if (visibility.state !== 'active' || hasInventoryReview || hasReviewItems) {
+    status = 'Needs review';
+  } else if (product.isSale || product.isNew || product.featured || merchReadiness.badges.some((badge) => badge.label === 'Featured' || badge.label === 'Sale ready' || badge.label === 'New arrival')) {
+    status = 'Merchandising opportunity';
+  }
+
+  const checklistPreview = [...checklist]
+    .sort((left, right) => {
+      if (left.ready !== right.ready) {
+        return left.ready ? 1 : -1;
+      }
+
+      return getLaunchChecklistOrder(left.key) - getLaunchChecklistOrder(right.key);
+    })
+    .slice(0, 4);
+
+  return {
+    status,
+    tone: getLaunchStatusTone(status),
+    visibility,
+    checklist,
+    checklistPreview,
+    issues,
+    merchReadiness,
+    readyCount: checklist.filter((item) => item.ready).length,
+    totalChecks: checklist.length,
+    note: getLaunchStatusNote(status, product, visibility, checklistPreview, issues),
+  };
+}
+
+function LaunchChecklistItem({ item }) {
+  return (
+    <div className={`admin-product-launch-checklist-item ${item.ready ? 'ready' : 'needs-attention'}`}>
+      <div className="admin-product-launch-checklist-row">
+        <strong>{item.label}</strong>
+        <span className={`status-badge ${item.ready ? 'status-active' : 'admin-issue-missing'}`}>
+          {item.ready ? 'Ready' : 'Needs attention'}
+        </span>
+      </div>
+      <p>{item.note}</p>
+    </div>
+  );
+}
+
+function LaunchProductCard({ item }) {
+  const { product, status, tone, visibility, checklistPreview, readyCount, totalChecks, note, merchReadiness } = item;
+
+  return (
+    <article className="admin-product-launch-card">
+      <div className="admin-product-launch-card-top">
+        <ShopOraImage
+          src={product.image}
+          alt={safeText(product.name, 'Product image')}
+          className="admin-product-launch-thumb"
+          fallbackText="ShopOra"
+        />
+        <div className="admin-product-launch-card-meta">
+          <div className="admin-product-launch-card-row">
+            <div>
+              <strong>{safeText(product.name, 'Untitled product')}</strong>
+              <p>
+                {safeText(product.brand, 'Unbranded')}
+                {' / '}
+                {safeText(product.department, 'Unassigned')}
+                {' / '}
+                {safeText(product.category, 'Unassigned')}
+                {' / SKU '}
+                {safeText(product.sku, 'Not assigned')}
+              </p>
+            </div>
+            <span className={`status-badge ${tone}`.trim()}>{status}</span>
+          </div>
+
+          <div className="status-badges admin-launch-badges">
+            <span className={`status-badge ${visibility.className}`}>{visibility.label}</span>
+            <span className="status-badge status-badge-muted">
+              {readyCount} / {totalChecks} checks ready
+            </span>
+            {merchReadiness.badges.map((badge) => (
+              <span key={badge.label} className={`status-badge ${badge.tone}`.trim()}>
+                {badge.label}
+              </span>
+            ))}
+          </div>
+
+          <p className="admin-product-launch-note">{note}</p>
+
+          <div className="admin-product-launch-checklist">
+            {checklistPreview.map((check) => (
+              <LaunchChecklistItem key={check.key} item={check} />
+            ))}
+          </div>
+
+          <div className="admin-product-launch-actions">
+            <Link to={`/admin/products/${product.id}/edit`} className="text-button">
+              Quick edit
+            </Link>
+            <Link to="/admin/products" className="text-button">
+              Review catalog
+            </Link>
+            <Link to="/admin/products/new" className="text-button">
+              Add Product
+            </Link>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function AdminProductsPage() {
   const {
     products,
@@ -55,6 +240,43 @@ export default function AdminProductsPage() {
   const hasFilters = Boolean(query.trim() || departmentFilter !== 'all' || categoryFilter !== 'all' || stockFilter !== 'all');
   const summary = useMemo(() => getCatalogReadinessSummary(products), [products]);
   const attentionProducts = useMemo(() => getCatalogAttentionProducts(products, { limit: 5 }), [products]);
+  const launchReadiness = useMemo(() => {
+    const entries = products.map((product) => {
+      const status = getLaunchChecklistStatus(product);
+
+      return {
+        product,
+        ...status,
+      };
+    });
+
+    const summaryCounts = entries.reduce(
+      (acc, item) => {
+        acc.total += 1;
+        acc[item.status] += 1;
+        return acc;
+      },
+      {
+        total: 0,
+        'Ready to launch': 0,
+        'Needs review': 0,
+        'Missing essentials': 0,
+        'Merchandising opportunity': 0,
+      },
+    );
+
+    const byStatus = launchStatusOrder.reduce((acc, status) => {
+      acc[status] = entries.filter((item) => item.status === status);
+      return acc;
+    }, {});
+
+    return {
+      entries,
+      summary: summaryCounts,
+      byId: new Map(entries.map((entry) => [entry.product.id, entry])),
+      byStatus,
+    };
+  }, [products]);
 
   const departments = useMemo(() => {
     return Array.from(new Set(products.map((product) => product.department).filter(Boolean)));
@@ -148,7 +370,7 @@ export default function AdminProductsPage() {
       <AdminPageHeader
         eyebrow="Catalog management"
         title="Products"
-        subtitle="Search, filter, and maintain the catalog from one clean admin table or mobile card view."
+        subtitle="Search, filter, and maintain the catalog from one clean admin table, launch checklist, or mobile card view."
         actionLabel="Add Product"
         actionTo="/admin/products/new"
       />
@@ -157,6 +379,90 @@ export default function AdminProductsPage() {
       {!resetAvailable ? (
         <p className="admin-catalog-helper">Reset catalog is only available in local demo mode.</p>
       ) : null}
+
+      <section className="admin-product-launch-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Product launch checklist</span>
+          <p>
+            A seller-friendly view of which products are ready to launch, which need review, and which still need
+            merchandising polish before a pitch or release batch.
+          </p>
+        </div>
+
+        <div className="admin-status-grid admin-launch-summary-grid">
+          <div className="admin-status-card admin-launch-summary-card">
+            <span>Ready to launch</span>
+            <strong>{launchReadiness.summary['Ready to launch']}</strong>
+            <p>Core product checks are complete.</p>
+          </div>
+          <div className="admin-status-card admin-launch-summary-card">
+            <span>Merchandising opportunity</span>
+            <strong>{launchReadiness.summary['Merchandising opportunity']}</strong>
+            <p>Products with sale or featured potential.</p>
+          </div>
+          <div className="admin-status-card admin-launch-summary-card">
+            <span>Needs review</span>
+            <strong>{launchReadiness.summary['Needs review']}</strong>
+            <p>Active products with stock, draft, or merchandising issues.</p>
+          </div>
+          <div className="admin-status-card admin-launch-summary-card">
+            <span>Missing essentials</span>
+            <strong>{launchReadiness.summary['Missing essentials']}</strong>
+            <p>Products missing core launch fields.</p>
+          </div>
+        </div>
+
+        <div className="admin-product-launch-groups">
+          {launchStatusOrder.map((status) => {
+            const items = launchReadiness.byStatus[status] ?? [];
+            if (!items.length) return null;
+
+            return (
+              <section key={status} className="admin-product-launch-group">
+                <div className="admin-product-launch-group-header">
+                  <div className="admin-dashboard-section-heading compact">
+                    <span>{status}</span>
+                    <p>
+                      {status === 'Ready to launch'
+                        ? 'Products that are ready to sell with no blockers.'
+                        : status === 'Merchandising opportunity'
+                          ? 'Products that are launch-ready and could be positioned more strongly.'
+                          : status === 'Needs review'
+                            ? 'Products that should be checked before a demo or release batch.'
+                            : 'Products missing core launch fields.'}
+                    </p>
+                  </div>
+                  <span className={`status-badge ${getLaunchStatusTone(status)}`.trim()}>{items.length}</span>
+                </div>
+
+                <div className="admin-product-launch-list">
+                  {items.slice(0, 2).map((item) => (
+                    <LaunchProductCard key={item.product.id} item={item} />
+                  ))}
+                </div>
+
+                {items.length > 2 ? (
+                  <p className="admin-product-launch-more">
+                    +{items.length - 2} more product{items.length - 2 === 1 ? '' : 's'} are listed in the table below.
+                  </p>
+                ) : null}
+              </section>
+            );
+          })}
+        </div>
+
+        <div className="admin-cta-row">
+          <Link to="/admin/products" className="btn btn-dark">
+            Review Catalog
+          </Link>
+          <Link to="/admin/products/new" className="btn btn-ghost">
+            Add Product
+          </Link>
+          <Link to="/admin" className="btn btn-outline">
+            Open Dashboard
+          </Link>
+        </div>
+      </section>
 
       <div className="admin-readiness-grid">
         <div className="admin-status-card admin-readiness-card">
@@ -352,6 +658,7 @@ export default function AdminProductsPage() {
                   <th>Department</th>
                   <th>Category</th>
                   <th>Price</th>
+                  <th>Launch</th>
                   <th>Status</th>
                   <th>Stock</th>
                   <th />
@@ -359,6 +666,7 @@ export default function AdminProductsPage() {
               </thead>
               <tbody>
                 {filtered.map((product) => {
+                  const launchInfo = launchReadiness.byId.get(product.id);
                   const visibility = getProductVisibilityInfo(product);
                   const merchandisingReadiness = getProductMerchandisingReadiness(product);
                   const stockCountValue = Number(product.stockCount);
@@ -407,6 +715,16 @@ export default function AdminProductsPage() {
                         ) : (
                           <span className="price">{formatMoney(product.price)}</span>
                         )}
+                      </td>
+                      <td>
+                        <div className="admin-status-stack">
+                          <span className={`status-badge ${launchInfo?.tone ?? 'status-badge-muted'}`}>
+                            {launchInfo?.status ?? 'Ready to launch'}
+                          </span>
+                          <span className="admin-status-caption">
+                            {launchInfo?.note ?? 'Core launch checks are complete.'}
+                          </span>
+                        </div>
                       </td>
                       <td>
                         <div className="status-badges admin-status-stack">
@@ -464,6 +782,7 @@ export default function AdminProductsPage() {
                 {filtered.map((product) => {
                   const visibility = getProductVisibilityInfo(product);
                   const merchandisingReadiness = getProductMerchandisingReadiness(product);
+                  const launchInfo = launchReadiness.byId.get(product.id);
                   const stockCountValue = Number(product.stockCount);
                   const stockCount = Number.isFinite(stockCountValue) ? stockCountValue : null;
                   const stockState = getStockState(stockCount);
@@ -487,6 +806,9 @@ export default function AdminProductsPage() {
                           {safeText(product.department, 'Unassigned')} / {safeText(product.category, 'Unassigned')}
                         </p>
                         <div className="status-badges">
+                          <span className={`status-badge ${launchInfo?.tone ?? 'status-badge-muted'}`}>
+                            {launchInfo?.status ?? 'Ready to launch'}
+                          </span>
                           <span className={`status-badge ${visibility.className}`}>{visibility.label}</span>
                           {featuredActive ? <span className="status-badge status-badge-muted">Featured</span> : null}
                           {saleActive ? <span className="status-badge status-badge-sale">Sale</span> : null}
@@ -499,6 +821,7 @@ export default function AdminProductsPage() {
                           ))}
                         </div>
                         <p className="admin-product-readiness-detail">{merchandisingReadiness.detail}</p>
+                        <p className="admin-product-launch-note">{launchInfo?.note ?? 'Core launch checks are complete.'}</p>
                       </div>
                     </div>
 

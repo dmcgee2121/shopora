@@ -89,7 +89,7 @@ async function requestProfiles(path, { method = 'GET', body, accessToken, prefer
   return text ? JSON.parse(text) : null;
 }
 
-async function insertSupabaseProfile(userId, profileData = {}, accessToken) {
+async function insertSupabaseProfile(userId, profileData = {}, accessToken, payloadOptions = {}) {
   const cleanUserId = typeof userId === 'string' ? userId.trim() : '';
 
   if (!cleanUserId) {
@@ -99,7 +99,7 @@ async function insertSupabaseProfile(userId, profileData = {}, accessToken) {
   const payload = profileToSupabasePayload({
     id: cleanUserId,
     ...buildProfileInput({ id: cleanUserId }, profileData),
-  });
+  }, payloadOptions);
   const { role: _role, ...safePayload } = payload ?? {};
   const rows = await requestProfiles('', {
     method: 'POST',
@@ -111,7 +111,7 @@ async function insertSupabaseProfile(userId, profileData = {}, accessToken) {
   return normalizeProfileFromSupabase(Array.isArray(rows) ? rows[0] : rows);
 }
 
-async function patchSupabaseProfile(userId, profileData = {}, accessToken) {
+async function patchSupabaseProfile(userId, profileData = {}, accessToken, payloadOptions = {}) {
   const cleanUserId = typeof userId === 'string' ? userId.trim() : '';
 
   if (!cleanUserId) {
@@ -121,7 +121,7 @@ async function patchSupabaseProfile(userId, profileData = {}, accessToken) {
   const payload = profileToSupabasePayload({
     id: cleanUserId,
     ...buildProfileInput({ id: cleanUserId }, profileData),
-  });
+  }, payloadOptions);
   const { role: _role, ...safePayload } = payload ?? {};
   const rows = await requestProfiles(`?id=eq.${encodeURIComponent(cleanUserId)}`, {
     method: 'PATCH',
@@ -133,13 +133,13 @@ async function patchSupabaseProfile(userId, profileData = {}, accessToken) {
   return normalizeProfileFromSupabase(Array.isArray(rows) ? rows[0] : rows);
 }
 
-async function upsertSupabaseProfile(userId, profileData = {}, accessToken) {
-  const updated = await patchSupabaseProfile(userId, profileData, accessToken);
+async function upsertSupabaseProfile(userId, profileData = {}, accessToken, payloadOptions = {}) {
+  const updated = await patchSupabaseProfile(userId, profileData, accessToken, payloadOptions);
   if (updated) {
     return updated;
   }
 
-  return insertSupabaseProfile(userId, profileData, accessToken);
+  return insertSupabaseProfile(userId, profileData, accessToken, payloadOptions);
 }
 
 export async function signUpWithSupabase({ firstName, lastName, email, password } = {}) {
@@ -280,6 +280,6 @@ export async function getProfile(userId) {
   return normalizeProfileFromSupabase(Array.isArray(rows) ? rows[0] : rows);
 }
 
-export async function upsertProfile(userId, profileData = {}) {
-  return upsertSupabaseProfile(userId, profileData);
+export async function upsertProfile(userId, profileData = {}, payloadOptions = {}) {
+  return upsertSupabaseProfile(userId, profileData, undefined, payloadOptions);
 }

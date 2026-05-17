@@ -129,6 +129,16 @@ function mergeDefaultShippingAddress(currentUser, updates) {
   };
 }
 
+function sanitizeShippingAddressForSupabase(address) {
+  const safeAddress = normalizeAddress(address);
+  return {
+    street: typeof safeAddress.street === 'string' ? safeAddress.street : '',
+    city: typeof safeAddress.city === 'string' ? safeAddress.city : '',
+    state: typeof safeAddress.state === 'string' ? safeAddress.state : '',
+    zip: typeof safeAddress.zip === 'string' ? safeAddress.zip : '',
+  };
+}
+
 function mergeUserRecord(existingUser, updatedUser, { preservePassword = true } = {}) {
   const safeExistingUser = existingUser && typeof existingUser === 'object' ? existingUser : {};
   const safeUpdatedUser = updatedUser && typeof updatedUser === 'object' ? updatedUser : {};
@@ -599,10 +609,11 @@ export function AuthProvider({ children }) {
         const profile = await upsertProfile(currentUser.id, {
           firstName: nextUser.firstName,
           lastName: nextUser.lastName,
-          email: nextUser.email,
           phone: nextUser.phone,
-          role: currentUser.role,
-          defaultShippingAddress: nextUser.defaultShippingAddress,
+          defaultShippingAddress: sanitizeShippingAddressForSupabase(nextUser.defaultShippingAddress),
+        }, {
+          includeEmail: false,
+          includeRole: false,
         });
 
         const profileUser =

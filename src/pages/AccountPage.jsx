@@ -176,6 +176,7 @@ export default function AccountPage() {
   });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const recentOrders = useMemo(() => {
     if (!currentUser?.id) return [];
     return getOrdersByUser(currentUser.id).slice(0, 3);
@@ -241,6 +242,7 @@ export default function AccountPage() {
     event.preventDefault();
     setMessage('');
     setError('');
+    setIsSavingProfile(true);
 
     try {
       await updateProfile(form);
@@ -251,6 +253,8 @@ export default function AccountPage() {
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to update your profile right now.');
+    } finally {
+      setIsSavingProfile(false);
     }
   };
 
@@ -787,7 +791,11 @@ export default function AccountPage() {
       <div className="account-layout">
         <form className="form-card account-form" onSubmit={handleSubmit}>
           <h2>Edit profile</h2>
-          <p className="account-form-note">Keep your name, contact info, and default shipping address current.</p>
+          <p className="account-form-note">
+            Keep your name, contact info, and default shipping address current. Changes save to your current account
+            source, with demo fallback kept local.
+          </p>
+          {isSavingProfile ? <div className="auth-message">Saving your profile...</div> : null}
           {message ? <div className="auth-message auth-message-success">{message}</div> : null}
           {error ? <div className="auth-message auth-message-error">{error}</div> : null}
           {!message && !error && authError ? <div className="auth-message auth-message-error">{authError}</div> : null}
@@ -870,8 +878,8 @@ export default function AccountPage() {
             </label>
           </div>
 
-          <button type="submit" className="btn btn-dark">
-            Save changes
+          <button type="submit" className="btn btn-dark" disabled={isSavingProfile}>
+            {isSavingProfile ? 'Saving...' : 'Save changes'}
           </button>
         </form>
 

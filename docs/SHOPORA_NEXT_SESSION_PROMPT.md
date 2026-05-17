@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.05-supabase-profile-persistence-audit
+- v1.06-customer-profile-persistence-implementation
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -21,8 +21,9 @@ Current state:
 - v1.03 is a local-first customer account persistence UX readiness pass
 - v1.04 is a local-first customer profile persistence implementation plan checkpoint
 - v1.05 is a local-first Supabase customer profile persistence audit
-- The repo already includes `supabase/schema.sql` with `public.profiles`, `public.saved_items`, `public.orders`, and `public.order_items` plus the RLS and grants the app-side helpers expect
-- The current checkpoint should not change app behavior beyond documentation updates
+- v1.06 is a local-first customer profile persistence implementation checkpoint
+- The first safe profile write improvement limits Supabase profile updates to the editable customer fields and keeps local/demo fallback behavior intact
+- The current checkpoint should not change app behavior beyond the profile-save improvement and documentation updates
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -67,6 +68,7 @@ Tasks for the next chat:
 5. Keep the no-touch areas untouched and do not modify `src` beyond safe prototype-safe copy changes unless explicitly requested.
 
 Current docs created or updated:
+- `docs/SHOPORA_V1_06_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION.md`
 - `docs/SHOPORA_V1_05_SUPABASE_PROFILE_PERSISTENCE_AUDIT.md`
 - `docs/SHOPORA_V1_04_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION_PLAN.md`
 - `docs/SHOPORA_V1_03_CUSTOMER_ACCOUNT_PERSISTENCE_UX_READINESS.md`

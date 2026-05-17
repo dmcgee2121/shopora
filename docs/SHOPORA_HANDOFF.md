@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.06-customer-profile-persistence-implementation`
+- `v1.07-post-merge-production-smoke-checkpoint`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -18,11 +18,13 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.04 is a local-first customer profile persistence implementation plan checkpoint.
 - v1.05 is a local-first Supabase customer profile persistence audit.
 - v1.06 is a local-first customer profile persistence implementation checkpoint.
+- v1.07 is a documentation-only post-merge production smoke checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
 - The repo already includes `supabase/schema.sql` with `public.profiles`, `public.saved_items`, `public.orders`, and `public.order_items` plus RLS and grants that the app-side helpers expect.
 - The first safe profile write improvement now limits Supabase profile updates to the editable customer fields and keeps local/demo fallback behavior intact.
+- PR #11 was merged into `main`, the stacked v0.90-v1.06 work is now on `main`, and production smoke checks appeared good after the Netlify deployment.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
@@ -141,6 +143,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Kept the change narrow: no saved-items changes, no order-history changes, no schema or migration work, and no auth/session changes.
 - Added `docs/SHOPORA_V1_06_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION.md` to capture the implementation details, field scope, manual QA, rollback notes, and no-touch areas.
 - Recommended next action: run account-profile QA in both Supabase and demo modes before considering any broader customer data expansion.
+
+## v1.07 Post-Merge Production Smoke Checkpoint
+
+- Started `v1.07-post-merge-production-smoke-checkpoint` as a documentation-only checkpoint after PR #11 merged into `main`.
+- Recorded that Netlify deployed after the merge, local `main` was pulled successfully, `npm run build` passed locally, and both local and production smoke checks appeared good.
+- Captured the pages reviewed in smoke testing, the no-touch areas, the v1.06 profile persistence note, and the next work options.
+- Kept the checkpoint documentation-only: no source edits, no migrations, no env changes, and no auth, checkout, cart, Stripe, or order-flow changes.
+- Added `docs/SHOPORA_V1_07_POST_MERGE_PRODUCTION_SMOKE_CHECKPOINT.md` to capture the merged state, smoke status, known notes, and recommended next work options.
+- Recommended next action: pick the next scoped planning branch from the recorded options rather than expanding this checkpoint.
 
 ## v0.68 Storefront Content And SEO Polish
 

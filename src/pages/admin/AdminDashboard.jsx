@@ -170,6 +170,19 @@ function StorefrontPreviewCard({ label, status, note, context }) {
   );
 }
 
+function LaunchQANoteCard({ label, status, note, context }) {
+  return (
+    <article className="admin-status-card admin-launch-qa-card">
+      <span>{label}</span>
+      <div className="status-badges">
+        <span className={`status-badge ${getReadinessTone(status)}`.trim()}>{status}</span>
+        {context ? <span className="status-badge status-badge-muted">{context}</span> : null}
+      </div>
+      <p>{note}</p>
+    </article>
+  );
+}
+
 export default function AdminDashboard() {
   const { users, currentUser } = useAuth();
   const { orders, ordersSource, isOrdersLoading } = useOrders();
@@ -644,6 +657,101 @@ export default function AdminDashboard() {
     storeReadiness,
   ]);
 
+  const launchQANotes = useMemo(() => {
+    const cards = [
+      {
+        key: 'storefront',
+        label: 'Storefront review',
+        status: storefrontPreview.overallStatus,
+        note:
+          storefrontPreview.overallStatus === 'Ready'
+            ? 'Walk the home page, category browsing, search, and sale pages like a buyer would and confirm the merchandising story feels complete.'
+            : 'Fix buyer-facing merch gaps first, then re-check the home page, category browsing, and search story before a launch.',
+        context: 'Use the storefront and category routes',
+      },
+      {
+        key: 'catalog',
+        label: 'Product / catalog review',
+        status: storeReadiness.overallStatus,
+        note:
+          storeReadiness.overallStatus === 'Ready'
+            ? 'Confirm products have names, images, pricing, stock, and merchandising details that make the catalog feel pitch-ready.'
+            : 'Review flagged products and close obvious catalog gaps before treating the launch as seller-ready.',
+        context: 'Use admin products and editor views',
+      },
+      {
+        key: 'checkout',
+        label: 'Checkout test-mode review',
+        status: 'Future backend work',
+        note:
+          'Open checkout only as a render-only or test-mode pass unless a deliberate payment QA session is in progress. Do not treat it as production-ready.',
+        context: 'Checkout route only',
+      },
+      {
+        key: 'account',
+        label: 'Customer account / profile review',
+        status: sellerLaunchCommandCenter.cards.find((item) => item.key === 'account')?.status ?? 'Needs review',
+        note:
+          'Check that profile details, account access, and the seller story for customer persistence still read clearly in the account area.',
+        context: 'Use the account routes',
+      },
+      {
+        key: 'saved-items',
+        label: 'Saved-items review',
+        status: sellerLaunchCommandCenter.cards.find((item) => item.key === 'saved-items')?.status ?? 'Needs review',
+        note:
+          'Confirm saved items are visible in the seller story and that the local/demo fallback still makes sense when the list is empty.',
+        context: 'Use the saved-items route',
+      },
+      {
+        key: 'orders',
+        label: 'Order history / read-only review',
+        status: 'Prototype/read-only',
+        note:
+          orders.length > 0
+            ? 'Review customer and admin order history for clarity, but keep it read-only and avoid implying live fulfillment tools are present.'
+            : 'The order-history surface is present, but there are no demo orders yet to review.',
+        context: 'Use account orders and admin orders',
+      },
+      {
+        key: 'admin-orders',
+        label: 'Admin order prototype review',
+        status: 'Prototype/read-only',
+        note:
+          'Check the admin orders prototype for review context only. Live status changes, refunds, and fulfillment actions remain future backend work.',
+        context: 'Use the admin orders route',
+      },
+    ];
+
+    const overallStatus = cards.some((card) => card.status === 'Needs review')
+      ? 'Needs review'
+      : cards.some((card) => card.status === 'Prototype/read-only')
+        ? 'Prototype/read-only'
+        : cards.some((card) => card.status === 'Future backend work')
+          ? 'Future backend work'
+          : 'Ready';
+
+    const overallNote =
+      overallStatus === 'Ready'
+        ? 'These notes are ready to use as a local launch smoke test before a future release batch.'
+        : overallStatus === 'Prototype/read-only'
+          ? 'The launch paths are visible, but order review and admin order tools remain intentionally read-only.'
+          : overallStatus === 'Future backend work'
+            ? 'Checkout still needs future production-confidence work before any launch batch is worth spending credits on.'
+            : 'Some storefront or catalog areas still need review before the launch notes can read as fully ready.';
+
+    return {
+      cards,
+      overallStatus,
+      overallNote,
+    };
+  }, [
+    orders.length,
+    sellerLaunchCommandCenter.cards,
+    storeReadiness.overallStatus,
+    storefrontPreview.overallStatus,
+  ]);
+
   return (
     <div className="admin-page-stack admin-dashboard-page">
       <AdminPageHeader
@@ -734,6 +842,63 @@ export default function AdminDashboard() {
             </Link>
             <Link to="/women" className="btn btn-outline">
               Browse Categories
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-launch-qa-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Launch QA notes</span>
+          <p>
+            A lightweight local smoke-test checklist for a store owner or admin before batching this work into a
+            future release.
+          </p>
+        </div>
+
+        <div className="admin-launch-qa-grid">
+          {launchQANotes.cards.map((item) => (
+            <LaunchQANoteCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+            />
+          ))}
+        </div>
+
+        <div className="admin-launch-qa-footer">
+          <div className="admin-launch-command-center-summary">
+            <span className={`status-badge ${getReadinessTone(launchQANotes.overallStatus)}`.trim()}>
+              {launchQANotes.overallStatus}
+            </span>
+            <p>{launchQANotes.overallNote}</p>
+          </div>
+
+          <p className="admin-launch-command-center-note">
+            Suggested smoke-test flow: storefront, products, checkout test-mode, account profile, saved items,
+            customer order history, and admin order prototype review.
+          </p>
+
+          <div className="admin-launch-qa-actions">
+            <Link to="/" className="btn btn-dark">
+              View Storefront
+            </Link>
+            <Link to="/admin/products" className="btn btn-ghost">
+              Review Catalog
+            </Link>
+            <Link to="/checkout" className="btn btn-ghost">
+              Open Checkout
+            </Link>
+            <Link to="/account" className="btn btn-outline">
+              Check Account
+            </Link>
+            <Link to="/account/saved" className="btn btn-outline">
+              Saved Items
+            </Link>
+            <Link to="/admin/orders" className="btn btn-outline">
+              Admin Orders
             </Link>
           </div>
         </div>

@@ -146,6 +146,30 @@ function QuickActionLink({ to, label, description, className = 'btn btn-ghost' }
   );
 }
 
+const storefrontPreviewToneByLabel = {
+  Ready: 'status-active',
+  'Needs review': 'status-draft',
+  'Render-only': 'status-badge-muted',
+  'Future backend work': 'admin-issue-missing',
+};
+
+function getStorefrontPreviewTone(label) {
+  return storefrontPreviewToneByLabel[label] ?? 'status-badge-muted';
+}
+
+function StorefrontPreviewCard({ label, status, note, context }) {
+  return (
+    <article className="admin-status-card">
+      <span>{label}</span>
+      <div className="status-badges">
+        <span className={`status-badge ${getStorefrontPreviewTone(status)}`.trim()}>{status}</span>
+        {context ? <span className="status-badge status-badge-muted">{context}</span> : null}
+      </div>
+      <p>{note}</p>
+    </article>
+  );
+}
+
 export default function AdminDashboard() {
   const { users, currentUser } = useAuth();
   const { orders, ordersSource, isOrdersLoading } = useOrders();
@@ -366,6 +390,127 @@ export default function AdminDashboard() {
     };
   }, [analytics.customerCount, analytics.savedTotal, catalogReadiness, orders.length, ordersSource, products]);
 
+  const storefrontPreview = useMemo(() => {
+    const totalProducts = catalogReadiness.totalProducts;
+    const hasCatalog = totalProducts > 0;
+    const hasSearchableCatalog =
+      products.some((product) => safeText(product.name) || safeText(product.brand) || safeText(product.category)) &&
+      hasCatalog;
+    const categoriesPreview = Array.from(
+      new Set(products.map((product) => product.department).filter(Boolean)),
+    ).slice(0, 4);
+    const categoryReady = categoriesPreview.length > 0;
+    const homeMerchandisingReady = hasCatalog && (catalogReadiness.saleProducts > 0 || catalogReadiness.featuredProducts > 0);
+    const productDetailReady = hasCatalog && catalogReadiness.productsNeedingAttention === 0;
+    const savedTouchpointsReady = analytics.savedTotal > 0 || analytics.customerCount > 0;
+    const cartReady = catalogReadiness.activeProducts > 0 && catalogReadiness.outOfStockProducts < totalProducts;
+    const policyPagesReady = true;
+
+    const cards = [
+      {
+        key: 'home',
+        label: 'Home page merchandising',
+        status: homeMerchandisingReady ? 'Ready' : 'Needs review',
+        note: homeMerchandisingReady
+          ? `${catalogReadiness.saleProducts} sale item${catalogReadiness.saleProducts === 1 ? '' : 's'} and ${catalogReadiness.featuredProducts} featured item${catalogReadiness.featuredProducts === 1 ? '' : 's'} help the homepage feel merchandised.`
+          : hasCatalog
+            ? 'Add sale or featured items so the homepage has stronger buyer-facing hero stories.'
+            : 'Add products before the homepage merchandising story can feel complete.',
+        context: 'Homepage hero and campaign areas',
+      },
+      {
+        key: 'categories',
+        label: 'Category browsing',
+        status: categoryReady ? 'Ready' : 'Needs review',
+        note:
+          categoryReady
+            ? `Category browsing is covered across ${categoriesPreview.join(', ')} and the existing department routes.`
+            : 'Add products with department coverage so the category pages feel worthwhile to browse.',
+        context: 'Women, men, shoes, accessories',
+      },
+      {
+        key: 'search',
+        label: 'Search / discovery',
+        status: hasSearchableCatalog ? 'Ready' : 'Needs review',
+        note:
+          hasSearchableCatalog
+            ? 'Search can surface products by name, brand, department, category, and SKU.'
+            : 'The search experience needs product data before it can feel convincing in a demo.',
+        context: 'Search landing and result states',
+      },
+      {
+        key: 'product-detail',
+        label: 'Product detail experience',
+        status: productDetailReady ? 'Ready' : 'Needs review',
+        note:
+          productDetailReady
+            ? 'Product pages have the merchandising basics needed for a buyer walkthrough.'
+            : 'Complete catalog gaps before the product detail experience feels fully launch-ready.',
+        context: 'Images, copy, pricing, and details',
+      },
+      {
+        key: 'saved-items',
+        label: 'Saved-items / account touchpoints',
+        status: savedTouchpointsReady ? 'Ready' : 'Needs review',
+        note:
+          savedTouchpointsReady
+            ? `${analytics.savedTotal} saved item${analytics.savedTotal === 1 ? '' : 's'} and ${analytics.customerCount} customer account${analytics.customerCount === 1 ? '' : 's'} show the account area has activity to preview.`
+            : 'Saved-items and account touchpoints exist, but there is no live demo activity yet.',
+        context: 'Account and saved-items routes',
+      },
+      {
+        key: 'cart',
+        label: 'Cart readiness',
+        status: cartReady ? 'Ready' : 'Needs review',
+        note:
+          cartReady
+            ? 'The cart has active catalog items to test and reflects the current storefront inventory story.'
+            : 'Add active products with inventory before the cart preview feels complete.',
+        context: 'Cart route and mini-cart flow',
+      },
+      {
+        key: 'checkout',
+        label: 'Checkout readiness',
+        status: 'Render-only',
+        note:
+          'Checkout is available for review, but it should be treated as render-only or test-mode unless you are intentionally running a checkout QA session.',
+        context: 'No live payment testing here',
+      },
+      {
+        key: 'support',
+        label: 'Policy / support pages',
+        status: policyPagesReady ? 'Ready' : 'Needs review',
+        note:
+          'Shipping, returns, contact, and privacy pages are in place to support a buyer-facing walkthrough.',
+        context: 'Shipping, returns, contact, privacy',
+      },
+    ];
+
+    const overallStatus = cards.some((card) => card.status === 'Needs review')
+      ? 'Needs review'
+      : cards.some((card) => card.status === 'Render-only')
+        ? 'Render-only'
+        : 'Ready';
+
+    const overallNote =
+      overallStatus === 'Ready'
+        ? 'The storefront is ready for a buyer-side walkthrough, with checkout still treated as test-mode unless intentionally tested.'
+        : overallStatus === 'Render-only'
+          ? 'The storefront preview is in good shape, but checkout should stay render-only until a deliberate QA pass.'
+          : 'Some buyer-facing routes still need product or content review before a launch walkthrough.';
+
+    return {
+      cards,
+      overallStatus,
+      overallNote,
+    };
+  }, [
+    analytics.customerCount,
+    analytics.savedTotal,
+    catalogReadiness,
+    products,
+  ]);
+
   return (
     <div className="admin-page-stack admin-dashboard-page">
       <AdminPageHeader
@@ -434,6 +579,52 @@ export default function AdminDashboard() {
           </Link>
           <Link to="/" className="btn btn-outline">
             Check Storefront
+          </Link>
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-storefront-preview-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Storefront preview checklist</span>
+          <p>
+            A buyer-side readiness view of the storefront using existing routes and catalog data only.
+          </p>
+        </div>
+
+        <div className="admin-readiness-grid admin-storefront-preview-grid">
+          {storefrontPreview.cards.map((item) => (
+            <StorefrontPreviewCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+            />
+          ))}
+        </div>
+
+        <div className="admin-storefront-preview-footer">
+          <span className={`status-badge ${getStorefrontPreviewTone(storefrontPreview.overallStatus)}`.trim()}>
+            {storefrontPreview.overallStatus}
+          </span>
+          <p>{storefrontPreview.overallNote}</p>
+        </div>
+
+        <div className="admin-storefront-preview-actions">
+          <Link to="/" className="btn btn-dark">
+            View Storefront
+          </Link>
+          <Link to="/women" className="btn btn-ghost">
+            View Categories
+          </Link>
+          <Link to="/search?q=sale" className="btn btn-ghost">
+            Test Search
+          </Link>
+          <Link to="/sale" className="btn btn-ghost">
+            View Sale Page
+          </Link>
+          <Link to="/shipping" className="btn btn-outline">
+            Review Shipping / Returns / Contact
           </Link>
         </div>
       </section>

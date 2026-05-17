@@ -317,6 +317,47 @@
   gap: 8px;
 }
 
+.admin-storefront-preview-panel {
+  display: grid;
+  gap: 18px;
+  padding: 20px;
+  border-radius: 26px;
+  border: 1px solid rgba(221, 213, 203, 0.84);
+  background: rgba(255, 253, 250, 0.98);
+  box-shadow: 0 16px 34px rgba(43, 33, 20, 0.06);
+}
+
+.admin-storefront-preview-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-storefront-preview-grid .admin-status-card {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-storefront-preview-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+  border-top: 1px solid rgba(228, 217, 204, 0.72);
+}
+
+.admin-storefront-preview-footer p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.admin-storefront-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .admin-store-readiness-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2462,6 +2503,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .admin-storefront-preview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .admin-dashboard-overview,
   .admin-dashboard-panels {
     grid-template-columns: 1fr;
@@ -2569,6 +2614,10 @@
     padding: 16px;
   }
 
+  .admin-storefront-preview-panel {
+    padding: 16px;
+  }
+
   .admin-order-workflow-panel,
   .admin-order-ops-panel,
   .admin-order-modal {
@@ -2598,6 +2647,11 @@
 
   .admin-store-readiness-footer,
   .admin-summary-copy {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-storefront-preview-footer {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -2681,11 +2735,16 @@
     width: 100%;
   }
 
+  .admin-storefront-preview-actions {
+    width: 100%;
+  }
+
   .admin-page-header-actions .btn,
   .admin-toolbar-actions .btn,
   .admin-empty-state-actions .btn,
   .admin-product-card-actions .btn,
-  .admin-product-launch-actions .btn {
+  .admin-product-launch-actions .btn,
+  .admin-storefront-preview-actions .btn {
     flex: 1 1 160px;
   }
 
@@ -2764,6 +2823,7 @@
   .admin-editor-summary-grid,
   .admin-editor-readiness-summary,
   .admin-editor-guidance-summary,
+  .admin-storefront-preview-grid,
   .admin-readiness-grid,
   .admin-catalog-readiness-summary {
     grid-template-columns: 1fr;
@@ -2781,7 +2841,8 @@
   .admin-toolbar-actions .btn,
   .admin-empty-state-actions .btn,
   .admin-product-card-actions .btn,
-  .admin-product-launch-actions .btn {
+  .admin-product-launch-actions .btn,
+  .admin-storefront-preview-actions .btn {
     width: 100%;
   }
 
@@ -2791,6 +2852,11 @@
   }
 
   .admin-editor-guidance-group-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-storefront-preview-footer {
     align-items: flex-start;
     flex-direction: column;
   }

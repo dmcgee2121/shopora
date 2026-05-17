@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.29-admin-seller-launch-command-center
+- v1.30-admin-launch-readiness-polish
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -45,6 +45,7 @@ Current state:
 - v1.27 is a practical admin product editor readiness guidance feature checkpoint
 - v1.28 is a practical admin storefront preview checklist feature checkpoint
 - v1.29 is a practical admin seller launch command center feature checkpoint
+- v1.30 is a practical admin launch readiness polish checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
 - Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
@@ -60,6 +61,7 @@ Current state:
 - The current checkpoint is a practical frontend/admin product editor readiness guidance feature
 - The current checkpoint is a practical frontend/admin storefront preview checklist feature
 - The current checkpoint is a practical frontend/admin seller launch command center feature
+- The current checkpoint is a practical frontend/admin launch readiness polish feature
 - Netlify credits are limited, so future merges and deploys should be batched intentionally
 - v1.16 tightens the order-history UI copy while keeping read-only receipts, local/demo fallback, and admin order behavior unchanged
 - v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior
@@ -75,6 +77,7 @@ Current state:
 - v1.27 improves admin product editor readiness guidance without changing backend behavior
 - v1.28 improves admin storefront preview visibility without changing backend behavior
 - v1.29 improves admin seller launch command center visibility without changing backend behavior
+- v1.30 polishes admin launch readiness visibility without changing backend behavior
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested

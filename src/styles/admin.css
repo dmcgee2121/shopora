@@ -321,6 +321,34 @@
   margin-top: 2px;
 }
 
+.admin-launch-command-center-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-launch-command-center-stat {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(228, 217, 204, 0.72);
+  background: rgba(248, 244, 238, 0.8);
+}
+
+.admin-launch-command-center-stat span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.admin-launch-command-center-stat strong {
+  font-size: 1.08rem;
+  line-height: 1.25;
+}
+
 .admin-launch-command-center-footer {
   display: grid;
   gap: 12px;
@@ -2861,6 +2889,7 @@
   .admin-editor-readiness-summary,
   .admin-editor-guidance-summary,
   .admin-storefront-preview-grid,
+  .admin-launch-command-center-summary-grid,
   .admin-readiness-grid,
   .admin-catalog-readiness-summary {
     grid-template-columns: 1fr;

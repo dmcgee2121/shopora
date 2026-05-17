@@ -597,6 +597,12 @@ export default function AdminDashboard() {
     const reviewCount = cards.filter((card) => card.status === 'Needs review').length;
     const prototypeCount = cards.filter((card) => card.status === 'Prototype/read-only').length;
     const futureCount = cards.filter((card) => card.status === 'Future backend work').length;
+    const summary = [
+      { key: 'ready', label: 'Buyer-ready', value: readyCount },
+      { key: 'review', label: 'Needs review', value: reviewCount },
+      { key: 'prototype', label: 'Prototype/read-only', value: prototypeCount },
+      { key: 'future', label: 'Future backend work', value: futureCount },
+    ];
 
     const overallStatus = reviewCount
       ? 'Needs review'
@@ -617,6 +623,7 @@ export default function AdminDashboard() {
 
     return {
       cards,
+      summary,
       readyCount,
       reviewCount,
       prototypeCount,
@@ -670,9 +677,18 @@ export default function AdminDashboard() {
         <div className="admin-dashboard-section-heading">
           <span>Seller launch command center</span>
           <p>
-            One place for a store owner to see what is ready, what needs review, what is still prototype-only,
-            and what still needs future backend work before a launch.
+            One place for a store owner to see what is buyer-ready, what needs review, what remains
+            prototype-only, and what still needs future backend work before launch.
           </p>
+        </div>
+
+        <div className="admin-launch-command-center-summary-grid">
+          {sellerLaunchCommandCenter.summary.map((item) => (
+            <div key={item.key} className="admin-launch-command-center-stat">
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+            </div>
+          ))}
         </div>
 
         <div className="admin-readiness-grid admin-launch-command-center-grid">
@@ -696,8 +712,8 @@ export default function AdminDashboard() {
           </div>
 
           <p className="admin-launch-command-center-note">
-            Recommended next steps: clean up any flagged products, walk the storefront from the buyer side,
-            and keep checkout plus order operations in test-mode or read-only review until backend work is approved.
+            Recommended next steps: clear any flagged products, walk the storefront from the buyer side, and keep
+            checkout plus order operations in test-mode or read-only review until backend work is approved.
           </p>
 
           <div className="admin-launch-command-center-actions">

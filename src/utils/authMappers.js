@@ -37,18 +37,24 @@ export function normalizeProfileFromSupabase(profile) {
   };
 }
 
-export function profileToSupabasePayload(user) {
+export function profileToSupabasePayload(user, { includeEmail = true, includeRole = true } = {}) {
   if (!user) return null;
 
   const id = getProfileId(user);
   const payload = {
     first_name: toNullableString(user.firstName ?? user.first_name),
     last_name: toNullableString(user.lastName ?? user.last_name),
-    email: toNullableString(user.email),
     phone: toNullableString(user.phone),
-    role: normalizeRole(user.role),
     default_shipping_address: normalizeAddress(user.defaultShippingAddress ?? user.default_shipping_address),
   };
+
+  if (includeEmail) {
+    payload.email = toNullableString(user.email);
+  }
+
+  if (includeRole) {
+    payload.role = normalizeRole(user.role);
+  }
 
   return id ? { id, ...payload } : payload;
 }

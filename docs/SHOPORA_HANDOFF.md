@@ -6,25 +6,25 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v0.80-final-local-qa-before-pr`
-- v0.64 deployed successfully and the production smoke test passed.
-- v0.65 captured the post-deploy stability checkpoint.
-- v0.66 completed small post-deploy UI/support polish plus QA documentation.
-- v0.67 completed mobile/responsive polish.
-- v0.68 completed storefront content and SEO polish.
-- v0.69 completed admin QA/dashboard polish.
-- v0.70 completed the local release checkpoint.
-- v0.71 clarified the local branch scope after the v0.70 checkpoint.
-- v0.72 completed storefront polish lite.
-- v0.73 completed the local feature batch checkpoint.
-- v0.74 prepared a future release PR checkpoint.
-- v0.75 made the local roadmap and release decision.
-- v0.76 completed a small customer/account polish pass.
-- v0.77 completed a release-candidate review checkpoint.
-- v0.79 prepared the local batch for a future controlled release PR.
-- v0.80 is the final local QA checkpoint before any future PR decision.
-- The branch stack is local-only source plus documentation work, not docs-only.
-- The branch still carries the accumulated UI/customer/admin src changes from the v0.65-v0.77 trail and no new production-risk logic changes were introduced in this checkpoint.
+- `v1.06-customer-profile-persistence-implementation`
+- v0.80 Local QA release batch was merged into `main` through PR #7.
+- PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
+- v0.98 completed the safe brand image asset optimization pass.
+- v0.99 was the local-first admin order-management prototype planning pass.
+- v1.00 is a local-first admin order-management prototype UI pass.
+- v1.01 is a local-first admin order-detail prototype polish pass.
+- v1.02 is a local-first customer account persistence planning checkpoint.
+- v1.03 is a local-first customer account persistence UX readiness pass.
+- v1.04 is a local-first customer profile persistence implementation plan checkpoint.
+- v1.05 is a local-first Supabase customer profile persistence audit.
+- v1.06 is a local-first customer profile persistence implementation checkpoint.
+- The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
+- The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
+- The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
+- The repo already includes `supabase/schema.sql` with `public.profiles`, `public.saved_items`, `public.orders`, and `public.order_items` plus RLS and grants that the app-side helpers expect.
+- The first safe profile write improvement now limits Supabase profile updates to the editable customer fields and keeps local/demo fallback behavior intact.
+- Live Supabase orders remain read-only in the UI.
+- No new production-risk logic changes are introduced in this step.
 
 ## Current Stack
 
@@ -78,6 +78,69 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v0.75 local roadmap and release decision was started locally and documented in `docs/SHOPORA_V0_75_LOCAL_ROADMAP_AND_RELEASE_DECISION.md`
 - v0.76 customer account lite polish was started locally and documented in `docs/SHOPORA_V0_76_CUSTOMER_ACCOUNT_LITE_POLISH.md`
 - v0.77 release candidate review was started locally and documented in `docs/SHOPORA_V0_77_RELEASE_CANDIDATE_REVIEW.md`
+
+## v1.00 Admin Order Management Prototype UI
+
+- Started `v1.00-admin-order-management-prototype-ui` as a local-first admin workflow preview pass on top of the v0.99 planning checkpoint.
+- Added a prototype workflow preview panel to the admin orders page with fulfillment readiness, customer contact context, order attention flags, internal notes placeholder, and next operational step cards.
+- Expanded the selected-order quick view so the same prototype-safe workflow information is visible in the modal.
+- Kept the work prototype-safe and read-only: live Supabase order writes, backend schema changes, and admin mutation behavior are still out of scope.
+- Added `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md` to capture the UI additions, prototype-only boundaries, no-touch areas, and next-step recommendation.
+- Build verification passed locally with `npm run build`.
+- Recommended next action: keep the admin workflow preview read-only until a deliberate backend/admin-write milestone is approved.
+
+## v1.01 Admin Order Detail Prototype Polish
+
+- Started `v1.01-admin-order-detail-prototype-polish` as a local-first polish pass on the admin order modal/detail experience.
+- Added a top-level prototype detail banner and improved the selected-order modal so it reads more clearly as a future operations surface.
+- Kept the work prototype-safe and read-only: live Supabase order writes, backend schema changes, and admin mutation behavior are still out of scope.
+- Added `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md` to capture the UI additions, prototype-only boundaries, no-touch areas, and next-step recommendation.
+- Build verification passed locally with `npm run build`.
+- Recommended next action: keep the detail view read-only until a deliberate backend/admin-write milestone is approved.
+
+## v1.02 Customer Account Persistence Planning
+
+- Started `v1.02-customer-account-persistence-planning` as a documentation-first checkpoint for customer account persistence.
+- Reconfirmed that the current account surfaces mix Supabase-backed profile, saved-item, and order flows with local/demo fallback behavior and frontend-only recent activity plus preference hints.
+- Captured the current persistence gaps for profile fields, default shipping address ownership, saved items, order history, recently viewed products, and account preferences.
+- Kept the checkpoint documentation-only: no auth changes, no new mutations, no backend/schema work, and no changes to checkout submission, order creation, Stripe, Netlify functions/env, Supabase RLS, or cart behavior.
+- Added `docs/SHOPORA_V1_02_CUSTOMER_ACCOUNT_PERSISTENCE_PLANNING.md` to capture the current behavior, gaps, future phases, no-touch areas, and risk notes.
+- Recommended next action: keep customer account persistence planning separate from any dedicated auth/RLS/backend implementation milestone.
+
+## v1.03 Customer Account Persistence UX Readiness
+
+- Started `v1.03-customer-account-persistence-ux-readiness` as a local-first UX clarity pass on the customer account page.
+- Tightened the account copy so persisted account data, browser-local activity, and future preference work are easier to distinguish without changing behavior.
+- Kept the checkpoint copy-only and read-only: no new persistence models, no new mutations, and no backend/schema work.
+- Added `docs/SHOPORA_V1_03_CUSTOMER_ACCOUNT_PERSISTENCE_UX_READINESS.md` to capture the copy changes, persisted versus local behavior, no-touch areas, and next-step recommendation.
+- Recommended next action: keep any real account persistence expansion isolated to a dedicated auth/RLS/backend milestone.
+
+## v1.04 Customer Profile Persistence Implementation Plan
+
+- Started `v1.04-customer-profile-persistence-implementation-plan` as a documentation-first implementation plan for customer profile persistence.
+- Mapped the current profile flow across `AuthContext`, `AccountPage`, and the Supabase profile service so the editable field set, fallback behavior, and payload shape are explicit.
+- Documented the Supabase table, payload, and RLS assumptions that should be confirmed before any live write-path implementation.
+- Kept the checkpoint documentation-only: no new Supabase mutations, no auth changes, no schema work, and no changes to checkout submission, order creation, Stripe, Netlify functions/env, Supabase RLS, or cart behavior.
+- Added `docs/SHOPORA_V1_04_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION_PLAN.md` to capture the current behavior, the future implementation phases, the manual QA checklist, and the no-touch areas.
+- Recommended next action: keep profile persistence changes isolated to a dedicated implementation milestone after the table and RLS assumptions are confirmed.
+
+## v1.05 Supabase Profile Persistence Audit
+
+- Started `v1.05-supabase-profile-persistence-audit` as a backend-aware audit of the current Supabase customer profile path.
+- Confirmed the repo already contains `supabase/schema.sql` and app-side helpers that expect `public.profiles` plus supporting `saved_items`, `orders`, and `order_items` tables.
+- Documented the current profile read/write path, fallback behavior, RLS assumptions, and the safest first real backend step.
+- Kept the audit documentation-only: no migrations, no production SQL, no auth changes, no checkout changes, no order changes, and no live profile mutation implementation.
+- Added `docs/SHOPORA_V1_05_SUPABASE_PROFILE_PERSISTENCE_AUDIT.md` to capture the architecture, schema assumptions, verification checklist, risks, and rollback notes.
+- Recommended next action: verify the live Supabase project against `supabase/schema.sql` in a non-production environment before enabling any real profile write rollout.
+
+## v1.06 Customer Profile Persistence Implementation
+
+- Started `v1.06-customer-profile-persistence-implementation` as a narrow, reversible profile persistence improvement.
+- Wired Supabase-authenticated profile saves through the existing helper path while keeping local/demo fallback behavior intact.
+- Limited the Supabase profile write payload to the safest editable customer fields and added a small saving indicator on the account form.
+- Kept the change narrow: no saved-items changes, no order-history changes, no schema or migration work, and no auth/session changes.
+- Added `docs/SHOPORA_V1_06_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION.md` to capture the implementation details, field scope, manual QA, rollback notes, and no-touch areas.
+- Recommended next action: run account-profile QA in both Supabase and demo modes before considering any broader customer data expansion.
 
 ## v0.68 Storefront Content And SEO Polish
 
@@ -395,6 +458,9 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Vite may still show non-blocking chunk-size warnings depending on build output
 - Local Stripe testing can still be cumbersome; deployed Netlify is the reliable Stripe QA path
 - Admin/demo auth is prototype-level and should not be treated as production security
+- Admin order writes are still prototype-only for local demo storage and read-only for live Supabase orders
+- Admin workflow preview sections are descriptive only and do not persist notes or change order state
+- Admin order detail banner and modal polish are descriptive only and do not add mutation controls
 - Future production hardening should revisit admin auth, RLS, Stripe webhook confidence, and final policy/legal copy
 - Admin live order visibility now depends on the `get_admin_orders()` Supabase RPC plus an admin profile role in `public.profiles`
 - The demo checklist lives at `docs/SHOPORA_DEMO_QA_CHECKLIST.md`
@@ -578,4 +644,4 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Summary of Current State
 
-The app is in a good place for controlled release prep. The highest-priority code paths are stable, the merchandising layer is stronger, and the branch should now be treated as a final local QA checkpoint plus release packaging documentation rather than more feature growth.
+The app is in a good place for a narrow optimization pass. v0.80 is the main baseline, PR #8 covers the v0.90-v0.97 foundation and roadmap work, and v0.98 now reduces the emitted brand image payload without changing app behavior.

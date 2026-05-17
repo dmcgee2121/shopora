@@ -98,6 +98,123 @@ function getOrderSourceLabel(ordersSource) {
   return ordersSource === 'supabase' ? 'Live Supabase order' : 'Local demo order';
 }
 
+function getContactContextLines(order) {
+  if (!order) return [];
+
+  const lines = [
+    safeText(order.customerName, 'Guest customer'),
+    safeText(order.customerEmail, 'No email provided'),
+  ];
+
+  if (order.customerPhone) {
+    lines.push(order.customerPhone);
+  } else {
+    lines.push('No phone number provided.');
+  }
+
+  const shippingLines = formatAddress(order.shippingAddress);
+  if (shippingLines.length) {
+    lines.push(...shippingLines);
+  } else {
+    lines.push('No shipping address provided.');
+  }
+
+  return lines;
+}
+
+function getFulfillmentReadiness(order, attention) {
+  if (!order) {
+    return {
+      label: 'No order selected',
+      detail: 'Open a quick view to inspect fulfillment readiness.',
+    };
+  }
+
+  switch (attention?.key) {
+    case 'customer-info':
+      return {
+        label: 'Hold for customer review',
+        detail: 'Missing customer or shipping data should be checked before fulfillment can move forward.',
+      };
+    case 'payment-pending':
+      return {
+        label: 'Await payment clearance',
+        detail: 'Payment is still pending, so the order should stay in a waiting state.',
+      };
+    case 'ready-to-process':
+      return {
+        label: 'Ready to pick and pack',
+        detail: 'Payment is complete and the order can move into the packing queue.',
+      };
+    case 'needs-fulfillment':
+      return {
+        label: 'In fulfillment',
+        detail: 'The order is already being prepared and should stay on the active packing list.',
+      };
+    case 'shipped-complete':
+      return {
+        label: 'Post-shipment review',
+        detail: 'The order is shipped or complete and only needs lightweight follow-up.',
+      };
+    case 'cancelled-refunded':
+      return {
+        label: 'Closed order',
+        detail: 'No fulfillment action is expected for a cancelled or refunded order.',
+      };
+    default:
+      return {
+        label: 'Review before action',
+        detail: 'The order can be scanned for the next operational step without any live mutation.',
+      };
+  }
+}
+
+function getNextOperationalStep(order, attention) {
+  if (!order) {
+    return 'No order is selected yet.';
+  }
+
+  switch (attention?.key) {
+    case 'customer-info':
+      return 'Confirm the shipping snapshot and contact details before the order could enter fulfillment.';
+    case 'payment-pending':
+      return 'Wait for payment to clear, then revisit the order queue.';
+    case 'ready-to-process':
+      return 'Move the order into a future pick-and-pack workflow when live writes are available.';
+    case 'needs-fulfillment':
+      return 'Continue packing and preparing the order while keeping the admin view read-only.';
+    case 'shipped-complete':
+      return 'Use the receipt and support links only for customer follow-up or post-shipment review.';
+    case 'cancelled-refunded':
+      return 'Leave the order closed and use it as a prototype reference for non-active workflow states.';
+    default:
+      return 'Review the order details and confirm how a future live action should be staged.';
+  }
+}
+
+function getPrototypeWorkflowFlags(order, attention) {
+  if (!order) return [];
+
+  return [
+    order.demoMode ? 'Local simulation only' : 'Live order, read-only in UI',
+    attention?.label ? attention.label : 'No attention flag',
+    order.customerPhone ? 'Customer phone provided' : 'Phone missing',
+    formatAddress(order.shippingAddress).length ? 'Shipping snapshot present' : 'Shipping snapshot missing',
+  ];
+}
+
+function getDetailBannerLabels(order, attention, ordersSource) {
+  if (!order) return [];
+
+  return [
+    getOrderSourceLabel(ordersSource),
+    getOrderStatusLabel(order.status) || 'No status available',
+    getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode }),
+    attention?.label ?? 'No attention flag',
+    order.demoMode ? 'Prototype detail view' : 'Read-only live Supabase order',
+  ];
+}
+
 function OrderItemRow({ item }) {
   const image = getOrderItemImage(item);
   const quantity = Number(item?.quantity ?? 0);
@@ -133,14 +250,14 @@ export default function AdminOrdersPage() {
   const orderSourceNote =
     currentUser?.role === 'admin'
       ? ordersSource === 'supabase'
-        ? 'Live Supabase orders are visible here. Status updates stay read-only in this prototype until admin write support is added.'
-        : 'This prototype admin order list is reading browser-local demo orders only. Those local demo orders can still be adjusted from this admin view.'
+        ? 'Prototype note: live Supabase orders are visible here, but status updates remain read-only until admin write support is added.'
+        : 'Prototype note: this admin order list is reading browser-local demo orders only. Those local demo orders can be adjusted in browser storage.'
       : '';
   const canUpdateOrderStatus = ordersSource === 'local';
   const ordersSubtitle =
     ordersSource === 'supabase'
-      ? 'Review live Supabase orders, spot fulfillment gaps, and open receipts without leaving the admin area.'
-      : 'Review completed orders, update status, and open receipts without leaving the admin area.';
+      ? 'Review live Supabase orders, spot fulfillment gaps, and open receipts while status changes remain read-only in this prototype.'
+      : 'Review completed demo orders, simulate status changes locally, and open receipts without leaving the admin area.';
 
   const ordered = useMemo(
     () =>
@@ -172,6 +289,16 @@ export default function AdminOrdersPage() {
   }, [ordered, query, statusFilter]);
 
   const selectedOrder = ordered.find((order) => idsMatch(order.id, selectedOrderId)) ?? null;
+  const selectedOrderAttention = selectedOrder ? getOrderAttentionInfo(selectedOrder) : null;
+  const selectedOrderDetailBannerLabels = selectedOrder
+    ? getDetailBannerLabels(selectedOrder, selectedOrderAttention, ordersSource)
+    : [];
+  const workflowPreviewOrder = selectedOrder ?? ordered[0] ?? null;
+  const workflowPreviewAttention = workflowPreviewOrder ? getOrderAttentionInfo(workflowPreviewOrder) : null;
+  const workflowPreviewReadiness = getFulfillmentReadiness(workflowPreviewOrder, workflowPreviewAttention);
+  const workflowPreviewFlags = getPrototypeWorkflowFlags(workflowPreviewOrder, workflowPreviewAttention);
+  const workflowPreviewContactLines = getContactContextLines(workflowPreviewOrder);
+  const workflowPreviewNextStep = getNextOperationalStep(workflowPreviewOrder, workflowPreviewAttention);
 
   const counts = statusOptions.reduce((result, status) => {
     result[status] = ordered.filter(
@@ -232,7 +359,7 @@ export default function AdminOrdersPage() {
         <div className="admin-status-card">
           <span>Total orders</span>
           <strong>{operationsSummary.totalOrders}</strong>
-          <p>{sourceLabel} currently visible in this session.</p>
+          <p>{sourceLabel} currently visible in this session. Local status edits are simulation-only.</p>
         </div>
         <div className="admin-status-card">
           <span>Paid / payment pending</span>
@@ -274,6 +401,81 @@ export default function AdminOrdersPage() {
           <p>Gross order value across the current result set.</p>
         </div>
       </div>
+
+      <section className="admin-order-workflow-panel">
+        <div className="admin-dashboard-section-heading compact">
+          <span>Prototype workflow preview</span>
+          <p>
+            Read-only layout for a future order-management flow. These cards show how fulfillment, contact,
+            notes, and next-step details could be staged without mutating order data yet.
+          </p>
+        </div>
+        {workflowPreviewOrder ? (
+          <div className="admin-order-workflow-grid">
+            <article className="admin-order-workflow-card">
+              <span>Fulfillment readiness</span>
+              <strong>{workflowPreviewReadiness.label}</strong>
+              <p>{workflowPreviewReadiness.detail}</p>
+              <div className="admin-workflow-chip-row">
+                <span className={`status-badge ${workflowPreviewAttention?.tone ?? ''}`.trim()}>
+                  {workflowPreviewAttention?.label ?? 'No attention flag'}
+                </span>
+                <span className="status-badge status-badge-muted">Prototype-only</span>
+              </div>
+            </article>
+            <article className="admin-order-workflow-card">
+              <span>Customer contact context</span>
+              <strong>{safeText(workflowPreviewOrder.customerName, 'Guest customer')}</strong>
+              <div className="admin-workflow-list">
+                {workflowPreviewContactLines.map((line, index) => (
+                  <span key={`${line}-${index}`}>{line}</span>
+                ))}
+              </div>
+            </article>
+            <article className="admin-order-workflow-card">
+              <span>Order attention flags</span>
+              <strong>{workflowPreviewAttention?.label ?? 'No attention flag'}</strong>
+              <p>{workflowPreviewAttention?.detail ?? 'No attention details available.'}</p>
+              <div className="admin-workflow-chip-row">
+                {workflowPreviewFlags.map((flag, index) => (
+                  <span key={`${flag}-${index}`} className="admin-workflow-chip">
+                    {flag}
+                  </span>
+                ))}
+              </div>
+            </article>
+            <article className="admin-order-workflow-card">
+              <span>Internal notes placeholder</span>
+              <strong>Not wired yet</strong>
+              <p>
+                This is a prototype-only placeholder for future fulfillment notes, escalation comments, and
+                audit context.
+              </p>
+              <div className="admin-notes-placeholder" aria-label="Prototype internal notes placeholder">
+                Internal notes will be added here when a live write path exists.
+              </div>
+            </article>
+            <article className="admin-order-workflow-card">
+              <span>Next operational step</span>
+              <strong>{safeText(workflowPreviewOrder.orderNumber, 'Order')}</strong>
+              <p>{workflowPreviewNextStep}</p>
+              <div className="admin-workflow-chip-row">
+                <span className="admin-workflow-chip">Read-only preview</span>
+                <span className="admin-workflow-chip">Local-first planning</span>
+                <span className="admin-workflow-chip">No live mutation</span>
+              </div>
+            </article>
+          </div>
+        ) : (
+          <div className="admin-empty-state-tight admin-readiness-empty">
+            <h3>Workflow preview is waiting for an order.</h3>
+            <p>
+              Open checkouts or local demo orders to preview fulfillment readiness, contact context, notes, and
+              next-step planning in a prototype-only layout.
+            </p>
+          </div>
+        )}
+      </section>
 
       <div className="admin-toolbar">
         <div className="admin-toolbar-left">
@@ -669,6 +871,28 @@ export default function AdminOrdersPage() {
               </button>
             </div>
 
+            <section className="admin-order-detail-banner" aria-label="Prototype order detail summary">
+              <div className="admin-order-detail-banner-copy">
+                <span>Prototype order detail</span>
+                <p>
+                  Read-only layout for reviewing order context, fulfillment readiness, and the next operational
+                  step before any future admin write path is defined.
+                </p>
+              </div>
+              <div className="admin-order-detail-banner-meta">
+                <strong>{safeText(selectedOrder.orderNumber, 'Order')}</strong>
+                <span>Placed {formatDateTime(selectedOrder.createdAt)}</span>
+                <span>Updated {formatDateTime(selectedOrder.updatedAt)}</span>
+              </div>
+              <div className="admin-order-detail-banner-badges">
+                {selectedOrderDetailBannerLabels.map((label, index) => (
+                  <span key={`${label}-${index}`} className="status-badge status-badge-muted">
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </section>
+
             <div className="admin-order-modal-grid">
               <section className="admin-order-modal-panel">
                 <h3>Order summary</h3>
@@ -707,32 +931,23 @@ export default function AdminOrdersPage() {
                 <p className="admin-status-subtext">
                   {ordersSource === 'supabase'
                     ? 'Live Supabase orders are visible here. Status updates remain read-only until backend support is added.'
-                    : 'Local demo orders can be updated from this admin view.'}
+                    : 'Local demo orders can be updated in browser storage only. This is a prototype simulation, not a live order workflow.'}
                 </p>
               </section>
 
               <section className="admin-order-modal-panel">
-                <h3>Customer details</h3>
-                <p>{safeText(selectedOrder.customerName, 'Guest customer')}</p>
-                <p>{safeText(selectedOrder.customerEmail, 'No email provided')}</p>
-                {selectedOrder.customerPhone ? (
-                  <p>{selectedOrder.customerPhone}</p>
-                ) : (
-                  <p>No phone number provided.</p>
-                )}
+                <h3>Customer contact context</h3>
+                {getContactContextLines(selectedOrder).map((line, index) => (
+                  <p key={`${line}-${index}`}>{line}</p>
+                ))}
               </section>
 
               <section className="admin-order-modal-panel">
-                <h3>Shipping details</h3>
-                {formatAddress(selectedOrder.shippingAddress).length ? (
-                  formatAddress(selectedOrder.shippingAddress).map((line) => <p key={line}>{line}</p>)
-                ) : (
-                  <p>No shipping address provided.</p>
-                )}
-              </section>
-
-              <section className="admin-order-modal-panel">
-                <h3>Payment &amp; fulfillment</h3>
+                <h3>Fulfillment readiness</h3>
+                <p>
+                  <strong>Readiness:</strong> {getFulfillmentReadiness(selectedOrder, selectedOrderAttention).label}
+                </p>
+                <p>{getFulfillmentReadiness(selectedOrder, selectedOrderAttention).detail}</p>
                 <p>
                   <strong>Current status:</strong>{' '}
                   <span className={`status-badge ${getOrderStatusClass(selectedOrder.status)}`}>
@@ -751,12 +966,6 @@ export default function AdminOrdersPage() {
                   </span>
                 </p>
                 <p>
-                  <strong>Attention:</strong>{' '}
-                  <span className={`status-badge ${getOrderAttentionInfo(selectedOrder).tone}`.trim()}>
-                    {getOrderAttentionInfo(selectedOrder).label}
-                  </span>
-                </p>
-                <p>
                   <strong>Order source:</strong> {getOrderSourceLabel(ordersSource)}
                 </p>
                 <p>
@@ -766,7 +975,48 @@ export default function AdminOrdersPage() {
                   </Link>
                 </p>
                 <p className="admin-status-subtext">
-                  Use the status summary above to confirm what needs fulfillment attention next.
+                  Use the order summary above to judge whether a future live workflow should move this order forward.
+                </p>
+              </section>
+
+              <section className="admin-order-modal-panel">
+                <h3>Order attention flags</h3>
+                <p>
+                  <strong>Attention:</strong>{' '}
+                  <span className={`status-badge ${selectedOrderAttention.tone}`.trim()}>
+                    {selectedOrderAttention.label}
+                  </span>
+                </p>
+                <p>{selectedOrderAttention.detail}</p>
+                <p>
+                  <strong>Prototype flag:</strong> live writes remain disabled in this view.
+                </p>
+              </section>
+
+              <section className="admin-order-modal-panel">
+                <h3>Internal notes placeholder</h3>
+                <p>
+                  This panel is reserved for future fulfillment notes, escalation comments, or customer follow-up
+                  context.
+                </p>
+                <div className="admin-notes-placeholder" aria-label="Prototype internal notes placeholder">
+                  No notes are stored yet. This area stays read-only until a safe live write path exists.
+                </div>
+              </section>
+
+              <section className="admin-order-modal-panel">
+                <h3>Next operational step</h3>
+                <p>{getNextOperationalStep(selectedOrder, selectedOrderAttention)}</p>
+                <div className="admin-workflow-chip-row">
+                  <span className="admin-workflow-chip">Prototype-only</span>
+                  <span className="admin-workflow-chip">Read-only</span>
+                  <span className="admin-workflow-chip">No backend writes</span>
+                </div>
+                <p>
+                  <strong>Storefront order number:</strong> {safeText(selectedOrder.orderNumber, 'Order')}
+                </p>
+                <p className="admin-status-subtext">
+                  Use this area to stage a future workflow, but do not treat it as a live admin action surface yet.
                 </p>
               </section>
 
@@ -806,9 +1056,6 @@ export default function AdminOrdersPage() {
                   <Link to={`/order-confirmation/${selectedOrder.id}`} className="text-button">
                     Open receipt
                   </Link>
-                </p>
-                <p>
-                  <strong>Storefront order number:</strong> {safeText(selectedOrder.orderNumber, 'Order')}
                 </p>
                 <p className="admin-status-subtext">
                   Keep the order number handy when following up with support or fulfillment.

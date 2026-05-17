@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.02-customer-account-persistence-planning
+- v1.03-customer-account-persistence-ux-readiness
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -18,8 +18,9 @@ Current state:
 - v1.01 is a local-first admin order-detail prototype polish pass
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step
 - v1.02 is a local-first customer account persistence planning checkpoint
-- The customer account page currently combines Supabase-backed profile/saved-item/order behavior with local/demo fallback data and frontend-only recent activity and preference hints
-- The current checkpoint should not change app behavior beyond documentation updates
+- v1.03 is a local-first customer account persistence UX readiness pass
+- The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work
+- The current checkpoint should not change app behavior beyond copy/readability updates and documentation
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -64,6 +65,7 @@ Tasks for the next chat:
 5. Keep the no-touch areas untouched and do not modify `src` beyond safe prototype-safe copy changes unless explicitly requested.
 
 Current docs created or updated:
+- `docs/SHOPORA_V1_03_CUSTOMER_ACCOUNT_PERSISTENCE_UX_READINESS.md`
 - `docs/SHOPORA_V1_02_CUSTOMER_ACCOUNT_PERSISTENCE_PLANNING.md`
 - `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md`
 - `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md`

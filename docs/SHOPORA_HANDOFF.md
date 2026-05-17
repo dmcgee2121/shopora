@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.02-customer-account-persistence-planning`
+- `v1.03-customer-account-persistence-ux-readiness`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -14,8 +14,9 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.00 is a local-first admin order-management prototype UI pass.
 - v1.01 is a local-first admin order-detail prototype polish pass.
 - v1.02 is a local-first customer account persistence planning checkpoint.
+- v1.03 is a local-first customer account persistence UX readiness pass.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
-- The customer account page currently mixes Supabase-backed profile/saved-item/order flows with local/demo fallback data and frontend-only recent activity and preference hints.
+- The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
@@ -99,6 +100,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Kept the checkpoint documentation-only: no auth changes, no new mutations, no backend/schema work, and no changes to checkout submission, order creation, Stripe, Netlify functions/env, Supabase RLS, or cart behavior.
 - Added `docs/SHOPORA_V1_02_CUSTOMER_ACCOUNT_PERSISTENCE_PLANNING.md` to capture the current behavior, gaps, future phases, no-touch areas, and risk notes.
 - Recommended next action: keep customer account persistence planning separate from any dedicated auth/RLS/backend implementation milestone.
+
+## v1.03 Customer Account Persistence UX Readiness
+
+- Started `v1.03-customer-account-persistence-ux-readiness` as a local-first UX clarity pass on the customer account page.
+- Tightened the account copy so persisted account data, browser-local activity, and future preference work are easier to distinguish without changing behavior.
+- Kept the checkpoint copy-only and read-only: no new persistence models, no new mutations, and no backend/schema work.
+- Added `docs/SHOPORA_V1_03_CUSTOMER_ACCOUNT_PERSISTENCE_UX_READINESS.md` to capture the copy changes, persisted versus local behavior, no-touch areas, and next-step recommendation.
+- Recommended next action: keep any real account persistence expansion isolated to a dedicated auth/RLS/backend milestone.
 
 ## v0.68 Storefront Content And SEO Polish
 

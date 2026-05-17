@@ -388,7 +388,10 @@ export default function AccountPage() {
           <div>
             <p className="eyebrow">Account</p>
             <h1>Welcome{currentUser ? `, ${currentUser.firstName}` : ''}</h1>
-            <p>Manage your profile, saved styles, order history, and shipping details from one place.</p>
+            <p>
+              Manage your profile, saved styles, order history, and shipping details from one place. Saved items and
+              orders follow your current account, while recently viewed products stay local to this browser.
+            </p>
           </div>
         </div>
         <button type="button" className="btn btn-ghost" onClick={handleLogout}>
@@ -400,9 +403,10 @@ export default function AccountPage() {
         <div className="account-dashboard-copy">
           <p className="eyebrow">Account dashboard</p>
           <h2 id="account-dashboard-title">Your ShopOra snapshot</h2>
-          <p>
-            Keep saved styles, orders, profile details, and support shortcuts together in one polished account view.
-          </p>
+            <p>
+              Keep saved styles, orders, profile details, and support shortcuts together in one account view. This
+              snapshot mixes persisted account data with local browser activity where noted.
+            </p>
           <div className="account-dashboard-stats" aria-label="Account summary">
             <div>
               <span>Orders</span>
@@ -437,12 +441,12 @@ export default function AccountPage() {
           <p>{addressSummary}</p>
           <div className="account-profile-chips" aria-label="Profile readiness details">
             {profileDetails.map((detail) => (
-              <span key={detail} className="query-chip">
-                {detail}
-              </span>
-            ))}
+                <span key={detail} className="query-chip">
+                  {detail}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
       </section>
 
       <section className="account-dashboard-section account-preferences-section" aria-labelledby="account-preferences-title">
@@ -452,7 +456,7 @@ export default function AccountPage() {
             <h2 id="account-preferences-title">Your preference preview</h2>
             <p>
               This preview is built from saved items and recently viewed products only. No backend preference record
-              is stored here.
+              is stored here, and any future preference center would be a separate implementation.
             </p>
           </div>
           <div className="recommendation-links account-preferences-links" aria-label="Preference shortcuts">
@@ -483,7 +487,7 @@ export default function AccountPage() {
                   </span>
                 ))
               ) : (
-                <span className="query-chip">Saved locally for this demo</span>
+                <span className="query-chip">Saved locally in this demo browser</span>
               )}
             </div>
           </article>
@@ -518,7 +522,11 @@ export default function AccountPage() {
             </p>
             <div className="account-preference-note">
               <strong>Current status</strong>
-              <span>{currentUser?.email ? 'Profile details are saved for this demo account.' : 'Sign in to keep a profile trail together.'}</span>
+              <span>
+                {currentUser?.email
+                  ? 'Profile details are saved for this current account session.'
+                  : 'Sign in to keep profile history and account context together.'}
+              </span>
             </div>
           </article>
         </div>
@@ -537,7 +545,7 @@ export default function AccountPage() {
             <h2 id="account-member-title">Your ShopOra member experience</h2>
             <p>
               Frontend-only member cues that keep the account simple and reassuring. There are no points, store
-              credit, or redemption balances here.
+              credit, or redemption balances here, and any future rewards model would be separate.
             </p>
           </div>
           <div className="recommendation-links account-member-links" aria-label="Member shortcuts">
@@ -622,7 +630,7 @@ export default function AccountPage() {
         <article className="account-overview-card">
           <span className="account-card-label">Default shipping</span>
           <h2>{addressSummary}</h2>
-          <p>Saved shipping information helps keep checkout fast.</p>
+          <p>Saved shipping information helps keep checkout fast when the profile is already filled in.</p>
           <Link to="/account" className="text-button">
             Update profile
           </Link>
@@ -678,7 +686,9 @@ export default function AccountPage() {
               })}
             </div>
           ) : (
-            <p className="account-overview-note">Your latest orders will show here after checkout.</p>
+              <p className="account-overview-note">
+                Your latest orders will show here after checkout and stay tied to the current account.
+              </p>
           )}
           <Link to="/account/orders" className="text-button">
             View all orders
@@ -711,7 +721,7 @@ export default function AccountPage() {
           ) : (
             <EmptyAccountCard
               title="No orders yet."
-              text="Start with a current edit, then your order history and receipts will collect here."
+              text="Start with a current edit, then your order history and receipts will collect here in this account."
               primaryLink="/women"
               primaryLabel="Shop new arrivals"
               secondaryLink="/sale"
@@ -765,7 +775,7 @@ export default function AccountPage() {
         ) : (
           <EmptyAccountCard
             title="Start a fresh browse."
-            text="A few account recommendations will appear here as you save and view products."
+              text="A few account recommendations will appear here as you save and view products in this browser or account."
             primaryLink="/women"
             primaryLabel="Shop women"
             secondaryLink="/men"

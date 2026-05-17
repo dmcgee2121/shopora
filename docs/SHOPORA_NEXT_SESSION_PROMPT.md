@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.34-admin-launch-local-qa
+- v1.35-admin-launch-visual-qa-checklist
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -50,6 +50,7 @@ Current state:
 - v1.32 is a practical admin launch release notes panel checkpoint
 - v1.33 is a documentation-first admin launch batch handoff checkpoint
 - v1.34 is a documentation-first admin launch local QA checkpoint
+- v1.35 is a documentation-first admin launch visual QA checklist checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
 - Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
@@ -70,6 +71,7 @@ Current state:
 - The current checkpoint is a practical frontend/admin launch release notes panel feature
 - The current checkpoint is a documentation-first admin launch batch handoff feature
 - The current checkpoint is a documentation-first admin launch local QA feature
+- The current checkpoint is a documentation-first admin launch visual QA checklist feature
 - Netlify credits are limited, so future merges and deploys should be batched intentionally
 - v1.16 tightens the order-history UI copy while keeping read-only receipts, local/demo fallback, and admin order behavior unchanged
 - v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior
@@ -90,6 +92,7 @@ Current state:
 - v1.32 adds admin launch release notes visibility without changing backend behavior
 - v1.33 packages the v1.29-v1.32 launch-readiness batch without changing backend behavior
 - v1.34 records local QA for the parked v1.29-v1.33 launch-readiness batch without changing backend behavior
+- v1.35 records visual QA for the parked v1.29-v1.34 launch-readiness batch without changing backend behavior
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested

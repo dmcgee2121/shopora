@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.09-saved-items-supabase-persistence-implementation
+- v1.10-order-history-supabase-persistence-planning
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -25,9 +25,11 @@ Current state:
 - v1.07 is a documentation-only post-merge production smoke checkpoint
 - v1.08 is a local-first saved-items Supabase persistence planning checkpoint
 - v1.09 is a narrow saved-items Supabase persistence implementation checkpoint
+- v1.10 is an order-history Supabase persistence planning checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
-- The current checkpoint includes a narrow saved-items implementation plus documentation updates
+- Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
+- The current checkpoint is a documentation-only order-history planning checkpoint
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested

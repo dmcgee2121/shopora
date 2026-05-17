@@ -169,10 +169,7 @@ async function saveSavedProductIdInternal(productId, currentSavedProductIds = nu
     throw new Error('A valid product id is required.');
   }
 
-  const session = await getCurrentSavedItemsSessionSafe();
-  if (!session?.accessToken || !session?.userId) {
-    return normalizeSavedProductIds(currentSavedProductIds);
-  }
+  const session = await getCurrentSavedItemsSession();
 
   const { accessToken, userId } = session;
   const currentIds = normalizeSavedProductIds(
@@ -183,14 +180,14 @@ async function saveSavedProductIdInternal(productId, currentSavedProductIds = nu
     return currentIds;
   }
 
-  await requestSavedItems('', {
+  await requestSavedItems('?on_conflict=user_id,product_id', {
     method: 'POST',
     accessToken,
     body: {
       user_id: userId,
       product_id: cleanProductId,
     },
-    prefer: 'return=representation',
+    prefer: 'resolution=ignore-duplicates,return=representation',
   });
 
   return appendSavedProductId(currentIds, cleanProductId);
@@ -202,10 +199,7 @@ async function removeSavedProductIdInternal(productId, currentSavedProductIds = 
     throw new Error('A valid product id is required.');
   }
 
-  const session = await getCurrentSavedItemsSessionSafe();
-  if (!session?.accessToken || !session?.userId) {
-    return normalizeSavedProductIds(currentSavedProductIds);
-  }
+  const session = await getCurrentSavedItemsSession();
 
   const { accessToken, userId } = session;
   const currentIds = normalizeSavedProductIds(

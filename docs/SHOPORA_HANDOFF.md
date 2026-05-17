@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.08-saved-items-supabase-persistence-planning`
+- `v1.09-saved-items-supabase-persistence-implementation`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -20,12 +20,14 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.06 is a local-first customer profile persistence implementation checkpoint.
 - v1.07 is a documentation-only post-merge production smoke checkpoint.
 - v1.08 is a local-first saved-items Supabase persistence planning checkpoint.
+- v1.09 is a narrow saved-items Supabase persistence implementation checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
 - The repo already includes `supabase/schema.sql` with `public.profiles`, `public.saved_items`, `public.orders`, and `public.order_items` plus RLS and grants that the app-side helpers expect.
 - The first safe profile write improvement now limits Supabase profile updates to the editable customer fields and keeps local/demo fallback behavior intact.
 - Saved items already use a mixed model: local/demo users persist browser-local state while Supabase-authenticated users use the `public.saved_items` REST helper path.
+- The first safe saved-items implementation now keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

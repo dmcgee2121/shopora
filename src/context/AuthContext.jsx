@@ -276,6 +276,7 @@ export function AuthProvider({ children }) {
   });
   const [isAuthLoading, setIsAuthLoading] = useState(Boolean(isSupabaseConfigured));
   const [authError, setAuthError] = useState('');
+  const [savedItemRequestIds, setSavedItemRequestIds] = useState([]);
 
   const loadSupabaseSavedProductIds = async (fallbackMessage) => {
     try {
@@ -654,6 +655,10 @@ export function AuthProvider({ children }) {
     const isSaved = savedProductIds.some((id) => idsMatch(id, productId));
 
     if (authSource === 'supabase') {
+      setSavedItemRequestIds((current) =>
+        current.some((id) => idsMatch(id, productId)) ? current : [...current, productId],
+      );
+
       try {
         const updatedSavedProductIds = await toggleSavedProductId(productId, savedProductIds);
         const nextUser = normalizeStoredUser({
@@ -672,6 +677,8 @@ export function AuthProvider({ children }) {
       } catch (error) {
         setAuthError(getSavedItemsErrorMessage(error, 'Unable to update your saved items right now.'));
         return isSaved;
+      } finally {
+        setSavedItemRequestIds((current) => current.filter((id) => !idsMatch(id, productId)));
       }
     }
 
@@ -701,6 +708,8 @@ export function AuthProvider({ children }) {
       authSource,
       isAuthLoading,
       authError,
+      isSavingSavedItem: (productId) =>
+        savedItemRequestIds.some((id) => idsMatch(id, productId)),
       isAuthenticated: Boolean(currentUser),
       isAdmin: currentUser?.role === 'admin',
       savedProductIds,
@@ -711,7 +720,7 @@ export function AuthProvider({ children }) {
       toggleSavedItem,
       isSavedItem: (productId) => savedProductIds.some((id) => idsMatch(id, productId)),
     };
-  }, [users, currentUser, authSource, isAuthLoading, authError]);
+  }, [users, currentUser, authSource, isAuthLoading, authError, savedItemRequestIds]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

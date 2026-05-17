@@ -127,7 +127,7 @@ function getStockState(stockCount) {
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
-  const { isAuthenticated, isSavedItem, toggleSavedItem } = useAuth();
+  const { isAuthenticated, isSavedItem, isSavingSavedItem, toggleSavedItem } = useAuth();
   const { openMiniCart } = useMiniCart();
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
@@ -147,6 +147,7 @@ export default function ProductCard({ product }) {
   const primaryColor = colors[0];
   const previewImage = hovered && images.length > 1 ? getProductImage(safeProduct, 1) : getProductImage(safeProduct);
   const isSaved = typeof isSavedItem === 'function' ? Boolean(isSavedItem(productId)) : false;
+  const isSaving = typeof isSavingSavedItem === 'function' ? Boolean(isSavingSavedItem(productId)) : false;
   const redirectTarget = encodeURIComponent(`${location.pathname}${location.search}`);
   const stockState = getStockState(Number(safeProduct.stockCount ?? 0));
   const isOutOfStock = stockState.tone === 'out';
@@ -208,8 +209,23 @@ export default function ProductCard({ product }) {
         <button
           type="button"
           className={isSaved ? 'save-button is-saved' : 'save-button'}
-          aria-label={isSaved ? `Remove ${productName} from saved items` : `Save ${productName}`}
+          aria-label={
+            isSaving
+              ? `${isSaved ? 'Removing' : 'Saving'} ${productName}`
+              : isSaved
+                ? `Remove ${productName} from saved items`
+                : `Save ${productName}`
+          }
           aria-pressed={isSaved}
+          aria-busy={isSaving}
+          title={
+            isSaving
+              ? 'Updating saved items...'
+              : isSaved
+                ? `Remove ${productName} from saved items`
+                : `Save ${productName}`
+          }
+          disabled={isSaving}
           onClick={handleSave}
         >
           <HeartIcon filled={isSaved} />

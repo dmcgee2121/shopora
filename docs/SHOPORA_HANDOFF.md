@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.03-customer-account-persistence-ux-readiness`
+- `v1.04-customer-profile-persistence-implementation-plan`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -15,8 +15,10 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.01 is a local-first admin order-detail prototype polish pass.
 - v1.02 is a local-first customer account persistence planning checkpoint.
 - v1.03 is a local-first customer account persistence UX readiness pass.
+- v1.04 is a local-first customer profile persistence implementation plan checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
+- The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
@@ -108,6 +110,15 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Kept the checkpoint copy-only and read-only: no new persistence models, no new mutations, and no backend/schema work.
 - Added `docs/SHOPORA_V1_03_CUSTOMER_ACCOUNT_PERSISTENCE_UX_READINESS.md` to capture the copy changes, persisted versus local behavior, no-touch areas, and next-step recommendation.
 - Recommended next action: keep any real account persistence expansion isolated to a dedicated auth/RLS/backend milestone.
+
+## v1.04 Customer Profile Persistence Implementation Plan
+
+- Started `v1.04-customer-profile-persistence-implementation-plan` as a documentation-first implementation plan for customer profile persistence.
+- Mapped the current profile flow across `AuthContext`, `AccountPage`, and the Supabase profile service so the editable field set, fallback behavior, and payload shape are explicit.
+- Documented the Supabase table, payload, and RLS assumptions that should be confirmed before any live write-path implementation.
+- Kept the checkpoint documentation-only: no new Supabase mutations, no auth changes, no schema work, and no changes to checkout submission, order creation, Stripe, Netlify functions/env, Supabase RLS, or cart behavior.
+- Added `docs/SHOPORA_V1_04_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION_PLAN.md` to capture the current behavior, the future implementation phases, the manual QA checklist, and the no-touch areas.
+- Recommended next action: keep profile persistence changes isolated to a dedicated implementation milestone after the table and RLS assumptions are confirmed.
 
 ## v0.68 Storefront Content And SEO Polish
 

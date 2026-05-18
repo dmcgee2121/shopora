@@ -569,6 +569,49 @@
   gap: 10px;
 }
 
+.admin-weekly-review-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-weekly-review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-weekly-review-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(221, 213, 203, 0.84);
+  background: rgba(255, 253, 250, 0.98);
+  box-shadow: 0 16px 34px rgba(43, 33, 20, 0.06);
+}
+
+.admin-weekly-review-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.admin-weekly-review-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+  border-top: 1px solid rgba(228, 217, 204, 0.72);
+}
+
+.admin-weekly-review-footer p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .status-badge.priority-high {
   background: rgba(162, 78, 61, 0.12);
   color: #8e5642;
@@ -2736,6 +2779,7 @@
   .admin-readiness-grid,
   .admin-store-operations-snapshot-grid,
   .admin-priority-actions-grid,
+  .admin-weekly-review-grid,
   .admin-catalog-readiness-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3065,6 +3109,7 @@
   .admin-storefront-preview-grid,
   .admin-store-operations-snapshot-grid,
   .admin-priority-actions-grid,
+  .admin-weekly-review-grid,
   .admin-launch-command-center-summary-grid,
   .admin-launch-qa-grid,
   .admin-launch-release-note-grid,

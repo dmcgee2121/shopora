@@ -137,6 +137,40 @@ function PriorityActionCard({ label, status, note, context, links }) {
   );
 }
 
+const weeklyReviewToneByLabel = {
+  'Weekly review': 'priority-medium',
+  'Buyer-facing': 'priority-high',
+  'Admin readiness': 'priority-medium',
+  'Monitor only': 'priority-monitor',
+  'Future backend work': 'priority-future',
+};
+
+function getWeeklyReviewTone(label) {
+  return weeklyReviewToneByLabel[label] ?? 'priority-monitor';
+}
+
+function WeeklyReviewCard({ label, status, note, context, links }) {
+  return (
+    <article className="admin-weekly-review-card">
+      <div className="admin-priority-action-header">
+        <span>{label}</span>
+        <span className={`status-badge ${getWeeklyReviewTone(status)}`.trim()}>{status}</span>
+      </div>
+      <p>{note}</p>
+      {context ? <p className="admin-priority-action-context">{context}</p> : null}
+      {Array.isArray(links) && links.length ? (
+        <div className="admin-priority-action-links">
+          {links.map((link) => (
+            <Link key={`${label}-${link.to}-${link.label}`} to={link.to} className={link.className ?? 'btn btn-ghost'}>
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
 function OrderActivityRow({ order }) {
   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
   const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
@@ -811,6 +845,113 @@ export default function AdminDashboard() {
     storefrontPreview.overallStatus,
   ]);
 
+  const weeklyStoreReview = useMemo(() => {
+    const hasProducts = catalogReadiness.totalProducts > 0;
+    const storefrontReady = storefrontPreview.overallStatus === 'Ready';
+    const accountReady = analytics.customerCount > 0 || analytics.savedTotal > 0;
+    const savedItemsReady = analytics.savedTotal > 0;
+
+    const cards = [
+      {
+        key: 'products',
+        label: 'Review product readiness and launch essentials',
+        status: 'Weekly review',
+        note: hasProducts
+          ? `${attentionProducts.length} product${attentionProducts.length === 1 ? '' : 's'} still deserve a weekly launch-essentials pass.`
+          : 'Start here if the catalog is thin, because product readiness drives the rest of the weekly review.',
+        context: 'Look for imagery, pricing, and merchandising gaps in the catalog.',
+        links: [{ to: '/admin/products', label: 'Open Products', className: 'btn btn-dark' }],
+      },
+      {
+        key: 'storefront',
+        label: 'Check storefront presentation and buyer-facing routes',
+        status: 'Buyer-facing',
+        note: storefrontReady
+          ? 'The storefront reads cleanly this week, so a quick route check is enough to confirm the buyer-facing story.'
+          : 'The storefront still needs buyer-facing attention, especially around presentation and route consistency.',
+        context: 'Use the public store, search, and category routes.',
+        links: [
+          { to: '/', label: 'Open Storefront', className: 'btn btn-dark' },
+          { to: '/search', label: 'Search Catalog' },
+        ],
+      },
+      {
+        key: 'account',
+        label: 'Review customer account and profile messaging',
+        status: 'Admin readiness',
+        note: accountReady
+          ? `${analytics.customerCount} customer account${analytics.customerCount === 1 ? '' : 's'} and ${analytics.savedTotal} saved item${analytics.savedTotal === 1 ? '' : 's'} are available for a weekly account check.`
+          : 'Account and profile messaging should still be reviewed so the admin story stays clear even when data is light.',
+        context: 'Keep the customer-facing account copy honest and readable.',
+        links: [
+          { to: '/account', label: 'Open Account', className: 'btn btn-dark' },
+          { to: '/saved', label: 'Saved Items' },
+        ],
+      },
+      {
+        key: 'saved-items',
+        label: 'Review saved-items and engagement readiness',
+        status: savedItemsReady ? 'Admin readiness' : 'Monitor only',
+        note: savedItemsReady
+          ? 'Saved-items activity is present, so a weekly check can confirm the customer engagement signals still make sense.'
+          : 'Saved-items should be monitored weekly, even if the current data set does not show active engagement yet.',
+        context: 'Use it as a read-only engagement signal, not a task queue.',
+        links: [{ to: '/saved', label: 'Open Saved Items', className: 'btn btn-dark' }],
+      },
+      {
+        key: 'orders',
+        label: 'Monitor read-only order history and admin order prototype areas',
+        status: 'Monitor only',
+        note:
+          'Weekly order review should stay read-only and should not imply live admin order operations, refunds, or fulfillment actions.',
+        context: ordersSource === 'supabase' ? 'Live Supabase reads only.' : 'Local demo reads only.',
+        links: [
+          { to: '/admin/orders', label: 'Admin Orders', className: 'btn btn-dark' },
+          { to: '/orders', label: 'Customer Orders' },
+        ],
+      },
+      {
+        key: 'checkout',
+        label: 'Reconfirm checkout and future backend work messaging',
+        status: 'Future backend work',
+        note:
+          'A weekly check should keep checkout/test-mode copy honest and keep future backend work visible for fulfillment, refunds, and order mutation.',
+        context: 'Do not imply live payment, refund, or shipping purchase behavior.',
+        links: [{ to: '/admin/orders', label: 'Review Checkout Context' }],
+      },
+    ];
+
+    const overallStatus = cards.some((card) => card.status === 'Buyer-facing')
+      ? 'Buyer-facing'
+      : cards.some((card) => card.status === 'Admin readiness')
+        ? 'Admin readiness'
+        : cards.some((card) => card.status === 'Monitor only')
+          ? 'Monitor only'
+          : 'Future backend work';
+
+    const overallNote =
+      overallStatus === 'Buyer-facing'
+        ? 'Use the weekly review to make sure the storefront presentation stays credible to shoppers.'
+        : overallStatus === 'Admin readiness'
+          ? 'The weekly rhythm is healthy, with the admin and customer-facing areas still worth a quick check.'
+          : overallStatus === 'Monitor only'
+            ? 'The weekly job is mostly observation and confirmation, not operational action.'
+            : 'The remaining weekly concern is backend-bound, so the admin view should keep that boundary explicit.';
+
+    return {
+      cards,
+      overallStatus,
+      overallNote,
+    };
+  }, [
+    analytics.customerCount,
+    analytics.savedTotal,
+    attentionProducts.length,
+    catalogReadiness.totalProducts,
+    ordersSource,
+    storefrontPreview.overallStatus,
+  ]);
+
   const sellerLaunchCommandCenter = useMemo(() => {
     const hasProducts = catalogReadiness.totalProducts > 0;
     const productLaunchReady =
@@ -1457,6 +1598,36 @@ export default function AdminDashboard() {
             {priorityActions.overallStatus}
           </span>
           <p>{priorityActions.overallNote}</p>
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-weekly-review-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Weekly store review</span>
+          <p>
+            A simple once-a-week operating rhythm for keeping the store healthy. It stays advisory only and uses
+            existing routes only.
+          </p>
+        </div>
+
+        <div className="admin-weekly-review-grid">
+          {weeklyStoreReview.cards.map((item) => (
+            <WeeklyReviewCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+              links={item.links}
+            />
+          ))}
+        </div>
+
+        <div className="admin-weekly-review-footer">
+          <span className={`status-badge ${getWeeklyReviewTone(weeklyStoreReview.overallStatus)}`.trim()}>
+            {weeklyStoreReview.overallStatus}
+          </span>
+          <p>{weeklyStoreReview.overallNote}</p>
         </div>
       </section>
 

@@ -104,6 +104,39 @@ function ReadinessCard({ label, status, note, context }) {
   );
 }
 
+const priorityToneByLabel = {
+  'High priority': 'priority-high',
+  'Medium priority': 'priority-medium',
+  Monitor: 'priority-monitor',
+  'Future backend work': 'priority-future',
+};
+
+function getPriorityTone(label) {
+  return priorityToneByLabel[label] ?? 'priority-monitor';
+}
+
+function PriorityActionCard({ label, status, note, context, links }) {
+  return (
+    <article className="admin-priority-action">
+      <div className="admin-priority-action-header">
+        <span>{label}</span>
+        <span className={`status-badge ${getPriorityTone(status)}`.trim()}>{status}</span>
+      </div>
+      <p>{note}</p>
+      {context ? <p className="admin-priority-action-context">{context}</p> : null}
+      {Array.isArray(links) && links.length ? (
+        <div className="admin-priority-action-links">
+          {links.map((link) => (
+            <Link key={`${label}-${link.to}-${link.label}`} to={link.to} className={link.className ?? 'btn btn-ghost'}>
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
 function OrderActivityRow({ order }) {
   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
   const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
@@ -651,6 +684,131 @@ export default function AdminDashboard() {
     catalogReadiness,
     ordersSource,
     storefrontPreview,
+  ]);
+
+  const priorityActions = useMemo(() => {
+    const productsNeedLaunchEssentials = attentionProducts.length > 0 || catalogReadiness.productsNeedingAttention > 0;
+    const storefrontNeedsReview = storefrontPreview.overallStatus !== 'Ready';
+    const accountNeedsReview = analytics.customerCount === 0 && analytics.savedTotal === 0;
+    const savedItemsNeedMonitoring = analytics.savedTotal === 0;
+    const checkoutShouldStayTestMode = true;
+
+    const cards = [
+      {
+        key: 'products',
+        label: 'Review products that may need launch essentials',
+        status: productsNeedLaunchEssentials ? 'High priority' : 'Medium priority',
+        note: productsNeedLaunchEssentials
+          ? `${attentionProducts.length} product${attentionProducts.length === 1 ? '' : 's'} already need catalog follow-up, so this is the fastest place to start.`
+          : 'The catalog is mostly in shape, but a quick launch-essentials pass still makes sense before the next review.',
+        context: 'Look for imagery, pricing, and merchandising gaps in the product list.',
+        links: [
+          { to: '/admin/products', label: 'Open Products', className: 'btn btn-dark' },
+        ],
+      },
+      {
+        key: 'storefront',
+        label: 'Check storefront preview and readiness',
+        status: storefrontNeedsReview ? 'High priority' : 'Medium priority',
+        note: storefrontNeedsReview
+          ? 'The storefront still has review signals, so confirm the buyer-facing experience before treating it as ready.'
+          : 'The storefront reads well today, but a final preview pass is still a practical business-owner check.',
+        context: 'Use the public storefront and search routes to confirm the buyer story.',
+        links: [
+          { to: '/', label: 'Open Storefront', className: 'btn btn-dark' },
+          { to: '/search', label: 'Search Catalog' },
+        ],
+      },
+      {
+        key: 'checkout',
+        label: 'Review checkout and test-mode messaging',
+        status: checkoutShouldStayTestMode ? 'Future backend work' : 'Monitor',
+        note:
+          'Checkout messaging should continue to read as test-mode or render-only, with no suggestion that production payment operations are active.',
+        context: 'Keep the message honest without changing checkout behavior.',
+        links: [
+          { to: '/admin/orders', label: 'Review Orders' },
+        ],
+      },
+      {
+        key: 'account',
+        label: 'Review customer account and profile readiness',
+        status: accountNeedsReview ? 'High priority' : 'Medium priority',
+        note: accountNeedsReview
+          ? 'There is little customer activity to review, so the account story still needs attention before it feels fully useful.'
+          : `${analytics.customerCount} customer account${analytics.customerCount === 1 ? '' : 's'} and ${analytics.savedTotal} saved item${analytics.savedTotal === 1 ? '' : 's'} make the account area worth checking.`,
+        context: 'Confirm profile and account routes still read clearly.',
+        links: [
+          { to: '/account', label: 'Open Account', className: 'btn btn-dark' },
+          { to: '/saved', label: 'Open Saved Items' },
+        ],
+      },
+      {
+        key: 'saved-items',
+        label: 'Review saved-items and engagement readiness',
+        status: savedItemsNeedMonitoring ? 'Monitor' : 'Medium priority',
+        note: savedItemsNeedMonitoring
+          ? 'Saved-items is worth watching, but there is no active engagement signal in the current data set yet.'
+          : 'Saved-items activity is present, so it is worth a quick look as part of the customer engagement review.',
+        context: 'Use this as a read-only engagement signal, not a live task queue.',
+        links: [
+          { to: '/saved', label: 'Open Saved Items', className: 'btn btn-dark' },
+        ],
+      },
+      {
+        key: 'orders',
+        label: 'Monitor read-only order history and admin order prototype areas',
+        status: 'Monitor',
+        note:
+          'Use the order views to review status and activity, but keep the posture read-only and avoid implying live admin order operations.',
+        context: ordersSource === 'supabase' ? 'Live Supabase reads for admin review only.' : 'Local demo reads for admin review only.',
+        links: [
+          { to: '/admin/orders', label: 'Admin Orders', className: 'btn btn-dark' },
+          { to: '/orders', label: 'Customer Orders' },
+        ],
+      },
+      {
+        key: 'fulfillment',
+        label: 'Confirm no live fulfillment or refund action is implied',
+        status: 'Future backend work',
+        note:
+          'The UI should continue to signal that fulfillment, refunds, and similar actions are not implemented as live operations.',
+        context: 'Keep prototype and backend boundaries explicit.',
+        links: [
+          { to: '/admin/orders', label: 'Recheck Order UI' },
+        ],
+      },
+    ];
+
+    const overallStatus = cards.some((card) => card.status === 'High priority')
+      ? 'High priority'
+      : cards.some((card) => card.status === 'Medium priority')
+        ? 'Medium priority'
+        : cards.some((card) => card.status === 'Monitor')
+          ? 'Monitor'
+          : 'Future backend work';
+
+    const overallNote =
+      overallStatus === 'High priority'
+        ? 'Start with products and storefront checks, then verify account and order review areas stay read-only.'
+        : overallStatus === 'Medium priority'
+          ? 'The store is in good shape overall, but a few practical review items still deserve attention.'
+          : overallStatus === 'Monitor'
+            ? 'The main job here is ongoing review, not action-taking or backend mutation.'
+            : 'The remaining work is backend-bound, so the admin view should keep signaling that boundary clearly.';
+
+    return {
+      cards,
+      overallStatus,
+      overallNote,
+    };
+  }, [
+    analytics.customerCount,
+    analytics.savedTotal,
+    attentionProducts.length,
+    catalogReadiness.productsNeedingAttention,
+    ordersSource,
+    storefrontPreview.overallStatus,
   ]);
 
   const sellerLaunchCommandCenter = useMemo(() => {
@@ -1270,6 +1428,35 @@ export default function AdminDashboard() {
           <Link to="/orders" className="btn btn-outline">
             Open Orders
           </Link>
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-priority-actions-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Priority actions</span>
+          <p>
+            A short action list for what to review first. It stays advisory only and points to existing routes only.
+          </p>
+        </div>
+
+        <div className="admin-priority-actions-grid">
+          {priorityActions.cards.map((item) => (
+            <PriorityActionCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+              links={item.links}
+            />
+          ))}
+        </div>
+
+        <div className="admin-priority-actions-footer">
+          <span className={`status-badge ${getPriorityTone(priorityActions.overallStatus)}`.trim()}>
+            {priorityActions.overallStatus}
+          </span>
+          <p>{priorityActions.overallNote}</p>
         </div>
       </section>
 

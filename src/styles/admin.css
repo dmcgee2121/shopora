@@ -491,6 +491,32 @@
   gap: 10px;
 }
 
+.admin-store-operations-snapshot-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-store-operations-snapshot-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-store-operations-snapshot-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+  border-top: 1px solid rgba(228, 217, 204, 0.72);
+}
+
+.admin-store-operations-snapshot-footer p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .admin-store-readiness-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2632,6 +2658,7 @@
   .admin-store-readiness-grid,
   .admin-editor-summary-grid,
   .admin-readiness-grid,
+  .admin-store-operations-snapshot-grid,
   .admin-catalog-readiness-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2959,6 +2986,7 @@
   .admin-editor-readiness-summary,
   .admin-editor-guidance-summary,
   .admin-storefront-preview-grid,
+  .admin-store-operations-snapshot-grid,
   .admin-launch-command-center-summary-grid,
   .admin-launch-qa-grid,
   .admin-launch-release-note-grid,

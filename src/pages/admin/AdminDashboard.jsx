@@ -80,7 +80,9 @@ function ProgressRow({ label, value, total, note, toneClass = '' }) {
 
 const readinessToneByLabel = {
   Ready: 'status-active',
+  'Ready to review': 'status-active',
   'Needs review': 'status-draft',
+  'Monitor only': 'status-badge-muted',
   'Prototype/read-only': 'status-badge-muted',
   'Future backend work': 'admin-issue-missing',
 };
@@ -535,6 +537,120 @@ export default function AdminDashboard() {
     analytics.savedTotal,
     catalogReadiness,
     products,
+  ]);
+
+  const storeOperationsSnapshot = useMemo(() => {
+    const catalogReviewReady = catalogReadiness.totalProducts > 0;
+    const productsNeedReview = attentionProducts.length > 0;
+    const storefrontReady = storefrontPreview.overallStatus === 'Ready';
+    const customerAccountReady = analytics.customerCount > 0 || analytics.savedTotal > 0;
+    const savedItemsReady = analytics.savedTotal > 0;
+
+    const cards = [
+      {
+        key: 'catalog-review',
+        label: 'Catalog review',
+        status: catalogReviewReady ? 'Ready to review' : 'Needs review',
+        note: catalogReviewReady
+          ? `${catalogReadiness.totalProducts} product${catalogReadiness.totalProducts === 1 ? '' : 's'} are ready for a quick catalog pass before the next review session.`
+          : 'Add products first so the catalog review section has something useful to inspect.',
+        context: 'Product list and merchandising',
+      },
+      {
+        key: 'products-attention',
+        label: 'Products needing attention',
+        status: productsNeedReview ? 'Needs review' : 'Ready to review',
+        note: productsNeedReview
+          ? `${attentionProducts.length} product${attentionProducts.length === 1 ? '' : 's'} are already flagged by the catalog helper for follow-up.`
+          : 'No immediate product issues were flagged by the existing catalog helper.',
+        context: 'Existing catalog issues only',
+      },
+      {
+        key: 'storefront-readiness',
+        label: 'Storefront readiness',
+        status: storefrontReady ? 'Ready to review' : 'Needs review',
+        note: storefrontReady
+          ? 'The public storefront routes are in a good shape for a seller walkthrough.'
+          : 'The storefront still deserves a review pass before it is treated as ready.',
+        context: 'Home, search, account, saved, and orders routes',
+      },
+      {
+        key: 'customer-account',
+        label: 'Customer/account readiness',
+        status: customerAccountReady ? 'Ready to review' : 'Needs review',
+        note: customerAccountReady
+          ? `${analytics.customerCount} customer account${analytics.customerCount === 1 ? '' : 's'} and ${analytics.savedTotal} saved item${analytics.savedTotal === 1 ? '' : 's'} give the account area real activity to inspect.`
+          : 'No customer or saved-item activity is available yet, so account review is limited.',
+        context: 'Profile and account routes',
+      },
+      {
+        key: 'saved-items',
+        label: 'Saved-items / engagement',
+        status: savedItemsReady ? 'Ready to review' : 'Monitor only',
+        note: savedItemsReady
+          ? `${analytics.savedTotal} saved item${analytics.savedTotal === 1 ? '' : 's'} show customer engagement that can be reviewed today.`
+          : 'Saved-items are present, but there is no engagement signal yet, so this area is best watched rather than acted on.',
+        context: 'Saved and account touchpoints',
+      },
+      {
+        key: 'orders-monitoring',
+        label: 'Orders / read-only monitoring',
+        status: 'Monitor only',
+        note:
+          'Use the customer and admin order routes for review, but keep the posture read-only and avoid implying live order operations.',
+        context: ordersSource === 'supabase' ? 'Live Supabase reads' : 'Local demo reads',
+      },
+      {
+        key: 'admin-orders',
+        label: 'Admin order prototype',
+        status: 'Prototype/read-only',
+        note:
+          'The admin order surface is a prototype/read-only preview. Live status changes, refunds, fulfillment, and shipping actions remain out of scope.',
+        context: 'Admin orders route',
+      },
+      {
+        key: 'checkout-reminder',
+        label: 'Checkout test-mode reminder',
+        status: 'Future backend work',
+        note:
+          'Checkout should stay in test-mode or render-only posture until a deliberate production-confidence review is approved.',
+        context: 'Checkout and Stripe checklist',
+      },
+    ];
+
+    const overallStatus = cards.some((card) => card.status === 'Needs review')
+      ? 'Needs review'
+      : cards.some((card) => card.status === 'Future backend work')
+        ? 'Future backend work'
+        : cards.some((card) => card.status === 'Prototype/read-only')
+          ? 'Prototype/read-only'
+          : cards.some((card) => card.status === 'Monitor only')
+            ? 'Monitor only'
+            : 'Ready to review';
+
+    const overallNote =
+      overallStatus === 'Needs review'
+        ? 'Start with the catalog and storefront checks, then use the account and order links to confirm the rest of the seller story.'
+        : overallStatus === 'Future backend work'
+          ? 'The shop is reviewable, but checkout still belongs in a deliberate test-mode or backend-confidence pass.'
+          : overallStatus === 'Prototype/read-only'
+            ? 'Core store surfaces are reviewable, while the admin order tools stay intentionally read-only.'
+            : overallStatus === 'Monitor only'
+              ? 'The store is in a watch-and-review posture, with saved-items and orders best treated as signals rather than live operations.'
+              : 'The operational snapshot is ready for a business-owner review using existing routes only.';
+
+    return {
+      cards,
+      overallStatus,
+      overallNote,
+    };
+  }, [
+    analytics.customerCount,
+    analytics.savedTotal,
+    attentionProducts,
+    catalogReadiness,
+    ordersSource,
+    storefrontPreview,
   ]);
 
   const sellerLaunchCommandCenter = useMemo(() => {
@@ -1100,6 +1216,59 @@ export default function AdminDashboard() {
           </Link>
           <Link to="/shipping" className="btn btn-outline">
             Review Shipping / Returns / Contact
+          </Link>
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-store-operations-snapshot-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Store operations snapshot</span>
+          <p>
+            A compact business-owner review queue for what to look at today. It stays advisory only and uses existing
+            routes and existing data.
+          </p>
+        </div>
+
+        <div className="admin-readiness-grid admin-store-operations-snapshot-grid">
+          {storeOperationsSnapshot.cards.map((item) => (
+            <ReadinessCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+            />
+          ))}
+        </div>
+
+        <div className="admin-store-operations-snapshot-footer">
+          <span className={`status-badge ${getReadinessTone(storeOperationsSnapshot.overallStatus)}`.trim()}>
+            {storeOperationsSnapshot.overallStatus}
+          </span>
+          <p>{storeOperationsSnapshot.overallNote}</p>
+        </div>
+
+        <div className="admin-cta-row">
+          <Link to="/admin/products" className="btn btn-dark">
+            Review Products
+          </Link>
+          <Link to="/admin/orders" className="btn btn-ghost">
+            Review Admin Orders
+          </Link>
+          <Link to="/" className="btn btn-ghost">
+            Open Storefront
+          </Link>
+          <Link to="/search" className="btn btn-ghost">
+            Search Catalog
+          </Link>
+          <Link to="/account" className="btn btn-ghost">
+            Open Account
+          </Link>
+          <Link to="/saved" className="btn btn-ghost">
+            Open Saved Items
+          </Link>
+          <Link to="/orders" className="btn btn-outline">
+            Open Orders
           </Link>
         </div>
       </section>

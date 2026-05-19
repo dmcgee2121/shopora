@@ -178,9 +178,12 @@ export default function CategoryPage({ title, description, department, saleOnly 
   );
   const discoveryTitle = saleOnly ? 'Sale picks worth a closer look' : `${title} top picks`;
   const discoveryDescription = saleOnly
-    ? 'A compact edit of markdowns with clear value, ratings, and styling range.'
-    : 'A quick department edit that starts with strong styles, then lets shoppers refine the assortment by category, brand, size, price, or status.';
+    ? 'A focused value edit with clear pricing, strong ratings, and easy scanning.'
+    : 'A curated department edit that starts strong, then lets shoppers refine the assortment by category, brand, size, price, or status.';
   const discoveryHeadingId = `category-discovery-${saleOnly ? 'sale' : department || 'all'}`;
+  const browsingCues = saleOnly
+    ? ['Featured category', 'Style-ready finds', 'Browse the edit', 'Fresh ways to shop']
+    : [`${title} edit`, 'Curated picks', 'Style-ready finds', 'Browse the edit'];
 
   return (
     <section className="catalog-page">
@@ -188,18 +191,36 @@ export default function CategoryPage({ title, description, department, saleOnly 
         <CatalogStatusNote className="category-catalog-status" />
         <SectionHeading
           title={title}
-          description={`${description} You are browsing the ${browsingLabel.toLowerCase()}. Use the filters to narrow the edit by category, brand, price, size, and product status.`}
+          description={`${description} You are browsing the ${browsingLabel.toLowerCase()}. Use filters to narrow the edit by category, brand, price, size, and product status.`}
           action={<span className="count-badge">{countLabel}</span>}
         />
         <p className="catalog-toolbar-note">
-          Filters narrow the edit, sort changes what appears first, and the result count updates as you refine the shopping lane.
+          Sort changes what appears first. Filters narrow the edit. The result count updates as you refine the lane.
         </p>
+
+        <div className="catalog-intro-strip" aria-label={`${title} browsing cues`}>
+          <div className="catalog-intro-copy">
+            <p className="eyebrow">{saleOnly ? 'Featured category' : 'Curated browsing'}</p>
+            <p>
+              {saleOnly
+                ? 'Style-ready finds from the sale edit, with clear value and easy scanning.'
+                : 'Browse the edit, then use filters and shortcuts to move through a more curated assortment.'}
+            </p>
+          </div>
+          <div className="catalog-intro-chips">
+            {browsingCues.map((cue) => (
+              <span key={cue} className="query-chip">
+                {cue}
+              </span>
+            ))}
+          </div>
+        </div>
 
         <section className="discovery-hero" aria-labelledby={discoveryHeadingId}>
           <div className="discovery-hero-copy">
             <p className="eyebrow">{discoveryProfile.eyebrow}</p>
             <h2 id={discoveryHeadingId}>{discoveryProfile.title}</h2>
-              <p>{discoveryProfile.description}</p>
+            <p>{discoveryProfile.description}</p>
           </div>
           <div className="discovery-stat-card" aria-label={`${title} discovery summary`}>
             <span className="account-card-label">Department snapshot</span>

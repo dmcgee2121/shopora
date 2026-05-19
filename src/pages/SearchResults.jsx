@@ -59,6 +59,9 @@ export default function SearchResults() {
     () => getSearchLandingProducts(products, { limit: 4 }),
     [products],
   );
+  const browsingCues = query
+    ? ['Curated matches', 'Browse the edit', 'Fresh ways to shop', 'Style-ready finds']
+    : ['Curated starting points', 'Browse the edit', 'Department shortcuts', 'Fresh ways to shop'];
 
   const searchMatches = useMemo(() => {
     if (!query) {
@@ -154,8 +157,8 @@ export default function SearchResults() {
   ].filter(Boolean);
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No results found.';
   const emptyDescription = activeFilterCount
-    ? 'Try removing one or more filters, clearing the search, or browsing sale and new arrival styles to widen the results.'
-    : 'Try a broader keyword, check spelling, or use a department shortcut to start with a curated edit.';
+    ? 'Try removing one or more filters, clearing the search, or browsing sale and new arrival styles to widen the edit.'
+    : 'Try a broader keyword, check spelling, or use a department shortcut to start with a more curated edit.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -182,14 +185,32 @@ export default function SearchResults() {
           title={query ? `Search results for "${query}"` : 'Search ShopOra'}
           description={
             query
-              ? 'Browse the styles that match your search across brands, departments, and colorways, then narrow the edit with filters and sort controls.'
-              : 'Use the search bar in the navbar to look for products, categories, brands, and colors when you want a fast way into the edit.'
+              ? 'Browse the styles that match your search across brands, departments, and colorways, then use filters and sort controls to keep the edit focused.'
+              : 'Use the search bar in the navbar to look for products, categories, brands, and colors when you want a fast route into the edit.'
           }
           action={query ? <span className="count-badge">{countLabel}</span> : null}
         />
         <p className="catalog-toolbar-note">
-          Sort controls change the order of the results, while filters narrow the catalog to a smaller set of matches.
+          Sort controls change the order of the results. Filters narrow the catalog to a smaller set of matches.
         </p>
+
+        <div className="catalog-intro-strip search-intro-strip" aria-label="Search browsing cues">
+          <div className="catalog-intro-copy">
+            <p className="eyebrow">{query ? 'Search energy' : 'Search guide'}</p>
+            <p>
+              {query
+                ? 'Curated matches at a glance, with filters and sort controls to keep the results easy to scan.'
+                : 'Start with a product, category, brand, or color when you want a quicker route into the edit.'}
+            </p>
+          </div>
+          <div className="catalog-intro-chips">
+            {browsingCues.map((cue) => (
+              <span key={cue} className="query-chip">
+                {cue}
+              </span>
+            ))}
+          </div>
+        </div>
 
         {!query ? (
           <div className="search-landing">
@@ -197,7 +218,7 @@ export default function SearchResults() {
               <section className="search-landing-panel" aria-labelledby="search-start-title">
                 <p className="eyebrow">Search guide</p>
                 <h2 id="search-start-title">Start with a product, category, brand, or color.</h2>
-                <p>Try a focused search, then refine by department, size, price, product status, or sale.</p>
+                <p>Try a focused search, then refine by department, size, price, product status, or sale to keep the edit curated.</p>
                 <div className="recommendation-links search-suggestion-list" aria-label="Suggested searches">
                   {searchSuggestionLinks.map((link) => (
                     <Link key={link.to} to={link.to} className="query-chip">

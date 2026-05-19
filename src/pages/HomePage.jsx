@@ -30,7 +30,7 @@ function MerchSection({ id, title, description, action, products, loading = fals
       {loading ? (
         <div className="empty-state">
           <h3>Loading {title.toLowerCase()}.</h3>
-          <p>We are getting the latest catalog ready for browsing.</p>
+          <p>We are refreshing the latest catalog so browsing feels current.</p>
         </div>
       ) : products.length ? (
         <div className="product-grid">
@@ -55,7 +55,7 @@ function HomeDiscoverySection({ title, description, products, action, links, loa
       {loading ? (
         <div className="empty-state home-discovery-loading">
           <h3>Loading personalized picks.</h3>
-          <p>We are preparing a few styles and shortcuts for your next stop.</p>
+          <p>We are refreshing a few styles and shortcuts for your next stop.</p>
         </div>
       ) : (
         <>
@@ -172,7 +172,7 @@ export default function HomePage() {
         <MerchSection
           id="new-arrivals"
           title="New Arrivals"
-          description="Freshly added styles selected to balance wardrobe staples with seasonal pieces and easy outfit builders."
+          description="Freshly added styles, updated weekly, selected to balance wardrobe staples with seasonal pieces and easy outfit builders."
           action={<Link to="/women">Browse Women's Edit</Link>}
           products={newArrivals}
           loading={isInitialCatalogLoading}
@@ -183,12 +183,12 @@ export default function HomePage() {
         <MerchSection
           id="sale-picks"
           title="Sale Picks"
-          description="Marked-down styles with the clearest value, strongest savings, and easiest reasons to shop before they move on."
+          description="Marked-down styles with clear value, stronger savings, and easy reasons to shop before they move on."
           action={<Link to="/sale">Shop Sale</Link>}
           products={salePicks}
           loading={isInitialCatalogLoading}
           emptyTitle="Sale picks are temporarily empty."
-          emptyText="There are no markdowns in the current catalog right now. Browse the full store for more styles."
+          emptyText="There are no markdowns in the current catalog right now. Browse the full store for more styles and current favorites."
         />
 
         <FeaturedBrands />
@@ -198,7 +198,7 @@ export default function HomePage() {
         <MerchSection
           id="trending-now"
           title="Trending Now"
-          description="Best-reviewed styles and current favorites earning the most attention across the store right now."
+          description="Best-reviewed styles and currently featured favorites earning the most attention across the store right now."
           products={trendingProducts}
           loading={isInitialCatalogLoading}
           emptyTitle="Trending styles are loading."
@@ -208,7 +208,7 @@ export default function HomePage() {
         <MerchSection
           id="everyday-essentials"
           title="Everyday Essentials"
-          description="Polished basics, easy layers, and wardrobe pieces built for repeat wear across the week."
+          description="Curated for everyday wear: polished basics, easy layers, and wardrobe pieces built for repeat use across the week."
           action={<Link to="/men">Browse Men's Edit</Link>}
           products={everydayEssentials}
           loading={isInitialCatalogLoading}

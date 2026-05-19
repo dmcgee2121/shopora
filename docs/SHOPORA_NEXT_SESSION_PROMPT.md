@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.42-admin-operations-local-qa
+- v1.44-buyer-trust-liveliness-polish
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -66,6 +66,7 @@ Current state:
 - The current checkpoint is documentation-only and records the admin live order-status planning audit
 - The current checkpoint is documentation-only and records the admin order-operations QA checklist
 - The current checkpoint is documentation-only and packages draft PR prep notes for the parked v1.37-v1.42 admin operations/readiness mini-batch
+- The current checkpoint is frontend/buyer-facing polish that makes the storefront feel a little more alive without changing commerce behavior
 - The current checkpoint is documentation-only and records the local release batch wrap-up
 - The current checkpoint is documentation-only and records the portfolio/demo readiness plan
 - The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
@@ -137,7 +138,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a documentation-first admin operations draft PR prep checkpoint on top of the existing v1.37-v1.42 trail.
+2. Reconfirm the branch scope as a frontend/buyer-facing trust and liveliness polish pass on top of the existing storefront trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -158,6 +159,7 @@ Tasks for the next chat:
 - `docs/SHOPORA_DEMO_QA_CHECKLIST.md`
 - `docs/SHOPORA_HANDOFF.md`
 - `docs/SHOPORA_V1_43_ADMIN_OPERATIONS_DRAFT_PR_PREP.md`
+- `docs/SHOPORA_V1_44_BUYER_TRUST_LIVELINESS_POLISH.md`
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
 
 Current docs created or updated:

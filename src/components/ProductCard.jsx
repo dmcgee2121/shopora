@@ -80,15 +80,19 @@ function getDiscoveryCue(product, stockState, reviewDisplay, price) {
     return `${reviewDisplay.reviewCount.toLocaleString()} shopper ratings`;
   }
 
+  if (product?.featured) {
+    return 'Currently featured in the edit';
+  }
+
   if (product?.isNew) {
-    return 'New arrival';
+    return 'New arrival, updated weekly';
   }
 
   if (product?.isSale) {
     return 'Featured markdown';
   }
 
-  return product?.shippingNote || product?.returnNote || 'Open the product page to compare details, sizing, and support notes.';
+  return product?.shippingNote || product?.returnNote || 'Style-ready pick for easy outfit building.';
 }
 
 function StarRating({ rating, reviewCount }) {

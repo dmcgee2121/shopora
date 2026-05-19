@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.44-buyer-trust-liveliness-polish`
+- `v1.45-buyer-homepage-activity-cues`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -56,6 +56,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.42 is a QA/documentation-first admin operations local QA checkpoint.
 - v1.43 is a documentation-first admin operations draft PR prep checkpoint.
 - v1.44 is a frontend/buyer-facing buyer trust and liveliness polish checkpoint.
+- v1.45 is a frontend/buyer-facing buyer homepage activity cues checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -97,6 +98,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.42 documents the v1.37-v1.41 admin operations mini-batch local QA checklist without changing app or backend behavior.
 - v1.43 packages draft PR prep notes for the parked v1.37-v1.42 admin operations/readiness mini-batch without changing app or backend behavior.
 - v1.44 tightens buyer-facing trust and liveliness cues without changing checkout, order, cart, auth, or backend behavior.
+- v1.45 adds honest homepage activity cues using existing catalog data without changing commerce behavior.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
@@ -562,6 +564,8 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Client demo checklist
 - Portfolio case study / screenshots
 - Buyer trust and liveliness polish follow-up
+- Buyer homepage activity cues follow-up
+- Buyer homepage activity cues local QA follow-up
 - Documentation-only draft PR prep for the parked v1.37-v1.42 admin operations/readiness mini-batch
 
 ## v0.31 Final Screenshot / Demo Pass

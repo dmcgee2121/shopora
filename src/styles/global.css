@@ -1476,6 +1476,85 @@ main {
   margin-bottom: 20px;
 }
 
+.home-activity {
+  padding: 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(228, 217, 204, 0.88);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 250, 0.98), rgba(244, 236, 225, 0.88)),
+    rgba(255, 253, 250, 0.92);
+  box-shadow: var(--shadow-soft);
+}
+
+.home-activity .section-heading {
+  margin-bottom: 20px;
+}
+
+.activity-cue-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.activity-cue-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(228, 217, 204, 0.9);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 250, 0.98), rgba(246, 239, 228, 0.92)),
+    rgba(255, 253, 250, 0.96);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.activity-cue-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(180, 138, 77, 0.24);
+  box-shadow: var(--shadow);
+}
+
+.activity-cue-label {
+  margin: 0;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.activity-cue-card h3 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.activity-cue-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.activity-cue-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.activity-cue-link {
+  color: var(--gold-dark);
+  font-weight: 800;
+}
+
 .home-discovery-loading {
   margin-top: 4px;
 }
@@ -3433,6 +3512,7 @@ main {
   }
 
   .home-campaign,
+  .home-activity,
   .campaign-visual {
     grid-template-columns: 1fr;
   }
@@ -3650,6 +3730,10 @@ main {
     padding: 18px;
   }
 
+  .home-activity {
+    padding: 18px;
+  }
+
   .discovery-hero,
   .discovery-section,
   .search-landing-panel {
@@ -3681,6 +3765,10 @@ main {
   }
 
   .home-continue-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-cue-grid {
     grid-template-columns: 1fr;
   }
 

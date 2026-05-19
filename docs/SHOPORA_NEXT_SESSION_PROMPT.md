@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.45-buyer-homepage-activity-cues
+- v1.46-buyer-product-card-micro-interactions
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -66,7 +66,7 @@ Current state:
 - The current checkpoint is documentation-only and records the admin live order-status planning audit
 - The current checkpoint is documentation-only and records the admin order-operations QA checklist
 - The current checkpoint is documentation-only and packages draft PR prep notes for the parked v1.37-v1.42 admin operations/readiness mini-batch
-- The current checkpoint is frontend/buyer-facing homepage activity cues that use existing catalog data without fake live activity
+- The current checkpoint is frontend/buyer-facing product card micro-interactions that use existing product data without changing commerce behavior
 - The current checkpoint is documentation-only and records the local release batch wrap-up
 - The current checkpoint is documentation-only and records the portfolio/demo readiness plan
 - The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
@@ -138,7 +138,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a frontend/buyer-facing homepage activity cues pass on top of the existing storefront trail.
+2. Reconfirm the branch scope as a frontend/buyer-facing product card micro-interactions pass on top of the existing storefront trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -161,6 +161,7 @@ Tasks for the next chat:
 - `docs/SHOPORA_V1_43_ADMIN_OPERATIONS_DRAFT_PR_PREP.md`
 - `docs/SHOPORA_V1_44_BUYER_TRUST_LIVELINESS_POLISH.md`
 - `docs/SHOPORA_V1_45_BUYER_HOMEPAGE_ACTIVITY_CUES.md`
+- `docs/SHOPORA_V1_46_BUYER_PRODUCT_CARD_MICRO_INTERACTIONS.md`
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
 
 Current docs created or updated:

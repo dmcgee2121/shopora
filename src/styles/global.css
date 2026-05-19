@@ -396,6 +396,7 @@ main {
   .btn,
   .category-card,
   .product-card,
+  .product-body,
   .query-chip,
   .support-link-card,
   .save-button,
@@ -661,9 +662,12 @@ main {
 }
 
 .product-card:focus-within {
+  transform: translateY(-4px);
+  border-color: rgba(180, 138, 77, 0.34);
+  background: rgba(255, 253, 250, 0.98);
   box-shadow:
     0 0 0 3px rgba(180, 138, 77, 0.18),
-    var(--shadow-soft);
+    var(--shadow);
 }
 
 .product-media-wrap {
@@ -694,6 +698,10 @@ main {
   transform: scale(1.03);
 }
 
+.product-card:focus-within .product-media-image {
+  transform: scale(1.03);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .product-card:hover .product-name {
     color: var(--gold-dark);
@@ -704,7 +712,12 @@ main {
   }
 
   .product-card:hover .save-button:not(:disabled) {
+    transform: translateY(-1px) scale(1.03);
+  }
+
+  .card-actions .btn:hover {
     transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
   }
 }
 
@@ -796,6 +809,12 @@ main {
 
 .product-body {
   padding: 16px 16px 18px;
+  transition: transform 0.2s ease;
+}
+
+.product-card:hover .product-body,
+.product-card:focus-within .product-body {
+  transform: translateY(-1px);
 }
 
 .save-button {
@@ -834,6 +853,20 @@ main {
 
 .save-button:focus-visible {
   border-color: var(--gold);
+}
+
+.product-card:focus-within .save-button:not(:disabled) {
+  transform: translateY(-1px) scale(1.03);
+}
+
+.product-card:hover .product-discovery-cue,
+.product-card:focus-within .product-discovery-cue {
+  color: var(--gold-dark);
+}
+
+.product-card:hover .product-discovery-support,
+.product-card:focus-within .product-discovery-support {
+  color: var(--text);
 }
 
 .product-category {
@@ -1059,6 +1092,11 @@ main {
 .card-actions .btn {
   flex: 1;
   min-width: 0;
+}
+
+.card-actions .btn:focus-visible {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(180, 138, 77, 0.16);
 }
 
 .card-actions .btn:disabled {

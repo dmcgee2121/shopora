@@ -90,6 +90,10 @@ export function getProductMerchandisingBadges(product) {
     badges.push({ label: 'New', tone: 'badge-new' });
   }
 
+  if (product?.featured) {
+    badges.push({ label: 'Style pick', tone: 'badge-featured' });
+  }
+
   if (product?.isSale) {
     badges.push({ label: 'Sale', tone: 'badge-sale' });
   }

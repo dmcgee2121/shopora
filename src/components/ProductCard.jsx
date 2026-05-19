@@ -81,7 +81,7 @@ function getDiscoveryCue(product, stockState, reviewDisplay, price) {
   }
 
   if (product?.featured) {
-    return 'Currently featured in the edit';
+    return "Currently featured in this week's edit";
   }
 
   if (product?.isNew) {

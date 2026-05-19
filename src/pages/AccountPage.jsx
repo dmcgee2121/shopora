@@ -726,11 +726,11 @@ export default function AccountPage() {
           ) : (
             <EmptyAccountCard
               title="No orders yet."
-              text="Start with a current edit, then your read-only order history and receipts will collect here in this account."
+              text="Start with a fresh edit, and your read-only order history and receipts will collect here after checkout."
               primaryLink="/women"
-              primaryLabel="Shop new arrivals"
+              primaryLabel="Browse fresh picks"
               secondaryLink="/sale"
-              secondaryLabel="View sale"
+              secondaryLabel="Explore sale"
             />
           )}
         </section>
@@ -750,11 +750,11 @@ export default function AccountPage() {
           ) : (
             <EmptyAccountCard
               title="No saved styles yet."
-              text="Use the heart on product cards to build a shortlist before you buy."
-              primaryLink="/shoes"
-              primaryLabel="Browse shoes"
-              secondaryLink="/accessories"
-              secondaryLabel="Browse accessories"
+              text="Use the heart on product cards to save styles you want to revisit, compare later, or bring back into view."
+              primaryLink="/search"
+              primaryLabel="Browse search"
+              secondaryLink="/women"
+              secondaryLabel="Browse women"
             />
           )}
         </section>
@@ -780,11 +780,11 @@ export default function AccountPage() {
         ) : (
           <EmptyAccountCard
             title="Start a fresh browse."
-              text="A few account recommendations will appear here as you save and view products in this browser or account."
+            text="A few account recommendations will appear here as you save and view products in this browser or account."
             primaryLink="/women"
-            primaryLabel="Shop women"
-            secondaryLink="/men"
-            secondaryLabel="Shop men"
+            primaryLabel="Browse women"
+            secondaryLink="/sale"
+            secondaryLabel="Explore sale"
           />
         )}
       </section>

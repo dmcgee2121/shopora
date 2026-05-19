@@ -224,8 +224,8 @@ export default function OrdersPage() {
           <h2>{authSource === 'supabase' ? 'No orders yet.' : 'No demo orders yet.'}</h2>
           <p>
             {authSource === 'supabase'
-              ? 'Your read-only receipts will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale. Receipts stay tied to your account for quick review later.'
-              : 'Demo orders on this device will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale. Receipts stay tied to this demo account for quick review later.'}
+              ? 'Your read-only receipts will appear here after checkout. Until then, browse fresh picks, save a few favorites, or check the sale. Receipts stay tied to your account for quick review later.'
+              : 'Demo orders on this device will appear here after checkout. Until then, browse fresh picks, save a few favorites, or check the sale. Receipts stay tied to this demo account for quick review later.'}
           </p>
           <div className="empty-state-actions">
             <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">

@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.47-buyer-category-page-energy-polish`
+- `v1.48-buyer-empty-state-polish`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -59,6 +59,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.45 is a frontend/buyer-facing buyer homepage activity cues checkpoint.
 - v1.46 is a frontend/buyer-facing buyer product card micro-interactions checkpoint.
 - v1.47 is a frontend/buyer-facing buyer category page energy polish checkpoint.
+- v1.48 is a frontend/buyer-facing buyer empty-state polish checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -103,6 +104,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.45 adds honest homepage activity cues using existing catalog data without changing commerce behavior.
 - v1.46 adds subtle product-card micro-interactions and an honest featured badge using existing product data without changing commerce behavior.
 - v1.47 adds curated category and search browsing cues using existing routes without changing commerce behavior.
+- v1.48 adds warmer empty-state guidance for search, cart, saved items, orders, and account cards without changing commerce behavior.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
@@ -574,6 +576,8 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Buyer product card micro-interactions local QA follow-up
 - Buyer category page energy polish follow-up
 - Buyer category page energy polish local QA follow-up
+- Buyer empty-state polish follow-up
+- Buyer empty-state polish local QA follow-up
 - Documentation-only draft PR prep for the parked v1.37-v1.42 admin operations/readiness mini-batch
 
 ## v0.31 Final Screenshot / Demo Pass

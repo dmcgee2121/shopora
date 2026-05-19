@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.47-buyer-category-page-energy-polish
+- v1.48-buyer-empty-state-polish
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -66,7 +66,7 @@ Current state:
 - The current checkpoint is documentation-only and records the admin live order-status planning audit
 - The current checkpoint is documentation-only and records the admin order-operations QA checklist
 - The current checkpoint is documentation-only and packages draft PR prep notes for the parked v1.37-v1.42 admin operations/readiness mini-batch
-- The current checkpoint is frontend/buyer-facing category and search browsing energy polish that uses existing routes and product data without changing commerce behavior
+- The current checkpoint is frontend/buyer-facing empty-state polish that uses existing routes and product data without changing commerce behavior
 - The current checkpoint is documentation-only and records the local release batch wrap-up
 - The current checkpoint is documentation-only and records the portfolio/demo readiness plan
 - The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
@@ -138,7 +138,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a frontend/buyer-facing category page and search browsing energy polish pass on top of the existing storefront trail.
+2. Reconfirm the branch scope as a frontend/buyer-facing empty-state polish pass on top of the existing storefront trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -163,6 +163,7 @@ Tasks for the next chat:
 - `docs/SHOPORA_V1_45_BUYER_HOMEPAGE_ACTIVITY_CUES.md`
 - `docs/SHOPORA_V1_46_BUYER_PRODUCT_CARD_MICRO_INTERACTIONS.md`
 - `docs/SHOPORA_V1_47_BUYER_CATEGORY_PAGE_ENERGY_POLISH.md`
+- `docs/SHOPORA_V1_48_BUYER_EMPTY_STATE_POLISH.md`
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
 
 Current docs created or updated:
@@ -186,6 +187,7 @@ Current docs created or updated:
 - `docs/SHOPORA_V1_45_BUYER_HOMEPAGE_ACTIVITY_CUES.md`
 - `docs/SHOPORA_HANDOFF.md`
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
+- `docs/SHOPORA_V1_48_BUYER_EMPTY_STATE_POLISH.md`
 - `docs/SHOPORA_V1_47_BUYER_CATEGORY_PAGE_ENERGY_POLISH.md`
 - `docs/SHOPORA_V1_08_SAVED_ITEMS_SUPABASE_PERSISTENCE_PLANNING.md`
 - `docs/SHOPORA_V1_06_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION.md`

@@ -65,6 +65,7 @@ Current state:
 - The current checkpoint is documentation-only and records the account/orders release batch QA strategy
 - The current checkpoint is documentation-only and records the admin live order-status planning audit
 - The current checkpoint is documentation-only and records the admin order-operations QA checklist
+- The current checkpoint is documentation-only and packages draft PR prep notes for the parked v1.37-v1.42 admin operations/readiness mini-batch
 - The current checkpoint is documentation-only and records the local release batch wrap-up
 - The current checkpoint is documentation-only and records the portfolio/demo readiness plan
 - The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
@@ -136,7 +137,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a practical admin storefront preview feature checkpoint on top of the existing v1.00-v1.27 trail.
+2. Reconfirm the branch scope as a documentation-first admin operations draft PR prep checkpoint on top of the existing v1.37-v1.42 trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -153,9 +154,10 @@ Tasks for the next chat:
    - `docs/SHOPORA_V1_23_PORTFOLIO_CASE_STUDY_OUTLINE.md`
    - `docs/SHOPORA_V1_22_PORTFOLIO_DEMO_WALKTHROUGH_SCRIPT.md`
    - `docs/SHOPORA_V1_21_PORTFOLIO_DEMO_READINESS_PLANNING.md`
-   - `docs/SHOPORA_DEMO_SCREENSHOT_GUIDE.md`
-   - `docs/SHOPORA_DEMO_QA_CHECKLIST.md`
-   - `docs/SHOPORA_HANDOFF.md`
+- `docs/SHOPORA_DEMO_SCREENSHOT_GUIDE.md`
+- `docs/SHOPORA_DEMO_QA_CHECKLIST.md`
+- `docs/SHOPORA_HANDOFF.md`
+- `docs/SHOPORA_V1_43_ADMIN_OPERATIONS_DRAFT_PR_PREP.md`
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
 
 Current docs created or updated:

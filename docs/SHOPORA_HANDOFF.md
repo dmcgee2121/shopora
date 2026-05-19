@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.41-admin-operations-batch-handoff`
+- `v1.42-admin-operations-local-qa`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -53,6 +53,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.39 is a practical admin weekly store review feature checkpoint.
 - v1.40 is a practical admin store health summary feature checkpoint.
 - v1.41 is a documentation-first admin operations batch handoff checkpoint.
+- v1.42 is a QA/documentation-first admin operations local QA checkpoint.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -91,6 +92,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.39 adds a compact admin weekly store review section without changing backend behavior.
 - v1.40 adds a compact admin store health summary section without changing backend behavior.
 - v1.41 documents the v1.37-v1.40 admin operations mini-batch handoff without changing app or backend behavior.
+- v1.42 documents the v1.37-v1.41 admin operations mini-batch local QA checklist without changing app or backend behavior.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

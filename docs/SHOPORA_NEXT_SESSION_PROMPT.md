@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.40-admin-store-health-summary
+- v1.41-admin-operations-batch-handoff
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -56,6 +56,7 @@ Current state:
 - v1.38 is a practical admin store priority actions feature checkpoint
 - v1.39 is a practical admin weekly store review feature checkpoint
 - v1.40 is a practical admin store health summary feature checkpoint
+- v1.41 is a documentation-first admin operations batch handoff checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
 - Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
@@ -82,6 +83,7 @@ Current state:
 - The current checkpoint is a practical frontend/admin store priority actions feature
 - The current checkpoint is a practical frontend/admin weekly store review feature
 - The current checkpoint is a practical frontend/admin store health summary feature
+- The current checkpoint is a documentation-first admin operations mini-batch handoff feature
 - Netlify credits are limited, so future merges and deploys should be batched intentionally
 - v1.16 tightens the order-history UI copy while keeping read-only receipts, local/demo fallback, and admin order behavior unchanged
 - v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior
@@ -108,6 +110,7 @@ Current state:
 - v1.38 adds a compact admin store priority actions section without changing backend behavior
 - v1.39 adds a compact admin weekly store review section without changing backend behavior
 - v1.40 adds a compact admin store health summary section without changing backend behavior
+- v1.41 documents the v1.37-v1.40 admin operations mini-batch handoff without changing app or backend behavior
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested

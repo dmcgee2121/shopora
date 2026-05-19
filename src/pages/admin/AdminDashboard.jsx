@@ -171,6 +171,40 @@ function WeeklyReviewCard({ label, status, note, context, links }) {
   );
 }
 
+const healthSummaryToneByLabel = {
+  Healthy: 'status-active',
+  'Needs review': 'status-draft',
+  Monitor: 'priority-monitor',
+  'Prototype/read-only': 'status-badge-muted',
+  'Future backend work': 'priority-future',
+};
+
+function getHealthSummaryTone(label) {
+  return healthSummaryToneByLabel[label] ?? 'priority-monitor';
+}
+
+function HealthSummaryCard({ label, status, note, context, links }) {
+  return (
+    <article className="admin-health-summary-card">
+      <div className="admin-priority-action-header">
+        <span>{label}</span>
+        <span className={`status-badge ${getHealthSummaryTone(status)}`.trim()}>{status}</span>
+      </div>
+      <p>{note}</p>
+      {context ? <p className="admin-priority-action-context">{context}</p> : null}
+      {Array.isArray(links) && links.length ? (
+        <div className="admin-priority-action-links">
+          {links.map((link) => (
+            <Link key={`${label}-${link.to}-${link.label}`} to={link.to} className={link.className ?? 'btn btn-ghost'}>
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
 function OrderActivityRow({ order }) {
   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
   const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
@@ -952,6 +986,137 @@ export default function AdminDashboard() {
     storefrontPreview.overallStatus,
   ]);
 
+  const storeHealthSummary = useMemo(() => {
+    const catalogHealthy = catalogReadiness.totalProducts > 0 && catalogReadiness.productsNeedingAttention === 0;
+    const storefrontHealthy = storefrontPreview.overallStatus === 'Ready';
+    const accountHealthy = analytics.customerCount > 0;
+    const savedItemsHealthy = analytics.savedTotal > 0;
+
+    const cards = [
+      {
+        key: 'catalog',
+        label: 'Catalog health',
+        status: catalogHealthy ? 'Healthy' : 'Needs review',
+        note: catalogHealthy
+          ? 'Catalog data is in good shape for a business-owner review, with no obvious readiness gaps flagged.'
+          : catalogReadiness.totalProducts === 0
+            ? 'The catalog still needs product data before it can feel healthy.'
+            : `${catalogReadiness.productsNeedingAttention} product${catalogReadiness.productsNeedingAttention === 1 ? '' : 's'} still need attention before the catalog feels healthy.`,
+        context: 'Existing product data and merchandising signals.',
+        links: [{ to: '/admin/products', label: 'Review Products', className: 'btn btn-dark' }],
+      },
+      {
+        key: 'storefront',
+        label: 'Storefront presentation',
+        status: storefrontHealthy ? 'Healthy' : 'Needs review',
+        note: storefrontHealthy
+          ? 'The buyer-facing storefront reads well today and supports a clean review path.'
+          : 'The storefront still deserves a review pass before it should be treated as healthy.',
+        context: 'Homepage, search, and public route presentation.',
+        links: [
+          { to: '/', label: 'Open Storefront', className: 'btn btn-dark' },
+          { to: '/search', label: 'Search Catalog' },
+        ],
+      },
+      {
+        key: 'account',
+        label: 'Customer/account readiness',
+        status: accountHealthy ? 'Healthy' : 'Needs review',
+        note: accountHealthy
+          ? `${analytics.customerCount} customer account${analytics.customerCount === 1 ? '' : 's'} help the account experience feel real and reviewable.`
+          : 'Customer/account messaging still needs review because there is little live activity to reference.',
+        context: 'Profile and account routes remain advisory only.',
+        links: [
+          { to: '/account', label: 'Open Account', className: 'btn btn-dark' },
+          { to: '/saved', label: 'Saved Items' },
+        ],
+      },
+      {
+        key: 'saved-items',
+        label: 'Saved-items engagement',
+        status: savedItemsHealthy ? 'Healthy' : 'Monitor',
+        note: savedItemsHealthy
+          ? `${analytics.savedTotal} saved item${analytics.savedTotal === 1 ? '' : 's'} give the engagement area a clear signal to review.`
+          : 'Saved-items is still useful to monitor, even if the current data set does not show active engagement yet.',
+        context: 'Saved-items and engagement signals only.',
+        links: [{ to: '/saved', label: 'Open Saved Items', className: 'btn btn-dark' }],
+      },
+      {
+        key: 'checkout',
+        label: 'Checkout / test-mode readiness',
+        status: 'Future backend work',
+        note:
+          'Checkout should continue to read as test-mode or render-only until deliberate backend work is approved.',
+        context: 'Do not imply live payment, refund, or shipping purchase behavior.',
+        links: [{ to: '/admin/orders', label: 'Review Order Context' }],
+      },
+      {
+        key: 'orders',
+        label: 'Order visibility / read-only monitoring',
+        status: 'Monitor',
+        note:
+          'Orders should be reviewed as read-only signals, with no suggestion that live admin order operations are active.',
+        context: ordersSource === 'supabase' ? 'Live Supabase reads only.' : 'Local demo reads only.',
+        links: [
+          { to: '/admin/orders', label: 'Admin Orders', className: 'btn btn-dark' },
+          { to: '/orders', label: 'Customer Orders' },
+        ],
+      },
+      {
+        key: 'admin-ops',
+        label: 'Admin operations prototype',
+        status: 'Prototype/read-only',
+        note:
+          'The admin operations surface is still a prototype/read-only area. Live mutation behavior remains out of scope.',
+        context: 'Prototype order review only.',
+        links: [{ to: '/admin/orders', label: 'Open Admin Orders', className: 'btn btn-dark' }],
+      },
+      {
+        key: 'future-work',
+        label: 'Future backend operations work',
+        status: 'Future backend work',
+        note:
+          'Live fulfillment, refunds, shipping purchase, and other backend operations should remain clearly framed as future work.',
+        context: 'Keep the boundary explicit for review and handoff.',
+        links: [{ to: '/admin', label: 'Open Dashboard', className: 'btn btn-dark' }],
+      },
+    ];
+
+    const overallStatus = cards.some((card) => card.status === 'Needs review')
+      ? 'Needs review'
+      : cards.some((card) => card.status === 'Future backend work')
+        ? 'Future backend work'
+        : cards.some((card) => card.status === 'Prototype/read-only')
+          ? 'Prototype/read-only'
+          : cards.some((card) => card.status === 'Monitor')
+            ? 'Monitor'
+            : 'Healthy';
+
+    const overallNote =
+      overallStatus === 'Healthy'
+        ? 'The store reads as healthy for a business-owner review, with only intentional prototype and backend boundaries left to watch.'
+        : overallStatus === 'Needs review'
+          ? 'Some buyer-facing or catalog areas still need attention before the store feels healthy.'
+          : overallStatus === 'Prototype/read-only'
+            ? 'The storefront is reviewable, but admin operations should still be treated as prototype/read-only.'
+            : overallStatus === 'Monitor'
+              ? 'The store is in a monitoring posture, with the main job being review and confirmation rather than action.'
+              : 'The remaining work is backend-bound, so the admin view should keep that boundary explicit.';
+
+    return {
+      cards,
+      overallStatus,
+      overallNote,
+    };
+  }, [
+    analytics.customerCount,
+    analytics.savedTotal,
+    catalogReadiness.productsNeedingAttention,
+    catalogReadiness.totalProducts,
+    ordersSource,
+    storefrontPreview.overallStatus,
+  ]);
+
   const sellerLaunchCommandCenter = useMemo(() => {
     const hasProducts = catalogReadiness.totalProducts > 0;
     const productLaunchReady =
@@ -1628,6 +1793,35 @@ export default function AdminDashboard() {
             {weeklyStoreReview.overallStatus}
           </span>
           <p>{weeklyStoreReview.overallNote}</p>
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-health-summary-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Store health summary</span>
+          <p>
+            A compact business-owner overview that rolls the snapshot, priorities, and weekly review into one place.
+          </p>
+        </div>
+
+        <div className="admin-health-summary-grid">
+          {storeHealthSummary.cards.map((item) => (
+            <HealthSummaryCard
+              key={item.key}
+              label={item.label}
+              status={item.status}
+              note={item.note}
+              context={item.context}
+              links={item.links}
+            />
+          ))}
+        </div>
+
+        <div className="admin-health-summary-footer">
+          <span className={`status-badge ${getHealthSummaryTone(storeHealthSummary.overallStatus)}`.trim()}>
+            {storeHealthSummary.overallStatus}
+          </span>
+          <p>{storeHealthSummary.overallNote}</p>
         </div>
       </section>
 

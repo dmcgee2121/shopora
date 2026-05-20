@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.49-buyer-liveliness-batch-handoff
+- v1.50-buyer-liveliness-local-qa
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -68,6 +68,7 @@ Current state:
 - The current checkpoint is documentation-only and packages draft PR prep notes for the parked v1.37-v1.42 admin operations/readiness mini-batch
 - The current checkpoint is frontend/buyer-facing empty-state polish that uses existing routes and product data without changing commerce behavior
 - The current checkpoint is documentation-first buyer liveliness mini-batch handoff for v1.44-v1.48 and remains release-hold
+- The current checkpoint is QA/documentation-first buyer liveliness local QA for the v1.44-v1.49 mini-batch and remains release-hold
 - The current checkpoint is documentation-only and records the local release batch wrap-up
 - The current checkpoint is documentation-only and records the portfolio/demo readiness plan
 - The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
@@ -119,6 +120,7 @@ Current state:
 - v1.42 documents the v1.37-v1.41 admin operations mini-batch local QA checklist without changing app or backend behavior
 - v1.44-v1.48 deliver safe buyer-facing liveliness polish across homepage cues, product-card micro-interactions, category/search energy, and empty-state guidance without changing commerce/backend behavior
 - v1.49 packages the v1.44-v1.48 buyer liveliness mini-batch handoff for intentional later review
+- v1.50 records practical local QA coverage for the v1.44-v1.49 buyer liveliness mini-batch before any future draft PR/release review
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -168,7 +170,7 @@ Tasks for the next chat:
 - `docs/SHOPORA_V1_47_BUYER_CATEGORY_PAGE_ENERGY_POLISH.md`
 - `docs/SHOPORA_V1_48_BUYER_EMPTY_STATE_POLISH.md`
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
-6. Keep v1.44-v1.49 as parked release-hold checkpoints; do not merge/deploy without explicit approval because Netlify credits are limited.
+6. Keep v1.44-v1.50 as parked release-hold checkpoints; do not merge/deploy without explicit approval because Netlify credits are limited.
 
 Current docs created or updated:
 - `docs/SHOPORA_V1_28_ADMIN_STOREFRONT_PREVIEW_CHECKLIST.md`
@@ -193,6 +195,7 @@ Current docs created or updated:
 - `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 - `docs/SHOPORA_V1_48_BUYER_EMPTY_STATE_POLISH.md`
 - `docs/SHOPORA_V1_49_BUYER_LIVELINESS_BATCH_HANDOFF.md`
+- `docs/SHOPORA_V1_50_BUYER_LIVELINESS_LOCAL_QA.md`
 - `docs/SHOPORA_V1_47_BUYER_CATEGORY_PAGE_ENERGY_POLISH.md`
 - `docs/SHOPORA_V1_08_SAVED_ITEMS_SUPABASE_PERSISTENCE_PLANNING.md`
 - `docs/SHOPORA_V1_06_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION.md`

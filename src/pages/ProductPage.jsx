@@ -229,6 +229,11 @@ export default function ProductPage() {
   );
   const secondaryBadges = merchandisingBadges.filter((badge) => !primaryBadges.includes(badge));
   const storyHighlights = details.slice(0, 3);
+  const styleHighlights = [
+    product.fit ? `Fit: ${product.fit}` : null,
+    product.material ? `Material: ${product.material}` : null,
+    product.care ? `Care: ${product.care}` : null,
+  ].filter(Boolean);
   const quickFacts = [
     { label: 'Material', value: product.material },
     { label: 'Care', value: product.care },
@@ -236,6 +241,11 @@ export default function ProductPage() {
     { label: 'Shipping', value: product.shippingNote },
     { label: 'Returns', value: product.returnNote },
   ].filter((item) => item.value);
+  const browsingLinks = [
+    product.department ? { label: `${product.department} edit`, to: `/${product.department}` } : null,
+    product.category ? { label: `${product.category} picks`, to: '/search' } : null,
+    { label: 'Sale arrivals', to: '/sale' },
+  ].filter(Boolean);
 
   const handleAddToCart = () => {
     const added = addItem(product, {
@@ -308,7 +318,7 @@ export default function ProductPage() {
                   </button>
                 ))}
               </div>
-              <p className="product-gallery-note">Tap a thumbnail for alternate angles and color views.</p>
+              <p className="product-gallery-note">Tap a thumbnail for alternate angles and styling views.</p>
             </>
           ) : null}
         </div>
@@ -343,6 +353,14 @@ export default function ProductPage() {
           <p className={`stock-note stock-note-${isOutOfStock ? 'out' : stockCount <= 7 ? 'low' : 'in'}`}>
             {stockMessage}
           </p>
+          <div className="product-curated-cues" aria-label="Product highlights">
+            <span className="query-chip">Style note: curated for easy pairing</span>
+            {styleHighlights.slice(0, 2).map((highlight) => (
+              <span key={highlight} className="query-chip">
+                {highlight}
+              </span>
+            ))}
+          </div>
           <p className="detail-description">{product.description}</p>
 
           <section className="product-review-summary" aria-labelledby="product-review-summary-title">
@@ -411,6 +429,11 @@ export default function ProductPage() {
           ) : null}
 
           <div className="product-purchase-panel">
+            <p className="product-purchase-kicker">Ready to style this look?</p>
+            <p className="product-purchase-copy">
+              Pick your size, color, and quantity. The actions below keep the same trusted add-to-cart and saved-item
+              behavior.
+            </p>
             <div className="selector-block">
               <div className="selector-head">
                 <h3>Size</h3>
@@ -486,6 +509,11 @@ export default function ProductPage() {
             <p className="product-support-note">
               Secure checkout, easy returns, and shipping updates are ready when you are.
             </p>
+            <div className="product-trust-strip" aria-label="Shop with confidence">
+              <span>Secure checkout</span>
+              <span>Honest stock status</span>
+              <span>Support if you need help</span>
+            </div>
           </div>
 
           <div className="product-accordions">
@@ -518,6 +546,19 @@ export default function ProductPage() {
                 </p>
               </div>
             </details>
+          </div>
+
+          <div className="product-browsing-cues" aria-label="Keep browsing">
+            <p className="product-section-label">Keep browsing</p>
+            <h3>Build the look your way</h3>
+            <p>Use these routes to compare similar styles without leaving your current shopping flow.</p>
+            <div className="product-browsing-links">
+              {browsingLinks.map((item) => (
+                <Link key={`${item.to}-${item.label}`} to={item.to} className="query-chip">
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

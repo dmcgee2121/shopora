@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.50-buyer-liveliness-local-qa`
+- `v1.51-buyer-liveliness-draft-pr-prep`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -62,6 +62,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.48 is a frontend/buyer-facing buyer empty-state polish checkpoint.
 - v1.49 is a documentation-first buyer liveliness mini-batch handoff checkpoint for v1.44-v1.48.
 - v1.50 is a QA/documentation-first buyer liveliness local QA checkpoint for v1.44-v1.49.
+- v1.51 is a documentation-first buyer liveliness draft PR prep checkpoint for v1.44-v1.50.
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -109,7 +110,8 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.48 adds warmer empty-state guidance for search, cart, saved items, orders, and account cards without changing commerce behavior.
 - v1.49 packages the v1.44-v1.48 buyer liveliness mini-batch for future intentional review without changing app or backend behavior.
 - v1.50 documents the local QA checklist for the v1.44-v1.49 buyer liveliness mini-batch without changing app or backend behavior.
-- v1.44-v1.50 remain parked release-hold checkpoints pending explicit merge/deploy approval.
+- v1.51 packages clean draft PR prep notes for the v1.44-v1.50 buyer liveliness mini-batch without changing app or backend behavior.
+- v1.44-v1.51 remain parked release-hold checkpoints pending explicit merge/deploy approval.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

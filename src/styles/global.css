@@ -2398,6 +2398,24 @@ main {
   margin-top: 42px;
 }
 
+.related-section-featured {
+  margin-top: 46px;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(228, 217, 204, 0.95);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 250, 0.98), rgba(247, 242, 233, 0.88)),
+    rgba(255, 253, 250, 0.94);
+  box-shadow: var(--shadow-soft);
+}
+
+.related-links-row {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .product-browsing-cues {
   margin-top: 22px;
   padding: 18px;

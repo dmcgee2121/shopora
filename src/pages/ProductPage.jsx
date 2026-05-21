@@ -246,6 +246,13 @@ export default function ProductPage() {
     product.category ? { label: `${product.category} picks`, to: '/search' } : null,
     { label: 'Sale arrivals', to: '/sale' },
   ].filter(Boolean);
+  const trustCues = [
+    { label: 'Secure checkout', note: 'Powered by Stripe in test/local checkout context.', to: '/checkout' },
+    { label: 'Shipping guidance', note: product.shippingNote, to: '/shipping' },
+    { label: 'Return support', note: product.returnNote, to: '/returns' },
+    { label: 'Save for later', note: 'Use Save Item to revisit this style from your saved list.', to: '/saved' },
+    { label: 'Account order view', note: 'Signed-in shoppers can review order history from account routes.', to: '/orders' },
+  ];
 
   const handleAddToCart = () => {
     const added = addItem(product, {
@@ -514,6 +521,26 @@ export default function ProductPage() {
               <span>Honest stock status</span>
               <span>Support if you need help</span>
             </div>
+            <section className="product-trust-panel" aria-labelledby="product-trust-panel-title">
+              <div className="product-trust-panel-head">
+                <p className="product-section-label">Shop with confidence</p>
+                <h3 id="product-trust-panel-title">Trust cues for this product</h3>
+              </div>
+              <p className="product-trust-panel-copy">
+                These cues reflect existing ShopOra routes and current storefront capabilities only.
+              </p>
+              <div className="product-trust-grid">
+                {trustCues.map((cue) => (
+                  <article key={cue.label} className="product-trust-card">
+                    <h4>{cue.label}</h4>
+                    <p>{cue.note}</p>
+                    <Link to={cue.to} className="query-chip">
+                      Open {cue.label}
+                    </Link>
+                  </article>
+                ))}
+              </div>
+            </section>
           </div>
 
           <div className="product-accordions">

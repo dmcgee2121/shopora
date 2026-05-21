@@ -2274,6 +2274,58 @@ main {
   font-weight: 700;
 }
 
+.product-trust-panel {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(228, 217, 204, 0.95);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 250, 0.98), rgba(247, 242, 233, 0.86)),
+    rgba(255, 253, 250, 0.94);
+  box-shadow: var(--shadow-soft);
+}
+
+.product-trust-panel-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.product-trust-panel-copy {
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.product-trust-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.product-trust-card {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(228, 217, 204, 0.95);
+  background: rgba(255, 253, 250, 0.94);
+}
+
+.product-trust-card h4 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.product-trust-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.product-trust-card .query-chip {
+  margin-top: 10px;
+}
+
 .product-actions {
   display: flex;
   gap: 12px;
@@ -3663,6 +3715,10 @@ main {
   }
 
   .product-story-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-trust-grid {
     grid-template-columns: 1fr;
   }
 

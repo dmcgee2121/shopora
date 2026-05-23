@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.56-buyer-product-detail-local-qa`
+- `v1.57-buyer-product-detail-draft-pr-deploy-prep`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -68,6 +68,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.54 is a frontend/buyer-facing product detail recommendations polish checkpoint.
 - v1.55 is a documentation-first buyer product-detail mini-batch handoff checkpoint for v1.52-v1.54.
 - v1.56 is a QA/documentation-first buyer product-detail local QA checkpoint for v1.52-v1.55.
+- v1.57 is a docs-only buyer product-detail draft PR and controlled deploy prep checkpoint for v1.52-v1.56.
 
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
@@ -122,7 +123,8 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.54 adds product-detail recommendation section polish and route-safe browsing cues using existing catalog data without changing commerce or backend behavior.
 - v1.55 packages the v1.52-v1.54 buyer product-detail mini-batch handoff and QA/readiness notes without changing app or backend behavior.
 - v1.56 documents the practical local QA checklist and deploy-readiness hold for the parked v1.52-v1.55 buyer product-detail polish mini-batch without changing app or backend behavior.
-- v1.44-v1.56 remain parked release-hold checkpoints pending explicit merge/deploy approval.
+- v1.57 prepares draft PR language and controlled deploy-readiness notes for the parked v1.52-v1.56 buyer product-detail polish mini-batch without changing app or backend behavior.
+- v1.44-v1.57 remain parked release-hold checkpoints pending explicit merge/deploy approval.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
@@ -764,5 +766,6 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 ## Summary of Current State
 
 The app is in a good place for a narrow optimization pass. v0.80 is the main baseline, PR #8 covers the v0.90-v0.97 foundation and roadmap work, and v0.98 now reduces the emitted brand image payload without changing app behavior.
+
 
 

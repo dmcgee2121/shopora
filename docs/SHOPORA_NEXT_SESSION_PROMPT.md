@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.59-product-detail-release-candidate-prep
+- v1.61-post-merge-smoke-verification
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -78,6 +78,10 @@ Current state:
 - The current checkpoint is docs-only buyer product-detail draft PR and controlled deploy prep for v1.52-v1.56 and remains local-first release-hold pending explicit approval
 - The current checkpoint is docs-only v1.58 release-batch readiness mapping and path comparison for future intentional release review
 - The current checkpoint is docs-only v1.59 product-detail release candidate prep for v1.52-v1.57 and recommends product-detail-only as the smallest controlled deploy path
+- PR #14 (`Polish buyer product detail experience`) was merged into `main`
+- PR #15 (`V1.59 product detail release candidate prep`) was merged afterward and was broader than intended (50 commits, 73 changed files)
+- Local `main` was pulled after the merges, `npm run build` passed, and manual smoke test came back clean
+- Next runtime work should be cautious and focused while observing the current merged `main` state
 - The current checkpoint is documentation-only and records the local release batch wrap-up
 - The current checkpoint is documentation-only and records the portfolio/demo readiness plan
 - The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
@@ -184,7 +188,7 @@ Tasks for the next chat:
 - `docs/SHOPORA_V1_47_BUYER_CATEGORY_PAGE_ENERGY_POLISH.md`
 - `docs/SHOPORA_V1_48_BUYER_EMPTY_STATE_POLISH.md`
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
-6. Keep v1.44-v1.59 as parked release-hold checkpoints; maintain a local-first workflow with Codex-ready prompts, and do not push/merge/deploy unless explicitly approved because Netlify credits are limited; a controlled deploy may be considered soon, but only intentionally after local build/smoke checks and explicit approval.
+6. Keep a local-first workflow with Codex-ready prompts, and do not push/merge/deploy broad changes without explicit approval; protect checkout/cart/auth/backend/Stripe/Supabase/order behavior while observing merged `main`.
 
 Current docs created or updated:
 - `docs/SHOPORA_V1_28_ADMIN_STOREFRONT_PREVIEW_CHECKLIST.md`
@@ -252,7 +256,7 @@ Current docs created or updated:
 - `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
 - `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
 
-Release-path decision after v1.59 should intentionally choose one: assemble a product-detail release candidate branch and open a draft PR, continue preparing another release path (buyer-only/admin-only/full parked-batch), or hold for a later controlled deploy window.
+Likely next options after v1.61: document live Netlify deploy result, do small post-merge QA polish, ship a focused bugfix only if needed, or pause runtime changes and observe merged `main` stability.
 
 Recommended next action:
 - Run `npm run build`.

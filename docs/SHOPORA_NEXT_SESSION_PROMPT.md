@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.58-release-batch-readiness-map
+- v1.59-product-detail-release-candidate-prep
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -77,6 +77,7 @@ Current state:
 - The current checkpoint is QA/documentation-first buyer product-detail local QA for v1.52-v1.55 and remains local-first release-hold pending explicit approval
 - The current checkpoint is docs-only buyer product-detail draft PR and controlled deploy prep for v1.52-v1.56 and remains local-first release-hold pending explicit approval
 - The current checkpoint is docs-only v1.58 release-batch readiness mapping and path comparison for future intentional release review
+- The current checkpoint is docs-only v1.59 product-detail release candidate prep for v1.52-v1.57 and recommends product-detail-only as the smallest controlled deploy path
 - The current checkpoint is documentation-only and records the local release batch wrap-up
 - The current checkpoint is documentation-only and records the portfolio/demo readiness plan
 - The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
@@ -183,7 +184,7 @@ Tasks for the next chat:
 - `docs/SHOPORA_V1_47_BUYER_CATEGORY_PAGE_ENERGY_POLISH.md`
 - `docs/SHOPORA_V1_48_BUYER_EMPTY_STATE_POLISH.md`
 5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
-6. Keep v1.44-v1.58 as parked release-hold checkpoints; maintain a local-first workflow with Codex-ready prompts, and do not push/merge/deploy unless explicitly approved because Netlify credits are limited; a controlled deploy may be considered soon, but only intentionally after local build/smoke checks and explicit approval.
+6. Keep v1.44-v1.59 as parked release-hold checkpoints; maintain a local-first workflow with Codex-ready prompts, and do not push/merge/deploy unless explicitly approved because Netlify credits are limited; a controlled deploy may be considered soon, but only intentionally after local build/smoke checks and explicit approval.
 
 Current docs created or updated:
 - `docs/SHOPORA_V1_28_ADMIN_STOREFRONT_PREVIEW_CHECKLIST.md`
@@ -251,7 +252,7 @@ Current docs created or updated:
 - `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
 - `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
 
-Release-path decision after v1.58 should intentionally choose one: product-detail-only release candidate, buyer-only release candidate, admin-only release candidate, or full parked-batch release candidate.
+Release-path decision after v1.59 should intentionally choose one: assemble a product-detail release candidate branch and open a draft PR, continue preparing another release path (buyer-only/admin-only/full parked-batch), or hold for a later controlled deploy window.
 
 Recommended next action:
 - Run `npm run build`.

@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.58-release-batch-readiness-map`
+- `v1.59-product-detail-release-candidate-prep`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -70,6 +70,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.56 is a QA/documentation-first buyer product-detail local QA checkpoint for v1.52-v1.55.
 - v1.57 is a docs-only buyer product-detail draft PR and controlled deploy prep checkpoint for v1.52-v1.56.
 - v1.58 is a docs-only release batch readiness map that organizes parked branch batches, compares candidate release paths, and keeps deployment approval explicitly gated.
+- v1.59 is a docs-only product-detail release candidate prep checkpoint for the v1.52-v1.57 buyer product detail batch and recommends product-detail-only as the smallest controlled deploy path.
 
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
@@ -126,7 +127,8 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.56 documents the practical local QA checklist and deploy-readiness hold for the parked v1.52-v1.55 buyer product-detail polish mini-batch without changing app or backend behavior.
 - v1.57 prepares draft PR language and controlled deploy-readiness notes for the parked v1.52-v1.56 buyer product-detail polish mini-batch without changing app or backend behavior.
 - v1.58 maps parked release batches and compares controlled future release paths; latest parked branch before v1.58 was `v1.57-buyer-product-detail-draft-pr-deploy-prep` at commit `03010eb` without merge/deploy.
-- v1.44-v1.58 remain parked release-hold checkpoints pending explicit merge/deploy approval.
+- v1.59 adds docs-only preparation for a product-detail-only release candidate path across v1.52-v1.57 without changing runtime behavior.
+- v1.44-v1.59 remain parked release-hold checkpoints pending explicit merge/deploy approval.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

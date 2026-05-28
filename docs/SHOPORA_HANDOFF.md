@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.59-product-detail-release-candidate-prep`
+- `v1.61-post-merge-smoke-verification`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -71,6 +71,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.57 is a docs-only buyer product-detail draft PR and controlled deploy prep checkpoint for v1.52-v1.56.
 - v1.58 is a docs-only release batch readiness map that organizes parked branch batches, compares candidate release paths, and keeps deployment approval explicitly gated.
 - v1.59 is a docs-only product-detail release candidate prep checkpoint for the v1.52-v1.57 buyer product detail batch and recommends product-detail-only as the smallest controlled deploy path.
+- v1.61 is a docs-only post-merge smoke verification checkpoint after PR #14 and PR #15 were merged into `main`.
 
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
@@ -128,7 +129,11 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.57 prepares draft PR language and controlled deploy-readiness notes for the parked v1.52-v1.56 buyer product-detail polish mini-batch without changing app or backend behavior.
 - v1.58 maps parked release batches and compares controlled future release paths; latest parked branch before v1.58 was `v1.57-buyer-product-detail-draft-pr-deploy-prep` at commit `03010eb` without merge/deploy.
 - v1.59 adds docs-only preparation for a product-detail-only release candidate path across v1.52-v1.57 without changing runtime behavior.
-- v1.44-v1.59 remain parked release-hold checkpoints pending explicit merge/deploy approval.
+- PR #14 (`Polish buyer product detail experience`) merged the v1.60 product-detail release candidate into `main`.
+- PR #15 (`V1.59 product detail release candidate prep`) merged after PR #14 and was broader than intended (50 commits, 73 changed files), so `main` now includes more than only the narrow product-detail candidate.
+- Post-merge verification on v1.61 recorded a successful `npm run build` and clean manual smoke test after pulling updated `main`.
+- No immediate revert is recommended unless an actual issue appears.
+- v1.44-v1.59 were previously parked release-hold checkpoints pending explicit merge/deploy approval.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 

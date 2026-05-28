@@ -212,7 +212,7 @@ export default function OrdersPage() {
 
                 <div className="account-order-actions">
                   <Link to={`/account/orders/${order.id}`} className="btn btn-ghost btn-small">
-                    View Receipt
+                    View receipt
                   </Link>
                 </div>
               </article>

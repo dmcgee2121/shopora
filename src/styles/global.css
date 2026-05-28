@@ -1637,6 +1637,13 @@ main {
   font-weight: 800;
 }
 
+.activity-cue-link:hover,
+.activity-cue-link:focus-visible {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .home-discovery-loading {
   margin-top: 4px;
 }

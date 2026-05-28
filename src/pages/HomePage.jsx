@@ -68,7 +68,7 @@ function HomeDiscoverySection({ title, description, products, action, links, loa
             <div className="home-continue-copy">
               <p className="home-continue-kicker">Continue exploring</p>
               <h3>Keep moving through the store.</h3>
-              <p>Use these department shortcuts to jump back into the edits shoppers visit most.</p>
+              <p>Use these department shortcuts to jump back into the sections shoppers visit most.</p>
             </div>
             <div className="recommendation-links home-continue-links" aria-label="Continue shopping by department">
               {links.map((link) => (

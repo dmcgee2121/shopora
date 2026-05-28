@@ -754,7 +754,7 @@ export default function AccountPage() {
               primaryLink="/search"
               primaryLabel="Browse search"
               secondaryLink="/women"
-              secondaryLabel="Browse women"
+              secondaryLabel="Browse women's edit"
             />
           )}
         </section>
@@ -782,7 +782,7 @@ export default function AccountPage() {
             title="Start a fresh browse."
             text="A few account recommendations will appear here as you save and view products in this browser or account."
             primaryLink="/women"
-            primaryLabel="Browse women"
+            primaryLabel="Browse women's edit"
             secondaryLink="/sale"
             secondaryLabel="Explore sale"
           />

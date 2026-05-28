@@ -75,7 +75,7 @@ export default function AdminLoginPage() {
               </p>
               <div className="admin-unauthorized-actions">
                 <Link to="/account" className="btn btn-ghost">
-                  Go to My Account
+                  Go to my account
                 </Link>
                 <button
                   type="button"
@@ -114,7 +114,7 @@ export default function AdminLoginPage() {
                 />
               </label>
               <button type="submit" className="btn btn-dark full-width">
-                Sign in to Admin
+                Sign in to admin
               </button>
               <p className="auth-switch admin-switch">
                 <Link to="/">Return to Store</Link>

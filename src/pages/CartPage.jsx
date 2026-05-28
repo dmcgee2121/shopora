@@ -115,7 +115,7 @@ export default function CartPage() {
                   : 'Sign in to keep saved items and order history together in one account view.'}
               </p>
               <Link to="/checkout" className="btn btn-dark full-width">
-                Proceed to Checkout
+                Proceed to checkout
               </Link>
               <button type="button" className="btn btn-ghost full-width" onClick={clearCart}>
                 Clear cart

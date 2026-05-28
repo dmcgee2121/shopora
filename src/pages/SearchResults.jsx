@@ -336,9 +336,9 @@ export default function SearchResults() {
                     ))}
                   </div>
                 ) : (
-                <div className="empty-state search-empty">
-                  <h2>{emptyTitle}</h2>
-                  <p>{emptyDescription}</p>
+                  <div className="empty-state search-empty">
+                    <h2>{emptyTitle}</h2>
+                    <p>{emptyDescription}</p>
                     <div className="empty-state-actions">
                       {activeFilterCount ? (
                         <button type="button" className="btn btn-dark" onClick={resetFilters}>
@@ -350,10 +350,10 @@ export default function SearchResults() {
                         </button>
                       )}
                       <Link to="/women" className="btn btn-ghost">
-                        Browse women
+                        Browse women's edit
                       </Link>
                       <Link to="/sale" className="btn btn-ghost">
-                        Browse sale
+                        Browse sale picks
                       </Link>
                     </div>
                     <div className="recommendation-links" aria-label="Browse departments">

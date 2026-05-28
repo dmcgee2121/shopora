@@ -176,7 +176,7 @@ export default function ProductPage() {
   const basePrice = Number(product?.price ?? 0);
   const price = hasSalePrice ? Number(product.salePrice) : basePrice;
   const stockMessage =
-    stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? `Only ${stockCount} left` : 'In stock and ready to ship';
+    stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? `${stockCount} in stock` : 'In stock and ready to ship';
   const isSaved = typeof isSavedItem === 'function' ? Boolean(isSavedItem(product.id)) : false;
   const isSaving = typeof isSavingSavedItem === 'function' ? Boolean(isSavingSavedItem(product.id)) : false;
 
@@ -535,7 +535,7 @@ export default function ProductPage() {
             </div>
             {authError && isAuthenticated ? <div className="auth-message auth-message-error">{authError}</div> : null}
             <p className="product-support-note">
-              Secure checkout, easy returns, and shipping updates are ready when you are.
+              Secure checkout plus shipping and return guidance are available when you are ready.
             </p>
             <div className="product-trust-strip" aria-label="Shop with confidence">
               <span>Secure checkout</span>

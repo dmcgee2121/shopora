@@ -75,7 +75,7 @@ export default function SavedItemsPage() {
           <h2>No saved items yet.</h2>
           <p>
             Tap the heart icon on a product to build a wishlist, then come back here to compare favorites, revisit
-            them later, or pick up a new search.
+            them later, or pick up a fresh search when you want a faster route back into the edit.
           </p>
           <div className="empty-state-actions">
             <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
@@ -89,6 +89,9 @@ export default function SavedItemsPage() {
             </Link>
             <Link to={retentionLinks.account.to} className="btn btn-ghost">
               {retentionLinks.account.label}
+            </Link>
+            <Link to="/search" className="btn btn-ghost">
+              Browse search
             </Link>
           </div>
           <div className="recommendation-links account-empty-links" aria-label="Search shortcuts">

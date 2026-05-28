@@ -4,9 +4,9 @@ import { useAuth } from './AuthContext';
 import {
   createSupabaseOrder,
   getSupabaseAdminOrders,
+  getSupabaseCustomerOrderHistory,
   getSupabaseOrderById,
   getSupabaseOrderByStripeCheckoutSessionId,
-  getSupabaseOrders,
 } from '../services/supabaseOrdersService';
 import { normalizeOrderItems } from '../utils/orderItemUtils';
 import { idsMatch, normalizeId } from '../utils/idUtils';
@@ -206,7 +206,7 @@ export function OrdersProvider({ children }) {
 
     try {
       const nextOrders =
-        currentUser.role === 'admin' ? await getSupabaseAdminOrders() : await getSupabaseOrders();
+        currentUser.role === 'admin' ? await getSupabaseAdminOrders() : await getSupabaseCustomerOrderHistory();
       if (!mountedRef.current) {
         return nextOrders;
       }

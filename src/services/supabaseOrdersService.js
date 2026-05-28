@@ -546,6 +546,10 @@ export async function getSupabaseOrders() {
   }
 }
 
+export async function getSupabaseCustomerOrderHistory() {
+  return getSupabaseOrders();
+}
+
 export async function getSupabaseAdminOrders() {
   try {
     return await getAdminOrdersWithItems();

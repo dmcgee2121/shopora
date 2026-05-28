@@ -66,7 +66,7 @@ export default function OrdersPage() {
             <div>
               <p className="eyebrow">Account</p>
               <h1>Orders</h1>
-              <p>Loading your orders...</p>
+              <p>Loading your order history...</p>
             </div>
           </div>
         </div>
@@ -84,8 +84,8 @@ export default function OrdersPage() {
             <h1>Orders</h1>
             <p>
               {currentUser
-                ? `Order history for ${currentUser.firstName || 'your account'}.`
-                : 'Completed orders will appear here.'}
+                ? `Order history for ${currentUser.firstName || 'your account'}. Read-only receipts stay tied to this account.`
+                : 'Completed orders on this device will appear here.'}
             </p>
           </div>
         </div>
@@ -95,8 +95,8 @@ export default function OrdersPage() {
       </div>
 
       <p className="account-page-note">
-        Use this page to review recent purchases, check fulfillment status, open a receipt, or head back to
-        browsing. ShopOra keeps order history visible for quick reference and support.
+        Use this page to review recent purchases, open a receipt, or head back to browsing. ShopOra keeps order
+        history visible for quick reference and support.
       </p>
 
       <div className="account-toolbar">
@@ -119,7 +119,7 @@ export default function OrdersPage() {
       </div>
 
       <SupportLinkStrip
-        title="Need help with this order history?"
+        title="Need help with a receipt?"
         description="Keep the receipt or order number handy, then use these support shortcuts for shipping, returns, privacy, or account help."
         links={supportLinks}
       />
@@ -224,8 +224,8 @@ export default function OrdersPage() {
           <h2>{authSource === 'supabase' ? 'No orders yet.' : 'No demo orders yet.'}</h2>
           <p>
             {authSource === 'supabase'
-              ? 'Your orders will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale. Receipts will stay tied to your account for quick review later.'
-              : 'Demo orders on this device will appear here after checkout. Until then, keep browsing, save a few favorites, or check the sale. Receipts will stay tied to this demo account for quick review later.'}
+              ? 'Your read-only receipts will appear here after checkout. Until then, browse fresh picks, save a few favorites, or check the sale. Receipts stay tied to your account for quick review later.'
+              : 'Demo orders on this device will appear here after checkout. Until then, browse fresh picks, save a few favorites, or check the sale. Receipts stay tied to this demo account for quick review later.'}
           </p>
           <div className="empty-state-actions">
             <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">

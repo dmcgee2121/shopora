@@ -13,13 +13,14 @@ export default function HomeCampaign({ products = [] }) {
 
   return (
     <section className="home-campaign">
-        <div className="campaign-copy">
-          <p className="campaign-kicker">Seasonal edit</p>
+      <div className="campaign-copy">
+        <p className="campaign-kicker">Seasonal edit</p>
         <h2>Fresh arrivals, trending finds, and easy staples in one calm edit.</h2>
         <p>
           ShopOra is arranged like a modern department floor: new statements up front, trending
           pieces in the middle, dependable essentials close at hand, and support pages that stay
-          easy to find when shoppers want shipping, returns, or privacy details.
+          easy to find when shoppers want shipping, returns, or privacy details. The edit refreshes
+          regularly so the storefront feels current without losing its calm.
         </p>
         <div className="campaign-actions">
           <Link className="btn btn-dark" to="/women">
@@ -30,10 +31,10 @@ export default function HomeCampaign({ products = [] }) {
           </Link>
         </div>
         <div className="campaign-tags" aria-label="Merchandising highlights">
-          <span className="query-chip">New arrivals</span>
-          <span className="query-chip">Trending now</span>
-          <span className="query-chip">Saved for later</span>
-          <span className="query-chip">ShopOra member experience</span>
+          <span className="query-chip">New arrivals weekly</span>
+          <span className="query-chip">Secure checkout powered by Stripe</span>
+          <span className="query-chip">Easy returns</span>
+          <span className="query-chip">Editor's picks</span>
         </div>
         <div className="campaign-discovery-links" aria-label="Browse departments">
           {departmentLinks.map((link) => (

@@ -6,7 +6,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 
 ## Current Branch
 
-- `v1.09-saved-items-supabase-persistence-implementation`
+- `v1.59-product-detail-release-candidate-prep`
 - v0.80 Local QA release batch was merged into `main` through PR #7.
 - PR #8 exists for the `v0.90-v0.97` next-phase foundation and roadmap branch.
 - v0.98 completed the safe brand image asset optimization pass.
@@ -21,6 +21,57 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - v1.07 is a documentation-only post-merge production smoke checkpoint.
 - v1.08 is a local-first saved-items Supabase persistence planning checkpoint.
 - v1.09 is a narrow saved-items Supabase persistence implementation checkpoint.
+- v1.10 is an order-history Supabase persistence planning checkpoint.
+- v1.11 is an order-history implementation readiness review checkpoint.
+- v1.12 is a read-only Supabase customer order history helper checkpoint.
+- v1.13 is an order-history local QA and release-hold checkpoint.
+- v1.14 is a checkout and Stripe production test checklist checkpoint.
+- v1.15 is a release batch planning and Netlify credit strategy checkpoint.
+- v1.16 is a copy-only order-history UI polish local batch checkpoint.
+- v1.17 is a docs-only account/orders release batch QA checklist checkpoint.
+- v1.18 is a docs-only admin live order-status planning checkpoint.
+- v1.19 is a docs-only admin order-operations QA checklist checkpoint.
+- v1.20 is a docs-only local release batch wrap-up checkpoint.
+- v1.21 is a docs-only portfolio/demo readiness planning checkpoint.
+- v1.22 is a docs-only portfolio/demo walkthrough script checkpoint.
+- v1.23 is a docs-only portfolio case-study outline checkpoint.
+- v1.24 is a docs-only final local handoff and next work plan checkpoint.
+- v1.25 is a practical admin store-readiness dashboard feature checkpoint.
+- v1.26 is a practical admin product launch checklist feature checkpoint.
+- v1.27 is a practical admin product editor readiness guidance feature checkpoint.
+- v1.28 is a practical admin storefront preview checklist feature checkpoint.
+- v1.29 is a practical admin seller launch command center feature checkpoint.
+- v1.30 is a practical admin launch readiness polish checkpoint.
+- v1.31 is a practical admin launch QA notes checkpoint.
+- v1.32 is a practical admin launch release notes panel checkpoint.
+- v1.33 is a documentation-first admin launch batch handoff checkpoint.
+- v1.34 is a documentation-first admin launch local QA checkpoint.
+- v1.35 is a documentation-first admin launch visual QA checklist checkpoint.
+- v1.36 is a documentation-first admin launch draft PR prep checkpoint.
+- v1.37 is a practical admin store operations snapshot feature checkpoint.
+- v1.38 is a practical admin store priority actions feature checkpoint.
+- v1.39 is a practical admin weekly store review feature checkpoint.
+- v1.40 is a practical admin store health summary feature checkpoint.
+- v1.41 is a documentation-first admin operations batch handoff checkpoint.
+- v1.42 is a QA/documentation-first admin operations local QA checkpoint.
+- v1.43 is a documentation-first admin operations draft PR prep checkpoint.
+- v1.44 is a frontend/buyer-facing buyer trust and liveliness polish checkpoint.
+- v1.45 is a frontend/buyer-facing buyer homepage activity cues checkpoint.
+- v1.46 is a frontend/buyer-facing buyer product card micro-interactions checkpoint.
+- v1.47 is a frontend/buyer-facing buyer category page energy polish checkpoint.
+- v1.48 is a frontend/buyer-facing buyer empty-state polish checkpoint.
+- v1.49 is a documentation-first buyer liveliness mini-batch handoff checkpoint for v1.44-v1.48.
+- v1.50 is a QA/documentation-first buyer liveliness local QA checkpoint for v1.44-v1.49.
+- v1.51 is a documentation-first buyer liveliness draft PR prep checkpoint for v1.44-v1.50.
+- v1.52 is a frontend/buyer-facing product detail polish checkpoint.
+- v1.53 is a frontend/buyer-facing product detail trust-cues polish checkpoint.
+- v1.54 is a frontend/buyer-facing product detail recommendations polish checkpoint.
+- v1.55 is a documentation-first buyer product-detail mini-batch handoff checkpoint for v1.52-v1.54.
+- v1.56 is a QA/documentation-first buyer product-detail local QA checkpoint for v1.52-v1.55.
+- v1.57 is a docs-only buyer product-detail draft PR and controlled deploy prep checkpoint for v1.52-v1.56.
+- v1.58 is a docs-only release batch readiness map that organizes parked branch batches, compares candidate release paths, and keeps deployment approval explicitly gated.
+- v1.59 is a docs-only product-detail release candidate prep checkpoint for the v1.52-v1.57 buyer product detail batch and recommends product-detail-only as the smallest controlled deploy path.
+
 - The admin order modal now includes a top-level detail banner plus prototype-safe sections for order summary, customer/contact context, fulfillment readiness, order attention flags, internal notes, and next operational step.
 - The customer account page now more clearly labels persisted account data, local/demo fallback behavior, and future preference work.
 - The customer profile flow is currently centralized through `AuthContext`, the profile service, and the account page form, with local fallback and Supabase-backed paths already separated.
@@ -28,6 +79,56 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - The first safe profile write improvement now limits Supabase profile updates to the editable customer fields and keeps local/demo fallback behavior intact.
 - Saved items already use a mixed model: local/demo users persist browser-local state while Supabase-authenticated users use the `public.saved_items` REST helper path.
 - The first safe saved-items implementation now keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing.
+- Order history already uses a mixed model too: local/demo users persist browser-local orders while Supabase-authenticated customers and admins read from the existing `orders` / `order_items` helper paths and protected RPCs.
+- The first safe read-only customer order helper now wraps the existing owned-order read path and is used by the customer order loader in `OrdersContext`.
+- v1.12 local QA passed and the helper work is parked in draft PR #13 because Netlify deploy credits are limited.
+- Checkout and Stripe should be verified with a production-minded checklist before any future release batch is considered worth a deploy.
+- v1.15 captures the release batching rule: keep building locally, park work in draft PRs, and spend deploy credits only when the batch is worth it.
+- v1.16 tightens the order-history and receipt copy so loading, empty, unavailable, and local/demo states read more clearly without changing behavior.
+- v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior.
+- v1.18 records the current admin status model and the future live-write planning questions without changing runtime behavior.
+- v1.19 packages the admin order-operations QA checklist without changing runtime behavior.
+- v1.20 wraps up the current local release batch without changing runtime behavior.
+- v1.21 records the portfolio/demo readiness plan without changing runtime behavior.
+- v1.22 records the portfolio/demo walkthrough script without changing runtime behavior.
+- v1.23 records the portfolio case-study outline without changing runtime behavior.
+- v1.24 records the final local handoff and next work plan without changing runtime behavior.
+- v1.25 adds the admin store-readiness dashboard without changing backend behavior.
+- v1.26 adds the admin product launch checklist without changing backend behavior.
+- v1.27 adds the admin product editor readiness guidance without changing backend behavior.
+- v1.28 adds the admin storefront preview checklist without changing backend behavior.
+- v1.29 adds the admin seller launch command center without changing backend behavior.
+- v1.30 polishes the admin launch readiness command center without changing backend behavior.
+- v1.31 adds the admin launch QA notes without changing backend behavior.
+- v1.32 adds the admin launch release notes panel without changing backend behavior.
+- v1.33 packages the v1.29-v1.32 launch-readiness batch without changing backend behavior.
+- v1.34 records the local QA checkpoint for the parked v1.29-v1.33 launch-readiness batch without changing backend behavior.
+- v1.35 records the visual QA checklist checkpoint for the parked v1.29-v1.34 launch-readiness batch without changing backend behavior.
+- v1.36 packages draft PR prep notes for the parked v1.29-v1.35 launch-readiness batch without changing backend behavior.
+- v1.37 adds a compact admin store operations snapshot without changing backend behavior.
+- v1.38 adds a compact admin store priority actions section without changing backend behavior.
+- v1.39 adds a compact admin weekly store review section without changing backend behavior.
+- v1.40 adds a compact admin store health summary section without changing backend behavior.
+- v1.41 documents the v1.37-v1.40 admin operations mini-batch handoff without changing app or backend behavior.
+- v1.42 documents the v1.37-v1.41 admin operations mini-batch local QA checklist without changing app or backend behavior.
+- v1.43 packages draft PR prep notes for the parked v1.37-v1.42 admin operations/readiness mini-batch without changing app or backend behavior.
+- v1.44 tightens buyer-facing trust and liveliness cues without changing checkout, order, cart, auth, or backend behavior.
+- v1.45 adds honest homepage activity cues using existing catalog data without changing commerce behavior.
+- v1.46 adds subtle product-card micro-interactions and an honest featured badge using existing product data without changing commerce behavior.
+- v1.47 adds curated category and search browsing cues using existing routes without changing commerce behavior.
+- v1.48 adds warmer empty-state guidance for search, cart, saved items, orders, and account cards without changing commerce behavior.
+- v1.49 packages the v1.44-v1.48 buyer liveliness mini-batch for future intentional review without changing app or backend behavior.
+- v1.50 documents the local QA checklist for the v1.44-v1.49 buyer liveliness mini-batch without changing app or backend behavior.
+- v1.51 packages clean draft PR prep notes for the v1.44-v1.50 buyer liveliness mini-batch without changing app or backend behavior.
+- v1.52 improves product detail page hierarchy, helper cues, and CTA-area presentation without changing commerce or backend behavior.
+- v1.53 adds a compact product-detail trust-cues panel using existing routes/capabilities without changing commerce or backend behavior.
+- v1.54 adds product-detail recommendation section polish and route-safe browsing cues using existing catalog data without changing commerce or backend behavior.
+- v1.55 packages the v1.52-v1.54 buyer product-detail mini-batch handoff and QA/readiness notes without changing app or backend behavior.
+- v1.56 documents the practical local QA checklist and deploy-readiness hold for the parked v1.52-v1.55 buyer product-detail polish mini-batch without changing app or backend behavior.
+- v1.57 prepares draft PR language and controlled deploy-readiness notes for the parked v1.52-v1.56 buyer product-detail polish mini-batch without changing app or backend behavior.
+- v1.58 maps parked release batches and compares controlled future release paths; latest parked branch before v1.58 was `v1.57-buyer-product-detail-draft-pr-deploy-prep` at commit `03010eb` without merge/deploy.
+- v1.59 adds docs-only preparation for a product-detail-only release candidate path across v1.52-v1.57 without changing runtime behavior.
+- v1.44-v1.59 remain parked release-hold checkpoints pending explicit merge/deploy approval.
 - Live Supabase orders remain read-only in the UI.
 - No new production-risk logic changes are introduced in this step.
 
@@ -492,6 +593,16 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 - Production security / RLS review
 - Client demo checklist
 - Portfolio case study / screenshots
+- Buyer trust and liveliness polish follow-up
+- Buyer homepage activity cues follow-up
+- Buyer homepage activity cues local QA follow-up
+- Buyer product card micro-interactions follow-up
+- Buyer product card micro-interactions local QA follow-up
+- Buyer category page energy polish follow-up
+- Buyer category page energy polish local QA follow-up
+- Buyer empty-state polish follow-up
+- Buyer empty-state polish local QA follow-up
+- Documentation-only draft PR prep for the parked v1.37-v1.42 admin operations/readiness mini-batch
 
 ## v0.31 Final Screenshot / Demo Pass
 
@@ -659,3 +770,7 @@ ShopOra is a standalone ecommerce storefront separate from ShopOraGo. The curren
 ## Summary of Current State
 
 The app is in a good place for a narrow optimization pass. v0.80 is the main baseline, PR #8 covers the v0.90-v0.97 foundation and roadmap work, and v0.98 now reduces the emitted brand image payload without changing app behavior.
+
+
+
+

@@ -302,7 +302,8 @@ export default function OrderConfirmationPage() {
             <p className="eyebrow">ShopOra</p>
             <h1>Order confirmed</h1>
             <p>
-              Thanks for your order. Your receipt is below, along with quick paths back to shopping and saved items.
+              Thanks for your order. Your read-only receipt is below, along with quick paths back to shopping and
+              saved items.
             </p>
           </div>
         </div>
@@ -383,7 +384,7 @@ export default function OrderConfirmationPage() {
                 <p>
                   {orderItems.length} item{orderItems.length === 1 ? '' : 's'}
                 </p>
-                <p>{order.demoMode ? 'Demo order saved locally' : 'Customer order receipt'}</p>
+                <p>{order.demoMode ? 'Demo receipt saved locally' : 'Customer receipt'}</p>
               </section>
             </div>
 

@@ -1,7 +1,7 @@
 const items = [
   {
-    title: 'Curated Assortment',
-    text: 'Shop women, men, shoes, accessories, and sale edits from one clear storefront.',
+    title: 'Fresh Arrivals Weekly',
+    text: 'The edit refreshes often with new statements, seasonal pieces, and easy staples.',
   },
   {
     title: 'Shipping Clarity',
@@ -12,7 +12,7 @@ const items = [
     text: 'Checkout is powered by Stripe for a familiar, trusted payment handoff.',
   },
   {
-    title: 'Easy Support',
+    title: 'Easy Returns',
     text: 'Order help, returns, and account receipts are easy to find after purchase.',
   },
 ];

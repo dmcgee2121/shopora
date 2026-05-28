@@ -7,7 +7,7 @@ Project:
 - Stack: React 18 + Vite + React Router + Supabase + Stripe Checkout via Netlify Functions
 
 Current branch:
-- v1.09-saved-items-supabase-persistence-implementation
+- v1.59-product-detail-release-candidate-prep
 
 Current state:
 - v0.80 Local QA release batch has been merged into `main` through PR #7
@@ -25,9 +25,116 @@ Current state:
 - v1.07 is a documentation-only post-merge production smoke checkpoint
 - v1.08 is a local-first saved-items Supabase persistence planning checkpoint
 - v1.09 is a narrow saved-items Supabase persistence implementation checkpoint
+- v1.10 is an order-history Supabase persistence planning checkpoint
+- v1.11 is an order-history implementation readiness review checkpoint
+- v1.12 is a read-only Supabase customer order history helper checkpoint
+- v1.13 is an order-history local QA and release-hold checkpoint
+- v1.14 is a checkout and Stripe production test checklist checkpoint
+- v1.15 is a release batch planning and Netlify credit strategy checkpoint
+- v1.16 is a copy-only order-history UI polish local batch checkpoint
+- v1.17 is a docs-only account/orders release batch QA checklist checkpoint
+- v1.18 is a docs-only admin live order-status planning checkpoint
+- v1.19 is a docs-only admin order-operations QA checklist checkpoint
+- v1.20 is a docs-only local release batch wrap-up checkpoint
+- v1.21 is a docs-only portfolio/demo readiness planning checkpoint
+- v1.22 is a docs-only portfolio/demo walkthrough script checkpoint
+- v1.23 is a docs-only portfolio case-study outline checkpoint
+- v1.24 is a docs-only final local handoff and next work plan checkpoint
+- v1.25 is a practical admin store-readiness dashboard feature checkpoint
+- v1.26 is a practical admin product launch checklist feature checkpoint
+- v1.27 is a practical admin product editor readiness guidance feature checkpoint
+- v1.28 is a practical admin storefront preview checklist feature checkpoint
+- v1.29 is a practical admin seller launch command center feature checkpoint
+- v1.30 is a practical admin launch readiness polish checkpoint
+- v1.31 is a practical admin launch QA notes checkpoint
+- v1.32 is a practical admin launch release notes panel checkpoint
+- v1.33 is a documentation-first admin launch batch handoff checkpoint
+- v1.34 is a documentation-first admin launch local QA checkpoint
+- v1.35 is a documentation-first admin launch visual QA checklist checkpoint
+- v1.36 is a documentation-first admin launch draft PR prep checkpoint
+- v1.37 is a practical admin store operations snapshot feature checkpoint
+- v1.38 is a practical admin store priority actions feature checkpoint
+- v1.39 is a practical admin weekly store review feature checkpoint
+- v1.40 is a practical admin store health summary feature checkpoint
+- v1.41 is a documentation-first admin operations batch handoff checkpoint
+- v1.42 is a QA/documentation-first admin operations local QA checkpoint
 - Saved items already use a mixed model: browser-local fallback for demo/local users and `public.saved_items` REST persistence for Supabase-authenticated users
 - The first safe saved-items implementation keeps authenticated writes on the existing helper path, adds conservative in-flight UI state, and avoids silent no-op saves when the Supabase session is missing
-- The current checkpoint includes a narrow saved-items implementation plus documentation updates
+- Order history also uses a mixed model: browser-local demo orders for local users and `public.orders` / `public.order_items` for Supabase-authenticated customers, with admin reads routed through `get_admin_orders()`
+- v1.12 local QA passed and draft PR #13 is intentionally still unmerged because Netlify credits are limited
+- The current checkpoint is documentation-only and records the account/orders release batch QA strategy
+- The current checkpoint is documentation-only and records the admin live order-status planning audit
+- The current checkpoint is documentation-only and records the admin order-operations QA checklist
+- The current checkpoint is documentation-only and packages draft PR prep notes for the parked v1.37-v1.42 admin operations/readiness mini-batch
+- The current checkpoint is frontend/buyer-facing empty-state polish that uses existing routes and product data without changing commerce behavior
+- The current checkpoint is documentation-first buyer liveliness mini-batch handoff for v1.44-v1.48 and remains release-hold
+- The current checkpoint is QA/documentation-first buyer liveliness local QA for the v1.44-v1.49 mini-batch and remains release-hold
+- The current checkpoint is documentation-first buyer liveliness draft PR prep for the v1.44-v1.50 mini-batch and remains release-hold
+- The current checkpoint is frontend/buyer-facing product detail polish and remains local-first release-hold pending explicit approval
+- The current checkpoint is frontend/buyer-facing product detail trust-cues polish and remains local-first release-hold pending explicit approval
+- The current checkpoint is frontend/buyer-facing product detail recommendations polish and remains local-first release-hold pending explicit approval
+- The current checkpoint is documentation-first buyer product-detail mini-batch handoff for v1.52-v1.54 and remains local-first release-hold pending explicit approval
+- The current checkpoint is QA/documentation-first buyer product-detail local QA for v1.52-v1.55 and remains local-first release-hold pending explicit approval
+- The current checkpoint is docs-only buyer product-detail draft PR and controlled deploy prep for v1.52-v1.56 and remains local-first release-hold pending explicit approval
+- The current checkpoint is docs-only v1.58 release-batch readiness mapping and path comparison for future intentional release review
+- The current checkpoint is docs-only v1.59 product-detail release candidate prep for v1.52-v1.57 and recommends product-detail-only as the smallest controlled deploy path
+- The current checkpoint is documentation-only and records the local release batch wrap-up
+- The current checkpoint is documentation-only and records the portfolio/demo readiness plan
+- The current checkpoint is documentation-only and records the portfolio/demo walkthrough script
+- The current checkpoint is documentation-only and records the portfolio case-study outline
+- The current checkpoint is documentation-only and records the final local handoff and next work plan
+- The current checkpoint is a practical frontend/admin product editor readiness guidance feature
+- The current checkpoint is a practical frontend/admin storefront preview checklist feature
+- The current checkpoint is a practical frontend/admin seller launch command center feature
+- The current checkpoint is a practical frontend/admin launch readiness polish feature
+- The current checkpoint is a practical frontend/admin launch QA notes feature
+- The current checkpoint is a practical frontend/admin launch release notes panel feature
+- The current checkpoint is a documentation-first admin launch batch handoff feature
+- The current checkpoint is a documentation-first admin launch local QA feature
+- The current checkpoint is a documentation-first admin launch visual QA checklist feature
+- The current checkpoint is a documentation-first admin launch draft PR prep feature
+- The current checkpoint is a practical frontend/admin store operations snapshot feature
+- The current checkpoint is a practical frontend/admin store priority actions feature
+- The current checkpoint is a practical frontend/admin weekly store review feature
+- The current checkpoint is a practical frontend/admin store health summary feature
+- The current checkpoint is a documentation-first admin operations mini-batch handoff feature
+- The current checkpoint is a QA/documentation-first admin operations mini-batch local QA feature
+- Netlify credits are limited, so future merges and deploys should be batched intentionally
+- v1.16 tightens the order-history UI copy while keeping read-only receipts, local/demo fallback, and admin order behavior unchanged
+- v1.17 centralizes the next account/orders release batch QA checklist without changing runtime behavior
+- v1.18 documents the live admin order-status planning constraints without changing runtime behavior
+- v1.19 captures the admin order-operations QA boundaries without changing runtime behavior
+- v1.20 closes out the current local release batch without changing runtime behavior
+- v1.21 frames the portfolio/demo walkthrough without changing runtime behavior
+- v1.22 provides the portfolio/demo walkthrough script without changing runtime behavior
+- v1.23 packages the portfolio case-study outline without changing runtime behavior
+- v1.24 closes the local handoff loop without changing runtime behavior
+- v1.25 improves admin store-readiness visibility without changing backend behavior
+- v1.26 improves admin product launch readiness visibility without changing backend behavior
+- v1.27 improves admin product editor readiness guidance without changing backend behavior
+- v1.28 improves admin storefront preview visibility without changing backend behavior
+- v1.29 improves admin seller launch command center visibility without changing backend behavior
+- v1.30 polishes admin launch readiness visibility without changing backend behavior
+- v1.31 adds admin launch QA notes without changing backend behavior
+- v1.32 adds admin launch release notes visibility without changing backend behavior
+- v1.33 packages the v1.29-v1.32 launch-readiness batch without changing backend behavior
+- v1.34 records local QA for the parked v1.29-v1.33 launch-readiness batch without changing backend behavior
+- v1.35 records visual QA for the parked v1.29-v1.34 launch-readiness batch without changing backend behavior
+- v1.36 packages draft PR prep notes for the parked v1.29-v1.35 launch-readiness batch without changing backend behavior
+- v1.37 adds a compact admin store operations snapshot without changing backend behavior
+- v1.38 adds a compact admin store priority actions section without changing backend behavior
+- v1.39 adds a compact admin weekly store review section without changing backend behavior
+- v1.40 adds a compact admin store health summary section without changing backend behavior
+- v1.41 documents the v1.37-v1.40 admin operations mini-batch handoff without changing app or backend behavior
+- v1.42 documents the v1.37-v1.41 admin operations mini-batch local QA checklist without changing app or backend behavior
+- v1.44-v1.48 deliver safe buyer-facing liveliness polish across homepage cues, product-card micro-interactions, category/search energy, and empty-state guidance without changing commerce/backend behavior
+- v1.49 packages the v1.44-v1.48 buyer liveliness mini-batch handoff for intentional later review
+- v1.50 records practical local QA coverage for the v1.44-v1.49 buyer liveliness mini-batch before any future draft PR/release review
+- v1.51 records clean draft PR title/body prep notes for a future intentional v1.44-v1.50 buyer liveliness mini-batch draft PR
+- v1.52 adds buyer product detail page hierarchy/scanability polish, curated helper cues, and CTA-area trust presentation without changing commerce/backend behavior
+- v1.53 adds compact product-detail trust cues tied to existing routes and honest support/shipping/returns/save/account messaging without changing commerce/backend behavior
+- v1.54 adds product-detail recommendation section polish and route-safe keep-browsing cues using existing catalog data without changing commerce/backend behavior
+- v1.55 packages the v1.52-v1.54 buyer product-detail polish mini-batch handoff and future readiness notes without changing commerce/backend behavior
 - No checkout submission, order creation, cart, Stripe, Netlify, Supabase RLS, auth, env, secrets, or dependency changes are in scope
 - Workflow is local-first
 - Do not push, merge, deploy, open a PR, or trigger Netlify unless explicitly requested
@@ -50,7 +157,7 @@ Important no-touch areas:
 
 Tasks for the next chat:
 1. Reconfirm the current branch and working tree.
-2. Reconfirm the branch scope as a safe admin order-detail prototype polish pass on top of the existing v0.94-v1.01 trail.
+2. Reconfirm the branch scope as a frontend/buyer-facing empty-state polish pass on top of the existing storefront trail.
 3. Re-run or inspect:
    - `npm run build`
    - `git status`
@@ -59,19 +166,58 @@ Tasks for the next chat:
    - `git diff origin/main...HEAD --name-only`
    - `git diff origin/main...HEAD -- src`
 4. Review these docs:
-   - `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md`
-   - `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md`
-   - `docs/SHOPORA_V0_99_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_PLANNING.md`
-   - `docs/SHOPORA_V0_94_ADMIN_ORDER_MANAGEMENT_READINESS.md`
-   - `docs/SHOPORA_V0_97_NEXT_PHASE_ROADMAP_WRAP_UP.md`
-   - `docs/SHOPORA_V0_96_CHECKOUT_STRIPE_CONFIDENCE_REVIEW.md`
-   - `docs/SHOPORA_V0_95_CUSTOMER_ACCOUNT_BACKEND_READINESS.md`
-   - `docs/SHOPORA_HANDOFF.md`
-   - `docs/SHOPORA_ADMIN_LOCAL_QA.md`
-   - `docs/SHOPORA_V0_98_IMAGE_ASSET_OPTIMIZATION.md`
-5. Keep the no-touch areas untouched and do not modify `src` beyond safe prototype-safe copy changes unless explicitly requested.
+   - `docs/SHOPORA_V1_28_ADMIN_STOREFRONT_PREVIEW_CHECKLIST.md`
+   - `docs/SHOPORA_V1_27_ADMIN_PRODUCT_EDITOR_READINESS_GUIDANCE.md`
+   - `docs/SHOPORA_V1_26_ADMIN_PRODUCT_LAUNCH_CHECKLIST.md`
+   - `docs/SHOPORA_V1_25_ADMIN_STORE_READINESS_DASHBOARD.md`
+   - `docs/SHOPORA_V1_24_FINAL_LOCAL_HANDOFF_AND_NEXT_WORK_PLAN.md`
+   - `docs/SHOPORA_V1_23_PORTFOLIO_CASE_STUDY_OUTLINE.md`
+   - `docs/SHOPORA_V1_22_PORTFOLIO_DEMO_WALKTHROUGH_SCRIPT.md`
+   - `docs/SHOPORA_V1_21_PORTFOLIO_DEMO_READINESS_PLANNING.md`
+- `docs/SHOPORA_DEMO_SCREENSHOT_GUIDE.md`
+- `docs/SHOPORA_DEMO_QA_CHECKLIST.md`
+- `docs/SHOPORA_HANDOFF.md`
+- `docs/SHOPORA_V1_43_ADMIN_OPERATIONS_DRAFT_PR_PREP.md`
+- `docs/SHOPORA_V1_44_BUYER_TRUST_LIVELINESS_POLISH.md`
+- `docs/SHOPORA_V1_45_BUYER_HOMEPAGE_ACTIVITY_CUES.md`
+- `docs/SHOPORA_V1_46_BUYER_PRODUCT_CARD_MICRO_INTERACTIONS.md`
+- `docs/SHOPORA_V1_47_BUYER_CATEGORY_PAGE_ENERGY_POLISH.md`
+- `docs/SHOPORA_V1_48_BUYER_EMPTY_STATE_POLISH.md`
+5. Keep the no-touch areas untouched and do not modify `src` or release logic unless explicitly requested.
+6. Keep v1.44-v1.59 as parked release-hold checkpoints; maintain a local-first workflow with Codex-ready prompts, and do not push/merge/deploy unless explicitly approved because Netlify credits are limited; a controlled deploy may be considered soon, but only intentionally after local build/smoke checks and explicit approval.
 
 Current docs created or updated:
+- `docs/SHOPORA_V1_28_ADMIN_STOREFRONT_PREVIEW_CHECKLIST.md`
+- `docs/SHOPORA_V1_27_ADMIN_PRODUCT_EDITOR_READINESS_GUIDANCE.md`
+- `docs/SHOPORA_V1_26_ADMIN_PRODUCT_LAUNCH_CHECKLIST.md`
+- `docs/SHOPORA_V1_25_ADMIN_STORE_READINESS_DASHBOARD.md`
+- `docs/SHOPORA_V1_24_FINAL_LOCAL_HANDOFF_AND_NEXT_WORK_PLAN.md`
+- `docs/SHOPORA_V1_23_PORTFOLIO_CASE_STUDY_OUTLINE.md`
+- `docs/SHOPORA_V1_22_PORTFOLIO_DEMO_WALKTHROUGH_SCRIPT.md`
+- `docs/SHOPORA_V1_21_PORTFOLIO_DEMO_READINESS_PLANNING.md`
+- `docs/SHOPORA_V1_20_LOCAL_RELEASE_BATCH_WRAP_UP.md`
+- `docs/SHOPORA_V1_19_ADMIN_ORDER_OPERATIONS_QA_CHECKLIST.md`
+- `docs/SHOPORA_V1_18_ADMIN_LIVE_ORDER_STATUS_PLANNING.md`
+- `docs/SHOPORA_V1_17_ACCOUNT_ORDERS_RELEASE_BATCH_QA_CHECKLIST.md`
+- `docs/SHOPORA_V1_16_ORDER_HISTORY_UI_POLISH_LOCAL_BATCH.md`
+- `docs/SHOPORA_V1_15_RELEASE_BATCH_PLANNING_NETLIFY_CREDIT_STRATEGY.md`
+- `docs/SHOPORA_V1_14_CHECKOUT_STRIPE_PRODUCTION_TEST_CHECKLIST.md`
+- `docs/SHOPORA_V1_13_ORDER_HISTORY_LOCAL_QA_AND_RELEASE_HOLD.md`
+- `docs/SHOPORA_V1_12_ORDER_HISTORY_READONLY_SUPABASE_HELPER.md`
+- `docs/SHOPORA_V1_45_BUYER_HOMEPAGE_ACTIVITY_CUES.md`
+- `docs/SHOPORA_HANDOFF.md`
+- `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
+- `docs/SHOPORA_V1_48_BUYER_EMPTY_STATE_POLISH.md`
+- `docs/SHOPORA_V1_49_BUYER_LIVELINESS_BATCH_HANDOFF.md`
+- `docs/SHOPORA_V1_50_BUYER_LIVELINESS_LOCAL_QA.md`
+- `docs/SHOPORA_V1_51_BUYER_LIVELINESS_DRAFT_PR_PREP.md`
+- `docs/SHOPORA_V1_52_BUYER_PRODUCT_DETAIL_POLISH.md`
+- `docs/SHOPORA_V1_53_BUYER_PRODUCT_DETAIL_TRUST_CUES.md`
+- `docs/SHOPORA_V1_54_BUYER_PRODUCT_DETAIL_RECOMMENDATIONS_POLISH.md`
+- `docs/SHOPORA_V1_55_BUYER_PRODUCT_DETAIL_BATCH_HANDOFF.md`
+- `docs/SHOPORA_V1_56_BUYER_PRODUCT_DETAIL_LOCAL_QA.md`
+- `docs/SHOPORA_V1_57_BUYER_PRODUCT_DETAIL_DRAFT_PR_DEPLOY_PREP.md`
+- `docs/SHOPORA_V1_47_BUYER_CATEGORY_PAGE_ENERGY_POLISH.md`
 - `docs/SHOPORA_V1_08_SAVED_ITEMS_SUPABASE_PERSISTENCE_PLANNING.md`
 - `docs/SHOPORA_V1_06_CUSTOMER_PROFILE_PERSISTENCE_IMPLEMENTATION.md`
 - `docs/SHOPORA_V1_05_SUPABASE_PROFILE_PERSISTENCE_AUDIT.md`
@@ -81,8 +227,6 @@ Current docs created or updated:
 - `docs/SHOPORA_V1_01_ADMIN_ORDER_DETAIL_PROTOTYPE_POLISH.md`
 - `docs/SHOPORA_V1_00_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_UI.md`
 - `docs/SHOPORA_V0_99_ADMIN_ORDER_MANAGEMENT_PROTOTYPE_PLANNING.md`
-- `docs/SHOPORA_HANDOFF.md`
-- `docs/SHOPORA_NEXT_SESSION_PROMPT.md`
 - `docs/SHOPORA_V0_98_IMAGE_ASSET_OPTIMIZATION.md`
 - `docs/SHOPORA_V0_97_NEXT_PHASE_ROADMAP_WRAP_UP.md`
 - `docs/SHOPORA_V0_96_CHECKOUT_STRIPE_CONFIDENCE_REVIEW.md`
@@ -108,6 +252,16 @@ Current docs created or updated:
 - `docs/SHOPORA_V0_66_PRODUCTION_QA_POLISH.md`
 - `docs/SHOPORA_V0_65_POST_DEPLOY_SMOKE_AND_STABILITY.md`
 
+Release-path decision after v1.59 should intentionally choose one: assemble a product-detail release candidate branch and open a draft PR, continue preparing another release path (buyer-only/admin-only/full parked-batch), or hold for a later controlled deploy window.
+
 Recommended next action:
 - Run `npm run build`.
-- If build stays clean, treat this as a planning checkpoint and move on to the next scoped implementation branch.
+- If build stays clean, keep this as a docs-only checkpoint and move on to the next scoped implementation branch when ready.
+
+
+
+
+
+
+
+

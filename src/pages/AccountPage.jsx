@@ -335,8 +335,8 @@ export default function AccountPage() {
     {
       label: 'Order history',
       detail: recentOrders.length
-        ? `You have ${pluralize(recentOrders.length, 'recent order')} on file.`
-        : 'Your order history will appear after checkout.',
+        ? `You have ${pluralize(recentOrders.length, 'read-only recent order')} on file.`
+        : 'Your read-only order history will appear after checkout.',
       done: recentOrders.length > 0,
     },
   ];
@@ -368,7 +368,7 @@ export default function AccountPage() {
       label: 'Order history',
       headline: 'Receipts at a glance',
       text: recentOrders.length
-        ? `${pluralize(recentOrders.length, 'recent order')} are stored for easy review.`
+        ? `${pluralize(recentOrders.length, 'read-only recent order')} are stored for easy review.`
         : 'Your receipts and order history will appear after checkout.',
       action: 'View orders',
       to: '/account/orders',
@@ -409,7 +409,8 @@ export default function AccountPage() {
           <h2 id="account-dashboard-title">Your ShopOra snapshot</h2>
             <p>
               Keep saved styles, orders, profile details, and support shortcuts together in one account view. This
-              snapshot mixes persisted account data with local browser activity where noted.
+              snapshot mixes persisted account data with local browser activity where noted. Order receipts stay
+              read-only.
             </p>
           <div className="account-dashboard-stats" aria-label="Account summary">
             <div>
@@ -690,9 +691,9 @@ export default function AccountPage() {
               })}
             </div>
           ) : (
-              <p className="account-overview-note">
-                Your latest orders will show here after checkout and stay tied to the current account.
-              </p>
+            <p className="account-overview-note">
+              Your latest read-only orders will show here after checkout and stay tied to the current account.
+            </p>
           )}
           <Link to="/account/orders" className="text-button">
             View all orders
@@ -725,11 +726,11 @@ export default function AccountPage() {
           ) : (
             <EmptyAccountCard
               title="No orders yet."
-              text="Start with a current edit, then your order history and receipts will collect here in this account."
+              text="Start with a fresh edit, and your read-only order history and receipts will collect here after checkout."
               primaryLink="/women"
-              primaryLabel="Shop new arrivals"
+              primaryLabel="Browse fresh picks"
               secondaryLink="/sale"
-              secondaryLabel="View sale"
+              secondaryLabel="Explore sale"
             />
           )}
         </section>
@@ -749,11 +750,11 @@ export default function AccountPage() {
           ) : (
             <EmptyAccountCard
               title="No saved styles yet."
-              text="Use the heart on product cards to build a shortlist before you buy."
-              primaryLink="/shoes"
-              primaryLabel="Browse shoes"
-              secondaryLink="/accessories"
-              secondaryLabel="Browse accessories"
+              text="Use the heart on product cards to save styles you want to revisit, compare later, or bring back into view."
+              primaryLink="/search"
+              primaryLabel="Browse search"
+              secondaryLink="/women"
+              secondaryLabel="Browse women"
             />
           )}
         </section>
@@ -779,11 +780,11 @@ export default function AccountPage() {
         ) : (
           <EmptyAccountCard
             title="Start a fresh browse."
-              text="A few account recommendations will appear here as you save and view products in this browser or account."
+            text="A few account recommendations will appear here as you save and view products in this browser or account."
             primaryLink="/women"
-            primaryLabel="Shop women"
-            secondaryLink="/men"
-            secondaryLabel="Shop men"
+            primaryLabel="Browse women"
+            secondaryLink="/sale"
+            secondaryLabel="Explore sale"
           />
         )}
       </section>

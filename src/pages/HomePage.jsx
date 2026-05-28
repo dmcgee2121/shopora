@@ -30,7 +30,7 @@ function MerchSection({ id, title, description, action, products, loading = fals
       {loading ? (
         <div className="empty-state">
           <h3>Loading {title.toLowerCase()}.</h3>
-          <p>We are getting the latest catalog ready for browsing.</p>
+          <p>We are refreshing the latest catalog so browsing feels current.</p>
         </div>
       ) : products.length ? (
         <div className="product-grid">
@@ -55,7 +55,7 @@ function HomeDiscoverySection({ title, description, products, action, links, loa
       {loading ? (
         <div className="empty-state home-discovery-loading">
           <h3>Loading personalized picks.</h3>
-          <p>We are preparing a few styles and shortcuts for your next stop.</p>
+          <p>We are refreshing a few styles and shortcuts for your next stop.</p>
         </div>
       ) : (
         <>
@@ -79,6 +79,40 @@ function HomeDiscoverySection({ title, description, products, action, links, loa
             </div>
           </div>
         </>
+      )}
+    </section>
+  );
+}
+
+function HomeActivitySection({ cards, loading = false }) {
+  return (
+    <section className="section-block home-activity">
+      <SectionHeading
+        title="This week's edit"
+        description="Small, honest activity cues built from the current catalog so the homepage feels refreshed and easy to scan."
+        action={<Link to="/search">Browse all styles</Link>}
+      />
+      {loading ? (
+        <div className="empty-state home-activity-loading">
+          <h3>Loading this week's edit.</h3>
+          <p>We are assembling a few current entry points from the latest catalog.</p>
+        </div>
+      ) : (
+        <div className="activity-cue-grid">
+          {cards.map((card) => (
+            <article key={card.title} className="activity-cue-card">
+              <p className="activity-cue-label">{card.label}</p>
+              <h3>{card.title}</h3>
+              <p>{card.description}</p>
+              <div className="activity-cue-footer">
+                <span className="count-badge">{card.badge}</span>
+                <Link to={card.to} className="activity-cue-link">
+                  {card.cta}
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
       )}
     </section>
   );
@@ -146,6 +180,45 @@ export default function HomePage() {
   const discoveryAction = (
     <span className="count-badge">{isInitialCatalogLoading ? 'Loading' : `${discoveryProducts.length} picks`}</span>
   );
+  const activityCards = useMemo(
+    () => [
+      {
+        label: "This week's edit",
+        title: `${newArrivals.length} fresh picks`,
+        description: 'Fresh arrivals are surfaced first so the homepage feels current without pretending anything is live.',
+        badge: newArrivals.length ? `${newArrivals.length} new` : 'Refreshing now',
+        to: '/women',
+        cta: 'See new arrivals',
+      },
+      {
+        label: 'Trending styles',
+        title: `${trendingProducts.length} styles in view`,
+        description: 'Current catalog favorites are grouped up front so shoppers can move from the homepage into the edit quickly.',
+        badge: trendingProducts.length ? `${trendingProducts.length} featured` : 'Current edit',
+        to: '/search',
+        cta: 'Browse trending styles',
+      },
+      {
+        label: 'Recently highlighted',
+        title: `${discoveryProducts.length} styles to revisit`,
+        description: recentlyViewedProducts.length
+          ? 'Pick up where you left off with the styles already on your shortlist.'
+          : 'Start with a few curated picks drawn from the current catalog.',
+        badge: recentlyViewedProducts.length ? 'Recently viewed' : 'Curated now',
+        to: '/search',
+        cta: 'Open the edit',
+      },
+      {
+        label: 'Style picks to browse',
+        title: `${everydayEssentials.length} easy layers`,
+        description: 'Wardrobe staples, sale moments, and everyday pieces stay close at hand for quick browsing.',
+        badge: everydayEssentials.length ? `${everydayEssentials.length} staples` : 'Easy browse',
+        to: '/sale',
+        cta: 'Shop style picks',
+      },
+    ],
+    [discoveryProducts.length, everydayEssentials.length, newArrivals.length, recentlyViewedProducts.length, trendingProducts.length],
+  );
 
   return (
     <div className="home-page">
@@ -160,6 +233,8 @@ export default function HomePage() {
 
         <HomeCampaign products={catalogProducts} />
 
+        <HomeActivitySection cards={activityCards} loading={isInitialCatalogLoading} />
+
         <HomeDiscoverySection
           title={discoveryTitle}
           description={discoveryDescription}
@@ -172,7 +247,7 @@ export default function HomePage() {
         <MerchSection
           id="new-arrivals"
           title="New Arrivals"
-          description="Freshly added styles selected to balance wardrobe staples with seasonal pieces and easy outfit builders."
+          description="Freshly added styles, updated weekly, selected to balance wardrobe staples with seasonal pieces and easy outfit builders."
           action={<Link to="/women">Browse Women's Edit</Link>}
           products={newArrivals}
           loading={isInitialCatalogLoading}
@@ -183,12 +258,12 @@ export default function HomePage() {
         <MerchSection
           id="sale-picks"
           title="Sale Picks"
-          description="Marked-down styles with the clearest value, strongest savings, and easiest reasons to shop before they move on."
+          description="Marked-down styles with clear value, stronger savings, and easy reasons to shop before they move on."
           action={<Link to="/sale">Shop Sale</Link>}
           products={salePicks}
           loading={isInitialCatalogLoading}
           emptyTitle="Sale picks are temporarily empty."
-          emptyText="There are no markdowns in the current catalog right now. Browse the full store for more styles."
+          emptyText="There are no markdowns in the current catalog right now. Browse the full store for more styles and current favorites."
         />
 
         <FeaturedBrands />
@@ -198,7 +273,7 @@ export default function HomePage() {
         <MerchSection
           id="trending-now"
           title="Trending Now"
-          description="Best-reviewed styles and current favorites earning the most attention across the store right now."
+          description="Best-reviewed styles and currently featured favorites earning the most attention across the store right now."
           products={trendingProducts}
           loading={isInitialCatalogLoading}
           emptyTitle="Trending styles are loading."
@@ -208,7 +283,7 @@ export default function HomePage() {
         <MerchSection
           id="everyday-essentials"
           title="Everyday Essentials"
-          description="Polished basics, easy layers, and wardrobe pieces built for repeat wear across the week."
+          description="Curated for everyday wear: polished basics, easy layers, and wardrobe pieces built for repeat use across the week."
           action={<Link to="/men">Browse Men's Edit</Link>}
           products={everydayEssentials}
           loading={isInitialCatalogLoading}

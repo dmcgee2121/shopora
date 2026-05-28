@@ -22,6 +22,7 @@ export default function CartPage() {
   const departmentLinks = useMemo(() => getDepartmentLinks(), []);
   const retentionLinks = getCustomerRetentionLinks(currentUser);
   const supportLinks = getSupportLinks(currentUser);
+  const cartSearchLinks = retentionLinks.searchLinks.slice(0, 3);
   const accountLink = currentUser ? '/account' : '/login';
   const accountLabel = currentUser ? 'View account' : 'Sign in';
   const safeSavedProductIds = Array.isArray(savedProductIds) ? savedProductIds : [];
@@ -156,11 +157,11 @@ export default function CartPage() {
         </>
       ) : (
         <>
-          <div className="empty-state cart-empty">
-            <h2>Your cart is empty.</h2>
+        <div className="empty-state cart-empty">
+            <h2>Your cart is waiting.</h2>
             <p>
-              Browse the latest styles, save a few favorites, and return here when you are ready to review your full
-              order. Sign in to keep favorites and recent orders together in one account view.
+              Browse fresh picks, save a few favorites, and return here when you are ready to review your full order.
+              Sign in to keep favorites and recent orders together in one account view.
             </p>
             <div className="empty-state-actions">
               <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
@@ -175,6 +176,13 @@ export default function CartPage() {
             </div>
             <div className="recommendation-links" aria-label="Shop by department">
               {departmentLinks.map((link) => (
+                <Link key={link.to} to={link.to} className="query-chip">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            <div className="recommendation-links" aria-label="Search for styles">
+              {cartSearchLinks.map((link) => (
                 <Link key={link.to} to={link.to} className="query-chip">
                   {link.label}
                 </Link>

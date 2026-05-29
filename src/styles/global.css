@@ -5909,6 +5909,37 @@ body.modal-open {
     scroll-snap-align: start;
   }
 
+  .home-page .product-grid .badge-stack {
+    top: 8px;
+    max-width: calc(50% - 10px);
+    gap: 4px;
+  }
+
+  .home-page .product-grid .badge-stack-left {
+    left: 8px;
+  }
+
+  .home-page .product-grid .badge-stack-right {
+    right: 8px;
+  }
+
+  .home-page .product-grid .badge {
+    min-height: 20px;
+    max-width: 100%;
+    padding: 0 6px;
+    overflow: hidden;
+    font-size: 0.58rem;
+    letter-spacing: 0.04em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .home-page .product-grid .badge-featured,
+  .home-page .product-grid .badge-online,
+  .home-page .product-grid .badge-sale ~ .badge {
+    display: none;
+  }
+
   .home-page .product-grid .product-card:nth-child(n + 5) {
     display: none;
   }
@@ -5994,6 +6025,43 @@ body.modal-open {
   .home-page .department-grid,
   .home-page .department-nav {
     grid-auto-columns: minmax(174px, 64vw);
+  }
+
+  .home-page .brand-rail {
+    grid-auto-columns: minmax(210px, 72vw);
+  }
+
+  .home-page .brand-card {
+    min-height: 136px;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .home-page .brand-card-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 8px;
+  }
+
+  .home-page .brand-card-top h3 {
+    min-width: 0;
+    font-size: 1.36rem;
+    line-height: 1.02;
+    overflow-wrap: anywhere;
+  }
+
+  .home-page .brand-card-top span {
+    justify-self: end;
+    font-size: 0.72rem;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .home-page .brand-card p {
+    max-width: none;
+    font-size: 0.86rem;
+    line-height: 1.45;
   }
 
   .home-page .activity-cue-grid > *,

@@ -125,7 +125,7 @@ function getSwatchColor(value) {
 
 function getStockState(stockCount) {
   if (stockCount <= 0) return { label: 'Out of stock', tone: 'out' };
-  if (stockCount <= 7) return { label: `Only ${stockCount} left`, tone: 'low' };
+  if (stockCount <= 7) return { label: `Low stock: ${stockCount} available`, tone: 'low' };
   return { label: 'In stock', tone: 'in' };
 }
 
@@ -277,10 +277,10 @@ export default function ProductCard({ product }) {
               openMiniCart();
             }}
           >
-            {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+            {isOutOfStock ? 'Out of stock' : 'Add to cart'}
           </button>
           <Link to={productPath} className="btn btn-ghost btn-small">
-            View Details
+            View details
           </Link>
         </div>
       </div>

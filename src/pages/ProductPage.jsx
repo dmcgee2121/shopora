@@ -176,7 +176,7 @@ export default function ProductPage() {
   const basePrice = Number(product?.price ?? 0);
   const price = hasSalePrice ? Number(product.salePrice) : basePrice;
   const stockMessage =
-    stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? `${stockCount} in stock` : 'In stock and ready to ship';
+    stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? `Low stock: ${stockCount} available` : 'In stock';
   const isSaved = typeof isSavedItem === 'function' ? Boolean(isSavedItem(product.id)) : false;
   const isSaving = typeof isSavingSavedItem === 'function' ? Boolean(isSavingSavedItem(product.id)) : false;
 
@@ -263,11 +263,11 @@ export default function ProductPage() {
     { label: 'Sale arrivals', to: '/sale' },
   ].filter(Boolean);
   const trustCues = [
-    { label: 'Secure checkout', note: 'Powered by Stripe in test/local checkout context.', to: '/checkout' },
+    { label: 'Secure checkout', note: 'Stripe handles payment entry during checkout.', to: '/checkout' },
     { label: 'Shipping guidance', note: product.shippingNote, to: '/shipping' },
     { label: 'Return support', note: product.returnNote, to: '/returns' },
-    { label: 'Save for later', note: 'Use Save Item to revisit this style from your saved list.', to: '/saved' },
-    { label: 'Account order view', note: 'Signed-in shoppers can review order history from account routes.', to: '/orders' },
+    { label: 'Save for later', note: 'Save this style to revisit it from your saved list.', to: '/saved' },
+    { label: 'Order history', note: 'Signed-in shoppers can review read-only receipts from account orders.', to: '/orders' },
   ];
   const recommendationLinks = [
     product.department ? { label: `More ${product.department}`, to: `/${product.department}` } : null,
@@ -377,7 +377,7 @@ export default function ProductPage() {
             <span className="price">${price.toFixed(2)}</span>
             {hasSalePrice ? <span className="compare-price">${basePrice.toFixed(2)}</span> : null}
           </div>
-          <p className="price-note">A clear view of the price shoppers will pay today.</p>
+          <p className="price-note">Price shown before checkout so you can review it before adding to cart.</p>
           <p className={`stock-note stock-note-${isOutOfStock ? 'out' : stockCount <= 7 ? 'low' : 'in'}`}>
             {stockMessage}
           </p>
@@ -443,7 +443,7 @@ export default function ProductPage() {
               </article>
               <article className="product-story-card">
                 <p className="product-section-label">Support</p>
-                <h3>Confidence to buy</h3>
+                <h3>Before you buy</h3>
                 <ul className="product-story-list product-support-list">
                   <li>Secure checkout through Stripe.</li>
                   <li>{product.shippingNote}</li>
@@ -457,16 +457,15 @@ export default function ProductPage() {
           ) : null}
 
           <div className="product-purchase-panel">
-            <p className="product-purchase-kicker">Ready to style this look?</p>
+            <p className="product-purchase-kicker">Ready to add it to your cart?</p>
             <p className="product-purchase-copy">
-              Pick your size, color, and quantity. The actions below keep the same trusted add-to-cart and saved-item
-              behavior.
+              Pick your size, color, and quantity, then add the item to your cart or save it for later.
             </p>
             <div className="selector-block">
               <div className="selector-head">
                 <h3>Size</h3>
                 <button type="button" className="text-button" onClick={() => setSizeGuideOpen(true)}>
-                  Size Guide
+                  Size guide
                 </button>
               </div>
               <div className="chip-row">
@@ -517,7 +516,7 @@ export default function ProductPage() {
 
             <div className="product-actions">
               <button type="button" className="btn btn-dark" onClick={handleAddToCart} disabled={isOutOfStock}>
-                {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+                {isOutOfStock ? 'Out of stock' : 'Add to cart'}
               </button>
               <button
                 type="button"
@@ -527,19 +526,19 @@ export default function ProductPage() {
                 disabled={isSaving}
                 title={isSaving ? 'Updating saved items...' : isSaved ? 'Remove item from saved items' : 'Save item'}
               >
-                {isSaving ? (isSaved ? 'Removing...' : 'Saving...') : isSaved ? 'Saved' : 'Save Item'}
+                {isSaving ? (isSaved ? 'Removing...' : 'Saving...') : isSaved ? 'Saved' : 'Save item'}
               </button>
               <Link to="/cart" className="btn btn-outline">
-                View Cart
+                View cart
               </Link>
             </div>
             {authError && isAuthenticated ? <div className="auth-message auth-message-error">{authError}</div> : null}
             <p className="product-support-note">
-              Secure checkout plus shipping and return guidance are available when you are ready.
+              Shipping, return guidance, and secure checkout are available when you are ready.
             </p>
             <div className="product-trust-strip" aria-label="Shop with confidence">
               <span>Secure checkout</span>
-              <span>Honest stock status</span>
+              <span>Visible stock status</span>
               <span>Support if you need help</span>
             </div>
             <section className="product-trust-panel" aria-labelledby="product-trust-panel-title">
@@ -548,7 +547,7 @@ export default function ProductPage() {
                 <h3 id="product-trust-panel-title">Trust cues for this product</h3>
               </div>
               <p className="product-trust-panel-copy">
-                These cues reflect existing ShopOra routes and current storefront capabilities only.
+                These cues reflect current ShopOra support routes and product details.
               </p>
               <div className="product-trust-grid">
                 {trustCues.map((cue) => (
@@ -668,7 +667,7 @@ export default function ProductPage() {
         <section className="related-section">
           <div className="section-heading">
             <div>
-              <h2>Recently Viewed</h2>
+              <h2>Recently viewed</h2>
               <p>Pick up where you left off.</p>
             </div>
           </div>

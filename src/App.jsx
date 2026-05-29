@@ -130,7 +130,7 @@ export default function App() {
                         element={
                           <CategoryRoutePage
                             title="Sale"
-                            description="Fresh markdowns and limited-time deals across the collection."
+                            description="Current markdowns and value picks across the collection."
                             saleOnly
                           />
                         }

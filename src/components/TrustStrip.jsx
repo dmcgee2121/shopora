@@ -1,19 +1,19 @@
 const items = [
   {
-    title: 'Fresh Arrivals Weekly',
-    text: 'The edit refreshes often with new statements, seasonal pieces, and easy staples.',
+    title: 'Fresh arrivals',
+    text: 'New pieces, seasonal layers, and dependable staples are grouped for easy browsing.',
   },
   {
-    title: 'Shipping Clarity',
-    text: 'Delivery expectations are surfaced before checkout so shoppers know what to expect.',
+    title: 'Shipping guidance',
+    text: 'Shipping details stay close by so you can review expectations before checkout.',
   },
   {
-    title: 'Secure Checkout',
-    text: 'Checkout is powered by Stripe for a familiar, trusted payment handoff.',
+    title: 'Stripe checkout',
+    text: 'Payment entry is handled through Stripe during the checkout handoff.',
   },
   {
-    title: 'Easy Returns',
-    text: 'Order help, returns, and account receipts are easy to find after purchase.',
+    title: 'Return support',
+    text: 'Return guidance, order help, and account receipts stay easy to find after purchase.',
   },
 ];
 

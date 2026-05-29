@@ -157,8 +157,8 @@ export default function CategoryPage({ title, description, department, saleOnly 
   const countLabel = isInitialCatalogLoading ? 'Loading styles' : `${filteredProducts.length} products`;
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No styles found.';
   const emptyDescription = activeFilterCount
-    ? 'Try removing brand, size, price, or status filters, or clear the search term to widen the edit.'
-    : 'This lane is still being merchandised, so use the department shortcuts, sale picks, or nearby categories to keep browsing.';
+    ? 'Try removing a filter, clearing the search term, or browsing a nearby category.'
+    : 'This section does not have matching products yet. Use the shortcuts below to keep browsing.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -178,8 +178,8 @@ export default function CategoryPage({ title, description, department, saleOnly 
   );
   const discoveryTitle = saleOnly ? 'Sale picks worth a closer look' : `${title} top picks`;
   const discoveryDescription = saleOnly
-    ? 'A focused value edit with clear pricing, strong ratings, and easy scanning.'
-    : 'A curated department edit that starts strong, then lets shoppers refine the assortment by category, brand, size, price, or status.';
+    ? 'A focused value edit with clear pricing and easy scanning.'
+    : 'A curated department edit with filters for category, brand, size, price, and status.';
   const discoveryHeadingId = `category-discovery-${saleOnly ? 'sale' : department || 'all'}`;
   const browsingCues = saleOnly
     ? ['Featured category', 'Style-ready finds', 'Browse the edit', 'Fresh ways to shop']
@@ -195,7 +195,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
           action={<span className="count-badge">{countLabel}</span>}
         />
         <p className="catalog-toolbar-note">
-          Sort changes what appears first. Filters narrow the edit. The result count updates as you refine the lane.
+          Sort changes what appears first. Filters narrow the edit. The result count updates as you browse.
         </p>
 
         <div className="catalog-intro-strip" aria-label={`${title} browsing cues`}>
@@ -204,7 +204,7 @@ export default function CategoryPage({ title, description, department, saleOnly 
             <p>
               {saleOnly
                 ? 'Style-ready finds from the sale edit, with clear value and easy scanning.'
-                : 'Browse the edit, then use filters and shortcuts to move through a more curated assortment.'}
+                : 'Browse the edit, then use filters and shortcuts to narrow the assortment.'}
             </p>
           </div>
           <div className="catalog-intro-chips">
@@ -346,10 +346,10 @@ export default function CategoryPage({ title, description, department, saleOnly 
                       </button>
                     ) : null}
                     <Link to="/sale" className="btn btn-ghost">
-                      Browse sale
+                      Browse sale picks
                     </Link>
                     <Link to="/women" className="btn btn-ghost">
-                      Browse women
+                      Browse women's edit
                     </Link>
                   </div>
                   <div className="recommendation-links" aria-label="Browse departments">

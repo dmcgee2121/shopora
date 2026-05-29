@@ -23,10 +23,10 @@ export default function SavedItemsPage() {
           <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
           <div>
             <p className="eyebrow">Account</p>
-            <h1>Saved Items</h1>
+            <h1>Saved items</h1>
             <p>
               {currentUser
-                ? `Favorites saved for ${currentUser.firstName}. Keep them in one place for quicker comparison and easier repeat visits.`
+                ? `Favorites saved for ${currentUser.firstName}. Keep them in one place for easier comparison and return visits.`
                 : 'Products saved for later will appear here. Sign in to keep a wishlist tied to your account.'}
             </p>
           </div>
@@ -37,8 +37,8 @@ export default function SavedItemsPage() {
       </div>
 
       <p className="account-page-note">
-        Saved items work like a simple wishlist. Compare favorite finds, revisit styles later, and keep a lightweight
-        ShopOra member trail without any points, rewards, or redemption balance.
+        Saved items work like a simple wishlist. Compare favorite finds and revisit styles later without points,
+        rewards, or redemption balances.
       </p>
       {authError && currentUser ? <div className="auth-message auth-message-error">{authError}</div> : null}
 
@@ -50,7 +50,7 @@ export default function SavedItemsPage() {
               <span className="query-chip">
                 {savedProducts.length} favorite{savedProducts.length === 1 ? '' : 's'} ready to browse
               </span>
-              <span className="query-chip">Wishlist stays tied to this account</span>
+              <span className="query-chip">Wishlist tied to this account</span>
             </div>
             <div className="empty-state-actions">
               <Link to={retentionLinks.continueShopping.to} className="btn btn-dark btn-small">
@@ -75,7 +75,7 @@ export default function SavedItemsPage() {
           <h2>No saved items yet.</h2>
           <p>
             Tap the heart icon on a product to build a wishlist, then come back here to compare favorites, revisit
-            them later, or pick up a fresh search when you want a faster route back into the edit.
+            them later, or start a fresh search when you want another route back into the store.
           </p>
           <div className="empty-state-actions">
             <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
@@ -91,7 +91,7 @@ export default function SavedItemsPage() {
               {retentionLinks.account.label}
             </Link>
             <Link to="/search" className="btn btn-ghost">
-              Browse search
+              Search ShopOra
             </Link>
           </div>
           <div className="recommendation-links account-empty-links" aria-label="Search shortcuts">

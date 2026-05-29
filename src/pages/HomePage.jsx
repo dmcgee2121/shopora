@@ -30,7 +30,7 @@ function MerchSection({ id, title, description, action, products, loading = fals
       {loading ? (
         <div className="empty-state">
           <h3>Loading {title.toLowerCase()}.</h3>
-          <p>We are refreshing the latest catalog so browsing feels current.</p>
+          <p>Thanks for your patience while the catalog gets ready.</p>
         </div>
       ) : products.length ? (
         <div className="product-grid">
@@ -54,8 +54,8 @@ function HomeDiscoverySection({ title, description, products, action, links, loa
       <SectionHeading title={title} description={description} action={action} />
       {loading ? (
         <div className="empty-state home-discovery-loading">
-          <h3>Loading personalized picks.</h3>
-          <p>We are refreshing a few styles and shortcuts for your next stop.</p>
+          <h3>Loading ShopOra picks.</h3>
+          <p>We are getting a few styles and department shortcuts ready.</p>
         </div>
       ) : (
         <>
@@ -67,8 +67,8 @@ function HomeDiscoverySection({ title, description, products, action, links, loa
           <div className="home-continue-strip">
             <div className="home-continue-copy">
               <p className="home-continue-kicker">Continue exploring</p>
-              <h3>Keep moving through the store.</h3>
-              <p>Use these department shortcuts to jump back into the sections shoppers visit most.</p>
+              <h3>Pick a department and keep browsing.</h3>
+              <p>Use these shortcuts to jump into the main ShopOra sections.</p>
             </div>
             <div className="recommendation-links home-continue-links" aria-label="Continue shopping by department">
               {links.map((link) => (
@@ -89,13 +89,13 @@ function HomeActivitySection({ cards, loading = false }) {
     <section className="section-block home-activity">
       <SectionHeading
         title="This week's edit"
-        description="Small, honest activity cues built from the current catalog so the homepage feels refreshed and easy to scan."
+        description="A quick guide to new, sale, and staple styles from the current catalog."
         action={<Link to="/search">Browse all styles</Link>}
       />
       {loading ? (
         <div className="empty-state home-activity-loading">
           <h3>Loading this week's edit.</h3>
-          <p>We are assembling a few current entry points from the latest catalog.</p>
+          <p>We are getting the homepage edit ready.</p>
         </div>
       ) : (
         <div className="activity-cue-grid">
@@ -183,35 +183,35 @@ export default function HomePage() {
   const activityCards = useMemo(
     () => [
       {
-        label: "This week's edit",
-        title: `${newArrivals.length} fresh picks`,
-        description: 'Fresh arrivals are surfaced first so the homepage feels current without pretending anything is live.',
-        badge: newArrivals.length ? `${newArrivals.length} new` : 'Refreshing now',
+        label: 'New arrivals',
+        title: `${newArrivals.length} new-arrival picks`,
+        description: 'Fresh pieces are grouped first so you can start with what is newest in the catalog.',
+        badge: newArrivals.length ? `${newArrivals.length} new arrivals` : 'Loading',
         to: '/women',
         cta: 'See new arrivals',
       },
       {
-        label: 'Trending styles',
-        title: `${trendingProducts.length} styles in view`,
-        description: 'Current catalog favorites are grouped up front so shoppers can move from the homepage into the edit quickly.',
-        badge: trendingProducts.length ? `${trendingProducts.length} featured` : 'Current edit',
+        label: 'Featured styles',
+        title: `${trendingProducts.length} styles to compare`,
+        description: 'Highly rated and featured products are grouped together for quicker browsing.',
+        badge: trendingProducts.length ? `${trendingProducts.length} featured` : 'Featured edit',
         to: '/search',
-        cta: 'Browse trending styles',
+        cta: 'Browse featured styles',
       },
       {
         label: 'Recently highlighted',
         title: `${discoveryProducts.length} styles to revisit`,
         description: recentlyViewedProducts.length
-          ? 'Pick up where you left off with the styles already on your shortlist.'
-          : 'Start with a few curated picks drawn from the current catalog.',
-        badge: recentlyViewedProducts.length ? 'Recently viewed' : 'Curated now',
+          ? 'Pick up where you left off with styles you were already comparing.'
+          : 'Start with a few curated picks from the current catalog.',
+        badge: recentlyViewedProducts.length ? 'Recently viewed' : 'Curated picks',
         to: '/search',
         cta: 'Open the edit',
       },
       {
-        label: 'Style picks to browse',
-        title: `${everydayEssentials.length} easy layers`,
-        description: 'Wardrobe staples, sale moments, and everyday pieces stay close at hand for quick browsing.',
+        label: 'Everyday staples',
+        title: `${everydayEssentials.length} easy pieces`,
+        description: 'Wardrobe staples, sale picks, and everyday layers stay close at hand.',
         badge: everydayEssentials.length ? `${everydayEssentials.length} staples` : 'Easy browse',
         to: '/sale',
         cta: 'Shop style picks',
@@ -247,23 +247,23 @@ export default function HomePage() {
         <MerchSection
           id="new-arrivals"
           title="New Arrivals"
-          description="Freshly added styles, updated weekly, selected to balance wardrobe staples with seasonal pieces and easy outfit builders."
-          action={<Link to="/women">Browse Women's Edit</Link>}
+          description="Freshly added styles selected to balance wardrobe staples with seasonal pieces and easy outfit builders."
+          action={<Link to="/women">Browse women's edit</Link>}
           products={newArrivals}
           loading={isInitialCatalogLoading}
           emptyTitle="New arrivals are on the way."
-          emptyText="We are building the latest edit now. Check back shortly for fresh product drops and new outfit ideas."
+          emptyText="This section is being updated. Browse the full store for current styles in the meantime."
         />
 
         <MerchSection
           id="sale-picks"
           title="Sale Picks"
-          description="Marked-down styles with clear value, stronger savings, and easy reasons to shop before they move on."
-          action={<Link to="/sale">Shop Sale</Link>}
+          description="Marked-down styles with clear pricing and easy ways to compare value across the store."
+          action={<Link to="/sale">Shop sale</Link>}
           products={salePicks}
           loading={isInitialCatalogLoading}
-          emptyTitle="Sale picks are temporarily empty."
-          emptyText="There are no markdowns in the current catalog right now. Browse the full store for more styles and current favorites."
+          emptyTitle="No sale picks right now."
+          emptyText="There are no markdowns in the current catalog. Browse the full store for more styles."
         />
 
         <FeaturedBrands />
@@ -273,10 +273,10 @@ export default function HomePage() {
         <MerchSection
           id="trending-now"
           title="Trending Now"
-          description="Best-reviewed styles and currently featured favorites earning the most attention across the store right now."
+          description="Highly rated styles and featured favorites from across the store."
           products={trendingProducts}
           loading={isInitialCatalogLoading}
-          emptyTitle="Trending styles are loading."
+          emptyTitle="Featured styles are loading."
           emptyText="We are getting the latest catalog ready so you can keep browsing."
         />
 
@@ -284,7 +284,7 @@ export default function HomePage() {
           id="everyday-essentials"
           title="Everyday Essentials"
           description="Curated for everyday wear: polished basics, easy layers, and wardrobe pieces built for repeat use across the week."
-          action={<Link to="/men">Browse Men's Edit</Link>}
+          action={<Link to="/men">Browse men's edit</Link>}
           products={everydayEssentials}
           loading={isInitialCatalogLoading}
           emptyTitle="Everyday essentials are loading."

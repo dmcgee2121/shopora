@@ -5,18 +5,18 @@ export default function Hero() {
   return (
     <section className="hero">
       <div className="hero-copy">
-        <p className="hero-tagline">Curated department-store edit.</p>
-        <h1>New arrivals, everyday staples, and polished finds.</h1>
+        <p className="hero-tagline">Curated department-store shopping.</p>
+        <h1>New arrivals, everyday staples, polished finds.</h1>
         <p className="hero-text">
-          Modern style, easy shopping, and a storefront built to help shoppers find new arrivals,
-          dependable staples, and sale picks fast.
+          Shop clothing, shoes, and accessories across a calm storefront built for quick discovery,
+          clear details, and easy comparison.
         </p>
         <div className="hero-actions">
           <Link className="btn btn-dark" to="/women">
-            Shop Women
+            Shop women
           </Link>
           <Link className="btn btn-light" to="/men">
-            Shop Men
+            Shop men
           </Link>
         </div>
       </div>

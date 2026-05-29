@@ -157,8 +157,8 @@ export default function SearchResults() {
   ].filter(Boolean);
   const emptyTitle = activeFilterCount ? 'No styles match those filters.' : 'No results found.';
   const emptyDescription = activeFilterCount
-    ? 'Try removing one or more filters, clearing the search, or browsing sale and new arrival styles to widen the edit.'
-    : 'Try a broader keyword, check spelling, or use a department shortcut to start with a more curated edit.';
+    ? 'Try removing a filter, clearing the search, or browsing sale and new-arrival styles.'
+    : 'Try a broader keyword, check spelling, or use a department shortcut to keep browsing.';
   const recommendationSeeds = useMemo(
     () =>
       [
@@ -186,7 +186,7 @@ export default function SearchResults() {
           description={
             query
               ? 'Browse the styles that match your search across brands, departments, and colorways, then use filters and sort controls to keep the edit focused.'
-              : 'Use the search bar in the navbar to look for products, categories, brands, and colors when you want a fast route into the edit.'
+              : 'Use the search bar in the navbar to look for products, categories, brands, and colors when you know what you want to find.'
           }
           action={query ? <span className="count-badge">{countLabel}</span> : null}
         />
@@ -196,10 +196,10 @@ export default function SearchResults() {
 
         <div className="catalog-intro-strip search-intro-strip" aria-label="Search browsing cues">
           <div className="catalog-intro-copy">
-            <p className="eyebrow">{query ? 'Search energy' : 'Search guide'}</p>
+            <p className="eyebrow">{query ? 'Search results' : 'Search guide'}</p>
             <p>
               {query
-                ? 'Curated matches at a glance, with filters and sort controls to keep the results easy to scan.'
+                ? 'Matching products at a glance, with filters and sort controls to keep the results easy to scan.'
                 : 'Start with a product, category, brand, or color when you want a quicker route into the edit.'}
             </p>
           </div>
@@ -383,7 +383,7 @@ export default function SearchResults() {
                     <div className="section-heading">
                       <div>
                         <h2>Recommended styles</h2>
-                        <p>Popular products that shoppers often compare with this search.</p>
+                        <p>Related products from the current catalog to keep browsing.</p>
                       </div>
                     </div>
                     <div className="product-grid">

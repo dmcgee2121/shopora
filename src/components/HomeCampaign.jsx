@@ -17,23 +17,22 @@ export default function HomeCampaign({ products = [] }) {
         <p className="campaign-kicker">Seasonal edit</p>
         <h2>Fresh arrivals, trending finds, and easy staples in one calm edit.</h2>
         <p>
-          ShopOra is arranged like a modern department floor: new statements up front, trending
-          pieces in the middle, dependable essentials close at hand, and support pages that stay
-          easy to find when shoppers want shipping, returns, or privacy details. The edit refreshes
-          regularly so the storefront feels current without losing its calm.
+          ShopOra is arranged like a modern department floor: new pieces up front, dependable
+          essentials close at hand, and support pages easy to find when you want shipping, returns,
+          or privacy details.
         </p>
         <div className="campaign-actions">
           <Link className="btn btn-dark" to="/women">
-            Shop New Arrivals
+            Shop new arrivals
           </Link>
           <Link className="btn btn-outline" to="/sale">
-            Explore Sale Picks
+            Explore sale picks
           </Link>
         </div>
         <div className="campaign-tags" aria-label="Merchandising highlights">
-          <span className="query-chip">New arrivals weekly</span>
-          <span className="query-chip">Secure checkout powered by Stripe</span>
-          <span className="query-chip">Easy returns</span>
+          <span className="query-chip">New arrivals</span>
+          <span className="query-chip">Stripe checkout handoff</span>
+          <span className="query-chip">Return guidance</span>
           <span className="query-chip">Editor's picks</span>
         </div>
         <div className="campaign-discovery-links" aria-label="Browse departments">

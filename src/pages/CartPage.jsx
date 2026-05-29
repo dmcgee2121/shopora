@@ -49,7 +49,7 @@ export default function CartPage() {
         <div className="page-heading-brand-wrap">
           <BrandLogo variant="bag" alt="ShopOra" className="page-heading-brand" />
           <div>
-            <h1>Your Cart</h1>
+            <h1>Your cart</h1>
             <p>Review your selected items before heading to checkout.</p>
           </div>
         </div>
@@ -127,8 +127,8 @@ export default function CartPage() {
             <section className="related-section cart-recommendations">
               <div className="section-heading">
                 <div>
-                  <h2>Customers also considered</h2>
-                  <p>Lightweight extras that pair well with items already in your bag.</p>
+                  <h2>Pairs well with your cart</h2>
+                  <p>Lightweight extras that work with items already in your bag.</p>
                 </div>
               </div>
               <div className="product-grid">
@@ -157,11 +157,11 @@ export default function CartPage() {
         </>
       ) : (
         <>
-        <div className="empty-state cart-empty">
-            <h2>Your cart is waiting.</h2>
+          <div className="empty-state cart-empty">
+            <h2>Your cart is empty.</h2>
             <p>
-              Browse fresh picks, save a few favorites, and return here when you are ready to review your full order.
-              Sign in to keep favorites and recent orders together in one account view.
+              Browse fresh picks, save a few favorites, and return here when you are ready to review your order.
+              Sign in to keep favorites and orders together in one account view.
             </p>
             <div className="empty-state-actions">
               <Link to={retentionLinks.continueShopping.to} className="btn btn-dark">
@@ -193,8 +193,8 @@ export default function CartPage() {
             <section className="related-section cart-recommendations">
               <div className="section-heading">
                 <div>
-                  <h2>Popular picks to start with</h2>
-                  <p>Shoppers often begin with these best-performing styles.</p>
+                  <h2>Good places to start</h2>
+                  <p>A few easy pieces to begin your cart.</p>
                 </div>
               </div>
               <div className="product-grid">
@@ -209,7 +209,7 @@ export default function CartPage() {
 
       <SupportLinkStrip
         title="Need help before checkout?"
-        description="Review shipping, returns, privacy, and account details or contact support before you place the order."
+        description="Review shipping, returns, privacy, and account details or contact support before you place an order."
         links={supportLinks}
       />
     </section>

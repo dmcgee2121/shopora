@@ -317,6 +317,66 @@
   gap: 8px;
 }
 
+.admin-owner-checklist-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-owner-checklist-runtime {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-owner-checklist-runtime p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.admin-owner-checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-owner-checklist-group {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(221, 213, 203, 0.84);
+  background: rgba(255, 253, 250, 0.98);
+  box-shadow: 0 16px 34px rgba(43, 33, 20, 0.06);
+}
+
+.admin-owner-checklist-group h3 {
+  margin: 0;
+  color: var(--gold-dark);
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-owner-checklist-group ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.admin-owner-checklist-group li {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.admin-owner-checklist-note {
+  margin: 0;
+  padding-top: 6px;
+  border-top: 1px solid rgba(228, 217, 204, 0.72);
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 .admin-launch-command-center-panel {
   margin-top: 2px;
 }
@@ -2818,6 +2878,7 @@
   }
 
   .admin-store-readiness-grid,
+  .admin-owner-checklist-grid,
   .admin-editor-summary-grid,
   .admin-readiness-grid,
   .admin-store-operations-snapshot-grid,
@@ -3147,6 +3208,7 @@
 
 @media (max-width: 640px) {
   .admin-store-readiness-grid,
+  .admin-owner-checklist-grid,
   .admin-editor-summary-grid,
   .admin-editor-readiness-summary,
   .admin-editor-guidance-summary,

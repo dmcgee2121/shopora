@@ -94,6 +94,10 @@ Recommended starting points:
 - This change does not add live admin fulfillment writes.
 - This change does not complete payment operations hardening.
 
+## Owner Readiness Note
+- ShopOra admin now includes an owner-facing setup/readiness checklist panel for launch preparation guidance.
+- The checklist is advisory only and does not change payment, order, auth, Netlify function, or Supabase backend behavior.
+
 ## Future Hardening Checklist
 - Remove or isolate demo auth paths from production runtime entirely.
 - Replace remaining local fallback persistence with server-trusted production paths.

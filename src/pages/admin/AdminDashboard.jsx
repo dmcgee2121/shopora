@@ -16,7 +16,7 @@ import {
   getPaymentStatusLabel,
   normalizeOrderStatusValue,
 } from '../../utils/statusUtils';
-import { getRuntimeModeLabel, isDemoAdminEnabled, isDemoRuntime } from '../../utils/runtimeMode';
+import { getRuntimeModeLabel, isDemoAdminEnabled, isDemoRuntime, isProductionRuntime } from '../../utils/runtimeMode';
 
 function safeText(value, fallback = '-') {
   const text = typeof value === 'string' ? value.trim() : '';
@@ -300,6 +300,19 @@ function LaunchReleaseNoteCard({ label, status, note, context }) {
   );
 }
 
+function OwnerChecklistGroup({ title, items }) {
+  return (
+    <article className="admin-owner-checklist-group">
+      <h3>{title}</h3>
+      <ul>
+        {items.map((item) => (
+          <li key={`${title}-${item}`}>{item}</li>
+        ))}
+      </ul>
+    </article>
+  );
+}
+
 export default function AdminDashboard() {
   const { users, currentUser } = useAuth();
   const { orders, ordersSource, isOrdersLoading } = useOrders();
@@ -525,6 +538,78 @@ export default function AdminDashboard() {
       overallNote,
     };
   }, [analytics.customerCount, analytics.savedTotal, catalogReadiness, orders.length, ordersSource, products]);
+
+  const ownerSetupChecklist = useMemo(() => {
+    const runtimeLabel = getRuntimeModeLabel();
+    const runtimeModeLower = runtimeLabel.toLowerCase();
+    const runtimePosture = isProductionRuntime
+      ? 'Production runtime is active. Keep demo pathways disabled and confirm only live-backed admin access is used.'
+      : `Runtime mode is ${runtimeLabel}. Treat this as a preparation environment until final launch checks are complete.`;
+
+    const productionSafetyItems = [
+      'Set runtime mode intentionally before every release review.',
+      isDemoAdminEnabled
+        ? 'Disable demo admin before launch and verify only approved admin credentials are used.'
+        : `Demo admin is disabled in ${runtimeModeLower} mode. Keep it disabled for launch.`,
+      'Confirm Supabase admin roles and row-level security for production data access.',
+      'Avoid confusion between demo/local fallback data and live-backed Supabase data during operational reviews.',
+    ];
+
+    return {
+      runtimeContext: `Runtime mode: ${runtimeLabel}. Demo admin access is ${isDemoAdminEnabled ? 'enabled' : 'disabled'}.`,
+      runtimePosture,
+      groups: [
+        {
+          key: 'brand-storefront',
+          title: 'Brand & storefront',
+          items: [
+            'Add final business name and logo across storefront and admin surfaces.',
+            'Review homepage and category copy for your real brand voice.',
+            'Confirm support and contact information shown to shoppers is current.',
+          ],
+        },
+        {
+          key: 'catalog',
+          title: 'Product catalog',
+          items: [
+            'Add real product names, prices, photos, sizes/colors, and inventory counts.',
+            'Review sale, new, and stock labels so storefront merchandising stays accurate.',
+          ],
+        },
+        {
+          key: 'payments',
+          title: 'Payments',
+          items: [
+            'Connect Stripe test and live credentials deliberately in the correct environment.',
+            'Complete Stripe checkout and webhook testing before launch decisions.',
+          ],
+        },
+        {
+          key: 'orders-fulfillment',
+          title: 'Orders & fulfillment',
+          items: [
+            'Confirm how orders will be packed, shipped, cancelled, and refunded.',
+            'Review admin order visibility and current operational limits with your team.',
+          ],
+        },
+        {
+          key: 'policies-support',
+          title: 'Policies & support',
+          items: [
+            'Finalize shipping, returns, privacy, and contact pages before public launch.',
+            'Add a real support email/contact process with ownership and response expectations.',
+          ],
+        },
+        {
+          key: 'production-safety',
+          title: 'Production safety',
+          items: productionSafetyItems,
+        },
+      ],
+      closingNote:
+        'This checklist improves launch preparation, but it does not replace final live payment, order, and security testing.',
+    };
+  }, []);
 
   const storefrontPreview = useMemo(() => {
     const totalProducts = catalogReadiness.totalProducts;
@@ -1648,6 +1733,29 @@ export default function AdminDashboard() {
             Check Storefront
           </Link>
         </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-owner-checklist-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Owner setup checklist</span>
+          <p>
+            A practical launch-prep checklist for business owners. It clarifies what still needs setup without
+            overstating production readiness.
+          </p>
+        </div>
+
+        <div className="admin-owner-checklist-runtime">
+          <span className="status-badge status-badge-muted">{ownerSetupChecklist.runtimeContext}</span>
+          <p>{ownerSetupChecklist.runtimePosture}</p>
+        </div>
+
+        <div className="admin-owner-checklist-grid">
+          {ownerSetupChecklist.groups.map((group) => (
+            <OwnerChecklistGroup key={group.key} title={group.title} items={group.items} />
+          ))}
+        </div>
+
+        <p className="admin-owner-checklist-note">{ownerSetupChecklist.closingNote}</p>
       </section>
 
       <section className="admin-dashboard-panel admin-storefront-preview-panel">

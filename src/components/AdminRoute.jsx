@@ -1,5 +1,6 @@
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getRuntimeModeLabel, isDemoAdminEnabled } from '../utils/runtimeMode';
 
 export default function AdminRoute({ children }) {
   const { isAuthenticated, isAdmin, logout, currentUser, isAuthLoading } = useAuth();
@@ -23,6 +24,10 @@ export default function AdminRoute({ children }) {
           <p>
             Signed in as <strong>{currentUser?.email}</strong>. Use the demo admin login to access
             the ShopOra back office.
+          </p>
+          <p>
+            Runtime mode: <strong>{getRuntimeModeLabel()}</strong>. Demo admin access is{' '}
+            <strong>{isDemoAdminEnabled ? 'enabled' : 'disabled'}</strong> for this environment.
           </p>
           <div className="admin-unauthorized-actions">
             <Link to="/account" className="btn btn-ghost">

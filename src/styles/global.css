@@ -3778,9 +3778,14 @@ main {
 }
 
 @media (max-width: 768px) {
+  .container {
+    width: min(1180px, calc(100% - 24px));
+  }
+
   .topbar {
     grid-template-columns: 1fr auto;
-    min-height: 76px;
+    min-height: 72px;
+    gap: 12px;
   }
 
   .brand-logo-wordmark {
@@ -3807,7 +3812,7 @@ main {
     position: absolute;
     left: 12px;
     right: 12px;
-    top: 84px;
+    top: 78px;
     max-height: calc(100dvh - 100px);
     overflow-y: auto;
     display: none;
@@ -3839,6 +3844,11 @@ main {
   .cart-link,
   .account-link {
     width: 100%;
+  }
+
+  .search-form {
+    height: 46px;
+    padding: 0 14px;
   }
 
   .page-heading-brand-wrap {
@@ -3948,6 +3958,8 @@ main {
 
   .catalog-intro-strip {
     grid-template-columns: 1fr;
+    padding: 16px;
+    border-radius: 20px;
   }
 
   .toolbar-group {
@@ -5647,6 +5659,10 @@ body.modal-open {
 }
 
 @media (max-width: 640px) {
+  main {
+    padding: 18px 0 32px;
+  }
+
   .account-overview-grid,
   .account-grid {
     grid-template-columns: 1fr;
@@ -5845,7 +5861,7 @@ body.modal-open {
   }
 
   .home-page .section-block {
-    margin: 34px 0;
+    margin: 30px 0;
   }
 
   .home-campaign {
@@ -5895,18 +5911,24 @@ body.modal-open {
   .home-page .product-grid {
     grid-template-columns: none;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(158px, 52vw);
+    grid-auto-columns: minmax(170px, 60vw);
     gap: 12px;
     margin-inline: -2px;
     padding: 2px 2px 12px;
     overflow-x: auto;
     overscroll-behavior-inline: contain;
     scroll-snap-type: x proximity;
+    scroll-padding-inline: 10px;
     scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
   }
 
   .home-page .product-grid .product-card {
     scroll-snap-align: start;
+  }
+
+  .home-page .product-grid .product-media {
+    aspect-ratio: 4 / 5;
   }
 
   .home-page .product-grid .badge-stack {
@@ -6055,7 +6077,9 @@ body.modal-open {
     justify-self: end;
     font-size: 0.72rem;
     line-height: 1.15;
-    white-space: nowrap;
+    max-width: 8ch;
+    text-align: right;
+    white-space: normal;
   }
 
   .home-page .brand-card p {
@@ -6218,12 +6242,103 @@ body.modal-open {
     gap: 6px;
   }
 
+  .catalog-toolbar-note {
+    margin: -4px 0 14px;
+    font-size: 0.82rem;
+  }
+
+  .catalog-intro-strip {
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+    border-radius: 18px;
+  }
+
+  .catalog-intro-copy p:last-child {
+    line-height: 1.5;
+  }
+
+  .empty-state {
+    padding: 22px 16px;
+    border-radius: 20px;
+  }
+
+  .empty-state h3,
+  .empty-state h2,
+  .empty-state h1 {
+    font-size: clamp(1.65rem, 8.2vw, 2.2rem);
+  }
+
+  .catalog-page .product-grid,
+  .search-page .product-grid,
+  .account-page .product-grid,
+  .cart-page .related-section .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .cart-page .cart-item {
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  .cart-page .cart-item img {
+    width: 88px;
+  }
+
+  .cart-page .cart-item-footer {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .site-footer {
+    padding: 18px 0 24px;
+  }
+
+  .footer-inner {
+    padding-top: 14px;
+    gap: 14px;
+  }
+
+  .footer-copy {
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
   .detail-description,
   .price-note,
   .product-gallery-note,
   .product-story-list,
   .product-details-panel ul {
     line-height: 1.7;
+  }
+}
+
+@media (max-width: 430px) {
+  .catalog-page .product-grid,
+  .search-page .product-grid,
+  .account-page .product-grid,
+  .cart-page .related-section .product-grid {
+    gap: 10px;
+  }
+
+  .product-body {
+    padding: 10px;
+  }
+
+  .badge-stack {
+    max-width: calc(50% - 10px);
+  }
+
+  .badge {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

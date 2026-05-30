@@ -250,14 +250,14 @@ export default function AdminOrdersPage() {
   const orderSourceNote =
     currentUser?.role === 'admin'
       ? ordersSource === 'supabase'
-        ? 'Prototype note: live Supabase orders are visible here, but status updates remain read-only until admin write support is added.'
-        : 'Prototype note: this admin order list is reading browser-local demo orders only. Those local demo orders can be adjusted in browser storage.'
+        ? 'Note: live Supabase orders are visible here, but status updates remain read-only in this release.'
+        : 'Note: this admin order list is reading browser-local orders only in this mode. Status changes here are local-only.'
       : '';
   const canUpdateOrderStatus = ordersSource === 'local';
   const ordersSubtitle =
     ordersSource === 'supabase'
-      ? 'Review live Supabase orders, spot fulfillment gaps, and open receipts while status changes remain read-only in this prototype.'
-      : 'Review completed demo orders, simulate status changes locally, and open receipts without leaving the admin area.';
+      ? 'Review live Supabase orders, spot fulfillment gaps, and open receipts while status changes remain read-only.'
+      : 'Review completed local orders, simulate status changes locally, and open receipts without leaving the admin area.';
 
   const ordered = useMemo(
     () =>
@@ -404,10 +404,10 @@ export default function AdminOrdersPage() {
 
       <section className="admin-order-workflow-panel">
         <div className="admin-dashboard-section-heading compact">
-          <span>Prototype workflow preview</span>
+          <span>Order workflow preview</span>
           <p>
-            Read-only layout for a future order-management flow. These cards show how fulfillment, contact,
-            notes, and next-step details could be staged without mutating order data yet.
+            Read-only layout for planning order operations. These cards show fulfillment, contact, notes, and
+            next-step context without mutating order data.
           </p>
         </div>
         {workflowPreviewOrder ? (
@@ -468,10 +468,10 @@ export default function AdminOrdersPage() {
           </div>
         ) : (
           <div className="admin-empty-state-tight admin-readiness-empty">
-            <h3>Workflow preview is waiting for an order.</h3>
+            <h3>Order workflow preview is waiting for an order.</h3>
             <p>
-              Open checkouts or local demo orders to preview fulfillment readiness, contact context, notes, and
-              next-step planning in a prototype-only layout.
+              Open checkout or local orders to preview fulfillment readiness, contact context, notes, and
+              next-step planning in this read-only layout.
             </p>
           </div>
         )}
@@ -664,7 +664,7 @@ export default function AdminOrdersPage() {
                           <div className="admin-status-subtext">
                             {canUpdateOrderStatus
                               ? orderStatusLabel || 'No status available'
-                              : 'Read-only for live Supabase orders.'}
+                              : 'View-only for live Supabase orders.'}
                           </div>
                         </td>
                         <td>
@@ -767,7 +767,7 @@ export default function AdminOrdersPage() {
                     <div className="admin-record-row">
                       <span className={`status-badge ${orderStatusClass}`.trim()}>{orderStatusLabel}</span>
                       {!canUpdateOrderStatus ? (
-                        <span className="admin-status-subtext">Read-only for live Supabase orders.</span>
+                        <span className="admin-status-subtext">View-only for live Supabase orders.</span>
                       ) : null}
                       <div className="admin-row-actions">
                         <button

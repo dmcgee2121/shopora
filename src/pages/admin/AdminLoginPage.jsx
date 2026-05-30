@@ -64,12 +64,12 @@ export default function AdminLoginPage() {
           </div>
           <p className="admin-auth-hint">
             {isDemoAdminEnabled
-              ? 'Demo credentials are available in the project notes. Disable demo admin before a business launch.'
+              ? 'Demo credentials may be available in project notes. Disable demo admin before launch.'
               : 'Demo admin access is currently disabled. Use a Supabase-backed admin account.'}
           </p>
           {isDemoRuntime || isProductionRuntime ? (
             <p className="admin-auth-hint">
-              This admin surface may show local/demo fallback behavior depending on runtime configuration.
+              This admin surface can show local or live-backed behavior depending on runtime configuration.
             </p>
           ) : null}
         </div>

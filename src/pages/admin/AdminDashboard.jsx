@@ -1520,7 +1520,7 @@ export default function AdminDashboard() {
 
       <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-launch-command-center-panel">
         <div className="admin-dashboard-section-heading">
-          <span>Seller launch command center</span>
+          <span>Store owner command center</span>
           <p>
             One place for a store owner to see what is buyer-ready, what needs review, what remains
             prototype-only, and what still needs future backend work before launch.
@@ -1588,8 +1588,7 @@ export default function AdminDashboard() {
         <div className="admin-dashboard-section-heading">
           <span>Launch QA notes</span>
           <p>
-            A lightweight local smoke-test checklist for a store owner or admin before batching this work into a
-            future release.
+            A lightweight admin review checklist for business-owner walkthroughs before a future release decision.
           </p>
         </div>
 
@@ -1671,8 +1670,7 @@ export default function AdminDashboard() {
           </div>
 
           <p className="admin-launch-command-center-note">
-            Use this as a quick reminder of the current launch posture before batching future PRs or spending
-            release credits.
+            Use this as a quick reminder of the current launch posture before final release planning.
           </p>
 
           <div className="admin-launch-release-notes-actions">
@@ -2153,7 +2151,7 @@ export default function AdminDashboard() {
             ) : (
               <div className="admin-readiness-empty">
                 <h3>Storefront is in good shape.</h3>
-                <p>Catalog-ready products are already covering the basics for screenshots and demos.</p>
+                <p>Catalog-ready products are already covering the basics for a business-owner review.</p>
                 <div className="admin-empty-state-actions">
                   <Link to="/admin/products" className="btn btn-ghost btn-small">
                     Review catalog
@@ -2169,13 +2167,13 @@ export default function AdminDashboard() {
           <section className="admin-dashboard-panel">
             <div className="admin-dashboard-section-heading compact">
               <span>Customer activity</span>
-              <p>Local account and order signals worth watching during demos.</p>
+              <p>Account and order signals worth reviewing in this admin session.</p>
             </div>
 
             <div className="admin-insight-list">
               <div className="admin-insight-row">
                 <strong>{analytics.savedTotal}</strong>
-                <span>Saved items across demo customers</span>
+                <span>Saved items across customer accounts</span>
               </div>
               <div className="admin-insight-row">
                 <strong>{analytics.averageItemsPerOrder.toFixed(1)}</strong>
@@ -2183,7 +2181,7 @@ export default function AdminDashboard() {
               </div>
               <div className="admin-insight-row">
                 <strong>{analytics.totalItems}</strong>
-                <span>Total items sold across demo orders</span>
+                <span>Total items across tracked orders</span>
               </div>
               <div className="admin-insight-row">
                 <strong>{analytics.deliveredOrders}</strong>
@@ -2221,7 +2219,7 @@ export default function AdminDashboard() {
           ) : (
             <div className="admin-empty-state admin-empty-state-tight">
               <h3>No orders yet.</h3>
-              <p>Completed checkouts will appear here once demo orders are created.</p>
+              <p>Completed checkouts will appear here once orders are available in this environment.</p>
               <div className="admin-empty-state-actions">
                 <Link to="/admin/orders" className="btn btn-ghost">
                   View Orders
@@ -2293,7 +2291,7 @@ export default function AdminDashboard() {
         <section className="admin-dashboard-panel">
           <div className="admin-dashboard-section-heading">
             <span>Catalog health</span>
-            <p>Healthy, low, and out-of-stock status across the demo catalog.</p>
+            <p>Healthy, low, and out-of-stock status across the current catalog.</p>
           </div>
 
           <div className="admin-progress-list">
@@ -2330,7 +2328,7 @@ export default function AdminDashboard() {
         <section className="admin-dashboard-panel">
           <div className="admin-dashboard-section-heading">
             <span>Catalog highlights</span>
-            <p>Fresh or promoted items that are useful to keep visible during demos.</p>
+            <p>Fresh or promoted items that are useful to keep visible for owner review.</p>
           </div>
 
           {analytics.catalogHighlights.length ? (

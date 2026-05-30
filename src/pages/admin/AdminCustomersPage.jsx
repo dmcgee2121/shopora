@@ -318,7 +318,7 @@ export default function AdminCustomersPage() {
       <AdminPageHeader
         eyebrow="Customer directory"
         title="Customers"
-        subtitle="Browse customer accounts, saved-item activity, and order history summaries in a read-only directory."
+        subtitle="Browse customer accounts, saved-item activity, and order history summaries in a clear, read-only directory."
         actions={
           <>
             <Link to="/admin" className="btn btn-dark">
@@ -381,8 +381,8 @@ export default function AdminCustomersPage() {
         <div className="admin-dashboard-section-heading compact">
           <span>Relationship snapshot</span>
           <p>
-            Preview the most active storefront accounts and see which customers are new, returning, or driving value.
-            Admin access accounts stay visible in the directory for context.
+            Preview storefront accounts and see which customers are new, returning, or building order history.
+            Admin access accounts stay visible in the directory for context only.
           </p>
         </div>
 
@@ -447,7 +447,7 @@ export default function AdminCustomersPage() {
               Review orders
             </Link>
           </div>
-          <p className="admin-status-caption">Read-only view of customer relationship signals from the current session.</p>
+          <p className="admin-status-caption">Read-only customer relationship view for the current session. This is not a CRM automation tool.</p>
         </div>
       </section>
 
@@ -614,7 +614,7 @@ export default function AdminCustomersPage() {
       ) : (
         <div className="admin-empty-state">
           <h2>No customer records yet.</h2>
-          <p>Customer accounts appear here after sign-up, saved-item activity, or completed orders.</p>
+          <p>Customer accounts appear here after sign-up, saved-item activity, or completed orders in this environment.</p>
           <div className="admin-empty-state-actions">
             <Link to="/admin" className="btn btn-ghost">
               Open dashboard

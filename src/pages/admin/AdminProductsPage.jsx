@@ -370,22 +370,22 @@ export default function AdminProductsPage() {
       <AdminPageHeader
         eyebrow="Catalog management"
         title="Products"
-        subtitle="Search, filter, and maintain the catalog from one clean admin table, launch checklist, or mobile card view."
+        subtitle="Search, filter, and maintain the catalog from one clear admin table, readiness checklist, or mobile card view."
         actionLabel="Add Product"
         actionTo="/admin/products/new"
       />
 
       <CatalogStatusNote variant="admin" className="admin-catalog-status" />
       {!resetAvailable ? (
-        <p className="admin-catalog-helper">Reset catalog is only available in local demo mode.</p>
+        <p className="admin-catalog-helper">Reset catalog is available only in local mode.</p>
       ) : null}
 
       <section className="admin-product-launch-panel">
         <div className="admin-dashboard-section-heading">
-          <span>Product launch checklist</span>
+          <span>Product readiness checklist</span>
           <p>
-            A seller-friendly view of which products are ready to launch, which need review, and which still need
-            merchandising polish before a pitch or release batch.
+            A business-owner view of which products are ready to publish, which need review, and which still need
+            merchandising polish.
           </p>
         </div>
 
@@ -487,7 +487,7 @@ export default function AdminProductsPage() {
         <div className="admin-status-card admin-readiness-card">
           <span>Low stock</span>
           <strong>{summary.lowStockProducts}</strong>
-          <p>Items that should be restocked before demos or screenshots.</p>
+          <p>Items that should be restocked before store launch.</p>
         </div>
         <div className="admin-status-card admin-readiness-card">
           <span>Out of stock</span>
@@ -573,8 +573,8 @@ export default function AdminProductsPage() {
           </div>
         ) : (
           <div className="admin-empty-state-tight admin-readiness-empty">
-            <h3>Everything in this catalog is demo-ready.</h3>
-            <p>All tracked products have the core merchandising fields needed for screenshots, demos, and admin QA.</p>
+            <h3>Everything in this catalog is review-ready.</h3>
+            <p>All tracked products have the core merchandising fields needed for owner review and admin QA.</p>
           </div>
         )}
       </section>

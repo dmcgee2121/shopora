@@ -16,6 +16,7 @@ import {
   getPaymentStatusLabel,
   normalizeOrderStatusValue,
 } from '../../utils/statusUtils';
+import { getRuntimeModeLabel, isDemoAdminEnabled, isDemoRuntime } from '../../utils/runtimeMode';
 
 function safeText(value, fallback = '-') {
   const text = typeof value === 'string' ? value.trim() : '';
@@ -313,6 +314,12 @@ export default function AdminDashboard() {
     ordersSource === 'supabase'
       ? 'A clean snapshot of live Supabase order activity, catalog health, and admin QA signals for the current session.'
       : 'A clean snapshot of sales, catalog health, and admin QA signals using local demo data.';
+  const runtimeBoundaryNote =
+    isDemoRuntime || isDemoAdminEnabled
+      ? `Runtime mode: ${getRuntimeModeLabel()}. Demo admin access is ${
+          isDemoAdminEnabled ? 'enabled' : 'disabled'
+        }. Local/demo fallback behavior can still appear in admin views depending on data source.`
+      : '';
   const catalogReadiness = useMemo(() => getCatalogReadinessSummary(products), [products]);
   const attentionProducts = useMemo(() => getCatalogAttentionProducts(products, { limit: 4 }), [products]);
 
@@ -1418,6 +1425,11 @@ export default function AdminDashboard() {
       {orderSourceNote ? (
         <div className="admin-notice admin-catalog-error" role="note">
           <p>{orderSourceNote}</p>
+        </div>
+      ) : null}
+      {runtimeBoundaryNote ? (
+        <div className="admin-notice" role="note">
+          <p>{runtimeBoundaryNote}</p>
         </div>
       ) : null}
 

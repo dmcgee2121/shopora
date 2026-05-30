@@ -13,6 +13,7 @@ import {
   toggleSavedProductId,
 } from '../services/supabaseSavedItemsService';
 import { idsMatch, normalizeId } from '../utils/idUtils';
+import { isDemoAdminEnabled } from '../utils/runtimeMode';
 
 const AuthContext = createContext(null);
 const USERS_KEY = 'shopora_users';
@@ -100,6 +101,15 @@ function isDemoAdminEmail(email) {
 
 function readStoredUsers() {
   const storedUsers = readJson(USERS_KEY, []).map(normalizeStoredUser);
+  const usersWithoutDemoAdmin = storedUsers.filter((user) => user.email.toLowerCase() !== DEMO_ADMIN_EMAIL);
+
+  if (!isDemoAdminEnabled) {
+    if (usersWithoutDemoAdmin.length !== storedUsers.length) {
+      writeJson(USERS_KEY, usersWithoutDemoAdmin);
+    }
+    return usersWithoutDemoAdmin;
+  }
+
   const hasDemoAdmin = storedUsers.some((user) => user.email.toLowerCase() === DEMO_ADMIN_EMAIL);
   const nextUsers = hasDemoAdmin ? storedUsers : [...storedUsers, createDemoAdmin()];
   if (!hasDemoAdmin) {
@@ -466,7 +476,10 @@ export function AuthProvider({ children }) {
 
   const register = async ({ firstName, lastName, email, password }) => {
     if (isDemoAdminEmail(email)) {
-      throw new Error('Use the demo admin login for ShopOra admin access.');
+      if (isDemoAdminEnabled) {
+        throw new Error('Use the demo admin login for ShopOra admin access.');
+      }
+      throw new Error('This reserved demo admin email is disabled in this runtime mode.');
     }
 
     if (isSupabaseConfigured) {
@@ -538,6 +551,9 @@ export function AuthProvider({ children }) {
     const cleanEmail = email.trim().toLowerCase();
 
     if (isDemoAdminEmail(cleanEmail)) {
+      if (!isDemoAdminEnabled) {
+        throw new Error('Demo admin sign-in is disabled in this runtime mode.');
+      }
       return loginLocal(email, password);
     }
 

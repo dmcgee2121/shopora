@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import BrandLogo from '../../components/BrandLogo';
 import { useAuth } from '../../context/AuthContext';
+import { getRuntimeModeLabel, isDemoAdminEnabled, isDemoRuntime, isProductionRuntime } from '../../utils/runtimeMode';
 
 export default function AdminLoginPage() {
   const { login, logout, isAuthenticated, isAdmin, currentUser } = useAuth();
@@ -59,9 +60,18 @@ export default function AdminLoginPage() {
             <span>Customers</span>
           </div>
           <div className="admin-auth-note">
-            Demo admin access only. This is not production authentication.
+            Runtime mode: {getRuntimeModeLabel()}. Demo admin access is {isDemoAdminEnabled ? 'enabled' : 'disabled'}.
           </div>
-          <p className="admin-auth-hint">Demo credentials are available in the project notes.</p>
+          <p className="admin-auth-hint">
+            {isDemoAdminEnabled
+              ? 'Demo credentials are available in the project notes. Disable demo admin before a business launch.'
+              : 'Demo admin access is currently disabled. Use a Supabase-backed admin account.'}
+          </p>
+          {isDemoRuntime || isProductionRuntime ? (
+            <p className="admin-auth-hint">
+              This admin surface may show local/demo fallback behavior depending on runtime configuration.
+            </p>
+          ) : null}
         </div>
 
         <div className="admin-auth-card">
@@ -100,7 +110,7 @@ export default function AdminLoginPage() {
                   autoComplete="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  placeholder="admin@shopora.demo"
+                  placeholder={isDemoAdminEnabled ? 'admin@shopora.demo' : 'admin@yourstore.com'}
                 />
               </label>
               <label>

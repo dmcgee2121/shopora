@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import CatalogStatusNote from '../../components/CatalogStatusNote';
 import ShopOraImage from '../../components/ShopOraImage';
 import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import { useAuth } from '../../context/AuthContext';
@@ -1499,15 +1498,8 @@ export default function AdminDashboard() {
         }
       />
 
-      <CatalogStatusNote variant="admin" className="admin-dashboard-status" />
-
-      <div className="admin-runtime-strip" role="note">
-        <span className="status-badge status-badge-muted">{getRuntimeModeLabel()}</span>
-        <p>{orderSourceNote || 'Admin session is active.'}</p>
-      </div>
-
       <CollapsibleAdminSection
-        title="Launch Readiness Details"
+        title="Setup Details"
         description="Advanced setup, QA, and release notes. Keep collapsed for day-to-day owner workflow."
       >
       <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-launch-command-center-panel">
@@ -1985,7 +1977,7 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      <section className="admin-dashboard-panel">
+      <section className="admin-dashboard-panel admin-needs-attention-panel">
         <div className="admin-dashboard-section-heading compact">
           <span>Needs attention</span>
           <p>Top issues to review first. Focus here before secondary admin checks.</p>
@@ -1993,7 +1985,7 @@ export default function AdminDashboard() {
 
         {attentionProducts.length ? (
           <div className="admin-attention-list">
-            {attentionProducts.slice(0, 5).map(({ product, issues, issueCount }) => (
+            {attentionProducts.slice(0, 4).map(({ product, issues, issueCount }) => (
               <article key={product.id} className="admin-attention-item">
                 <div className="admin-attention-item-header">
                   <div>
@@ -2119,8 +2111,18 @@ export default function AdminDashboard() {
         </section>
       </div>
 
-      <div className="admin-dashboard-panels admin-dashboard-panels-secondary">
-        <section className="admin-dashboard-panel">
+      <details className="admin-collapsible-suite admin-more-details-suite">
+        <summary>
+          <span>More store details</span>
+          <small>Catalog health, highlights, customer activity, and runtime context.</small>
+        </summary>
+        <div className="admin-collapsible-suite-content">
+          <div className="admin-runtime-strip" role="note">
+            <span className="status-badge status-badge-muted">{getRuntimeModeLabel()}</span>
+            <p>{orderSourceNote || 'Admin session is active.'}</p>
+          </div>
+          <div className="admin-dashboard-panels admin-dashboard-panels-secondary">
+            <section className="admin-dashboard-panel">
           <div className="admin-dashboard-section-heading">
             <span>Catalog health</span>
             <p>Healthy, low, and out-of-stock status across the current catalog.</p>
@@ -2155,9 +2157,9 @@ export default function AdminDashboard() {
               Open product management
             </Link>
           </div>
-        </section>
+            </section>
 
-        <section className="admin-dashboard-panel">
+            <section className="admin-dashboard-panel">
           <div className="admin-dashboard-section-heading">
             <span>Catalog highlights</span>
             <p>Fresh or promoted items that are useful to keep visible for owner review.</p>
@@ -2198,9 +2200,9 @@ export default function AdminDashboard() {
               <p>Mark products as new or sale to populate this area.</p>
             </div>
           )}
-        </section>
+            </section>
 
-        <section className="admin-dashboard-panel">
+            <section className="admin-dashboard-panel">
           <div className="admin-dashboard-section-heading">
             <span>Customer activity</span>
             <p>Secondary account signals for owner review.</p>
@@ -2224,8 +2226,10 @@ export default function AdminDashboard() {
               <span>Delivered orders</span>
             </div>
           </div>
-        </section>
-      </div>
+            </section>
+          </div>
+        </div>
+      </details>
     </div>
   );
 }

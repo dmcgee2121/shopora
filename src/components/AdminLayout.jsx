@@ -27,8 +27,8 @@ export default function AdminLayout() {
         <Link to="/admin" className="admin-brand admin-top-brand" onClick={() => setNavOpen(false)}>
           <BrandLogo variant="bag" alt="ShopOra" />
           <div className="admin-brand-copy">
-            <span className="admin-console-label">Admin</span>
-            <span className="admin-brand-name">ShopOra</span>
+            <span className="admin-console-label">ShopOra Admin</span>
+            <span className="admin-brand-name">Store Admin</span>
           </div>
         </Link>
 

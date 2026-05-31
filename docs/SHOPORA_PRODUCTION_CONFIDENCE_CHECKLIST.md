@@ -103,7 +103,7 @@ Why this matters for a real business owner:
 - Launch-grade scale/performance hardening beyond pilot traffic assumptions.
 
 ## 11. Suggested next implementation sprints
-1. Checkout/payment test harness and evidence capture sprint.
+1. Checkout/payment test harness and evidence capture sprint (`docs/SHOPORA_CHECKOUT_PAYMENT_TEST_PLAN.md`).
 2. Admin access verification and trust-boundary hardening sprint.
 3. Order operations MVP sprint (fulfillment/refund/cancellation baseline workflow).
 4. Production runtime/environment setup guide sprint (`docs/SHOPORA_RUNTIME_ENV_SETUP_GUIDE.md`).

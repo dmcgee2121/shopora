@@ -1536,7 +1536,7 @@ export default function AdminDashboard() {
 
       <section className="admin-dashboard-panel admin-needs-attention-panel">
         <div className="admin-dashboard-section-heading compact">
-          <span>Needs attention</span>
+          <span>Today's tasks</span>
           <p>Top issues to review first. Focus here before secondary admin checks.</p>
         </div>
 
@@ -1581,7 +1581,7 @@ export default function AdminDashboard() {
           <aside className="admin-dashboard-panel admin-dashboard-panel-soft admin-next-steps-panel">
             <div className="admin-dashboard-section-heading compact">
               <span>Today's next steps</span>
-              <p>Fast shortcuts for owner tasks.</p>
+              <p>Start here after reviewing the task list.</p>
             </div>
             <div className="admin-dashboard-actions-row">
               <Link to="/admin/orders" className="btn btn-dark btn-small">Review Orders</Link>

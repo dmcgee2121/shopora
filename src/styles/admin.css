@@ -237,7 +237,7 @@
 .admin-main {
   min-width: 0;
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .admin-shell.dashboard-home {
@@ -303,11 +303,11 @@
 
 .admin-page-stack {
   display: grid;
-  gap: 20px;
+  gap: 16px;
 }
 
 .admin-dashboard-page {
-  gap: 14px;
+  gap: 12px;
 }
 
 .admin-dashboard-status {
@@ -340,21 +340,21 @@
 
 .admin-dashboard-section-heading {
   display: grid;
-  gap: 6px;
+  gap: 5px;
 }
 
 .admin-dashboard-section-heading span {
   color: var(--gold-dark);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.11em;
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 850;
 }
 
 .admin-dashboard-section-heading p {
   margin: 0;
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
 .admin-dashboard-section-heading.compact p {
@@ -406,7 +406,10 @@
 }
 
 .admin-owner-snapshot-panel {
-  gap: 12px;
+  gap: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 254, 251, 0.98), rgba(248, 241, 232, 0.86)),
+    radial-gradient(circle at top right, rgba(180, 138, 77, 0.1), transparent 42%);
 }
 
 .admin-dashboard-actions-row {
@@ -419,7 +422,7 @@
 .admin-owner-snapshot-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .admin-owner-snapshot-card {
@@ -971,11 +974,11 @@
 .admin-dashboard-panel {
   display: grid;
   gap: 16px;
-  padding: 20px;
+  padding: 18px;
   border-radius: 24px;
-  border: 1px solid rgba(221, 213, 203, 0.84);
+  border: 1px solid rgba(216, 206, 193, 0.82);
   background: rgba(255, 253, 250, 0.98);
-  box-shadow: 0 16px 34px rgba(43, 33, 20, 0.06);
+  box-shadow: 0 12px 24px rgba(43, 33, 20, 0.06);
 }
 
 .admin-needs-attention-panel {
@@ -984,7 +987,7 @@
 
 .admin-needs-attention-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.85fr);
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr);
   gap: 12px;
   align-items: start;
 }
@@ -993,7 +996,10 @@
   gap: 12px;
   padding: 14px;
   border-radius: 20px;
-  background: linear-gradient(180deg, rgba(255, 254, 251, 0.98), rgba(247, 239, 228, 0.82));
+  border-color: rgba(213, 199, 180, 0.82);
+  background:
+    linear-gradient(180deg, rgba(255, 254, 251, 0.99), rgba(247, 238, 225, 0.88)),
+    radial-gradient(circle at top right, rgba(180, 138, 77, 0.1), transparent 44%);
 }
 
 .admin-dashboard-panel-soft {

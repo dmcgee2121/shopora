@@ -15,13 +15,14 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [navOpen, setNavOpen] = useState(false);
+  const isDashboardHome = location.pathname === '/admin';
 
   useEffect(() => {
     setNavOpen(false);
   }, [location.pathname]);
 
   return (
-    <section className="admin-shell">
+    <section className={`admin-shell ${isDashboardHome ? 'admin-shell-dashboard' : ''}`.trim()}>
       <aside className={`admin-sidebar ${navOpen ? 'is-open' : ''}`}>
         <div className="admin-sidebar-top">
           <Link to="/admin" className="admin-brand" onClick={() => setNavOpen(false)}>
@@ -89,6 +90,26 @@ export default function AdminLayout() {
       </aside>
 
       <div className="admin-main">
+        {isDashboardHome ? (
+          <div className="admin-top-command-bar" role="navigation" aria-label="Dashboard quick navigation">
+            <div className="admin-top-command-links">
+              {navLinks.map((link) => (
+                <NavLink
+                  key={`top-${link.to}`}
+                  to={link.to}
+                  end={link.to === '/admin'}
+                  className={({ isActive }) => (isActive ? 'admin-top-link active' : 'admin-top-link')}
+                >
+                  {link.label}
+                </NavLink>
+              ))}
+            </div>
+            <div className="admin-top-command-user">
+              <span className="admin-role-pill">Admin</span>
+              <span>{currentUser?.firstName || 'Owner session'}</span>
+            </div>
+          </div>
+        ) : null}
         <Outlet />
       </div>
     </section>

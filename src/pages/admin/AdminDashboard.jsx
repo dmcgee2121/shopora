@@ -313,6 +313,18 @@ function OwnerChecklistGroup({ title, items }) {
   );
 }
 
+function CollapsibleAdminSection({ title, description, children, defaultOpen = false }) {
+  return (
+    <details className="admin-collapsible-suite" open={defaultOpen}>
+      <summary>
+        <span>{title}</span>
+        {description ? <small>{description}</small> : null}
+      </summary>
+      <div className="admin-collapsible-suite-content">{children}</div>
+    </details>
+  );
+}
+
 export default function AdminDashboard() {
   const { users, currentUser } = useAuth();
   const { orders, ordersSource, isOrdersLoading } = useOrders();
@@ -320,13 +332,13 @@ export default function AdminDashboard() {
   const orderSourceNote =
     currentUser?.role === 'admin'
       ? ordersSource === 'supabase'
-        ? 'This admin session is reading live Supabase admin orders through the protected RPC.'
-        : 'This prototype admin session is reading browser-local demo orders only. Supabase customer orders stay visible in customer accounts, but they are not exposed to this local admin login.'
+        ? 'This dashboard is reading live Supabase admin orders for this session.'
+        : 'This dashboard is using local demo order data for this session.'
       : '';
   const dashboardSubtitle =
     ordersSource === 'supabase'
-      ? 'A clean snapshot of live Supabase order activity, catalog health, and admin QA signals for the current session.'
-      : 'A clean snapshot of sales, catalog health, and admin QA signals using local demo data.';
+      ? 'Your command center for orders, products, and customers in the current live session.'
+      : 'Your command center for orders, products, and customers using local demo data.';
   const runtimeBoundaryNote =
     isDemoRuntime || isDemoAdminEnabled
       ? `Runtime mode: ${getRuntimeModeLabel()}. Demo admin access is ${
@@ -1518,6 +1530,10 @@ export default function AdminDashboard() {
         </div>
       ) : null}
 
+      <CollapsibleAdminSection
+        title="Launch Readiness Details"
+        description="Advanced setup, QA, and release notes. Keep collapsed for day-to-day owner workflow."
+      >
       <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-launch-command-center-panel">
         <div className="admin-dashboard-section-heading">
           <span>Store owner command center</span>
@@ -1942,6 +1958,21 @@ export default function AdminDashboard() {
           <p>{storeHealthSummary.overallNote}</p>
         </div>
       </section>
+      <section className="admin-dashboard-panel admin-dashboard-panel-soft">
+        <div className="admin-dashboard-section-heading">
+          <span>Coming later</span>
+          <p>Potential owner tools once backend workflows are approved.</p>
+        </div>
+        <div className="status-badges">
+          <span className="status-badge status-badge-muted">Low stock alerts</span>
+          <span className="status-badge status-badge-muted">Order notes</span>
+          <span className="status-badge status-badge-muted">Refund tracking</span>
+          <span className="status-badge status-badge-muted">Customer messaging</span>
+          <span className="status-badge status-badge-muted">Sales analytics</span>
+          <span className="status-badge status-badge-muted">Product performance</span>
+        </div>
+      </section>
+      </CollapsibleAdminSection>
 
       {isOrdersLoading && ordersSource === 'supabase' ? (
         <div className="admin-notice" role="status" aria-live="polite">

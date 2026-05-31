@@ -22,7 +22,47 @@ export default function AdminLayout() {
   }, [location.pathname]);
 
   return (
-    <section className={`admin-shell ${isDashboardHome ? 'admin-shell-dashboard' : ''}`.trim()}>
+    <section className={`admin-shell ${isDashboardHome ? 'dashboard-home' : ''}`}>
+      <header className="admin-top-nav-shell">
+        <Link to="/admin" className="admin-brand admin-top-brand" onClick={() => setNavOpen(false)}>
+          <BrandLogo variant="bag" alt="ShopOra" />
+          <div className="admin-brand-copy">
+            <span className="admin-console-label">Admin</span>
+            <span className="admin-brand-name">ShopOra</span>
+          </div>
+        </Link>
+
+        <nav className="admin-top-nav" aria-label="Admin navigation">
+          {navLinks.map((link) => (
+            <NavLink
+              key={`top-${link.to}`}
+              to={link.to}
+              end={link.to === '/admin'}
+              className={({ isActive }) => (isActive ? 'admin-top-nav-link active' : 'admin-top-nav-link')}
+            >
+              {link.label}
+            </NavLink>
+          ))}
+          <NavLink to="/" className="admin-top-nav-link">
+            View Storefront
+          </NavLink>
+        </nav>
+
+        <div className="admin-top-nav-user">
+          <span className="admin-role-pill">Admin</span>
+          <button
+            type="button"
+            className="btn btn-ghost btn-small"
+            onClick={() => {
+              logout();
+              navigate('/admin/login', { replace: true });
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      </header>
+
       <aside className={`admin-sidebar ${navOpen ? 'is-open' : ''}`}>
         <div className="admin-sidebar-top">
           <Link to="/admin" className="admin-brand" onClick={() => setNavOpen(false)}>
@@ -90,26 +130,6 @@ export default function AdminLayout() {
       </aside>
 
       <div className="admin-main">
-        {isDashboardHome ? (
-          <div className="admin-top-command-bar" role="navigation" aria-label="Dashboard quick navigation">
-            <div className="admin-top-command-links">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={`top-${link.to}`}
-                  to={link.to}
-                  end={link.to === '/admin'}
-                  className={({ isActive }) => (isActive ? 'admin-top-link active' : 'admin-top-link')}
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-            </div>
-            <div className="admin-top-command-user">
-              <span className="admin-role-pill">Admin</span>
-              <span>{currentUser?.firstName || 'Owner session'}</span>
-            </div>
-          </div>
-        ) : null}
         <Outlet />
       </div>
     </section>

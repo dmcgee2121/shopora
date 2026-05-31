@@ -104,7 +104,7 @@ Why this matters for a real business owner:
 
 ## 11. Suggested next implementation sprints
 1. Checkout/payment test harness and evidence capture sprint (`docs/SHOPORA_CHECKOUT_PAYMENT_TEST_PLAN.md`).
-2. Admin access verification and trust-boundary hardening sprint.
+2. Admin access verification and trust-boundary hardening sprint (`docs/SHOPORA_ADMIN_ACCESS_VERIFICATION_CHECKLIST.md`).
 3. Order operations MVP sprint (fulfillment/refund/cancellation baseline workflow).
 4. Production runtime/environment setup guide sprint (`docs/SHOPORA_RUNTIME_ENV_SETUP_GUIDE.md`).
 5. Final pilot QA sweep with sign-off rubric sprint.

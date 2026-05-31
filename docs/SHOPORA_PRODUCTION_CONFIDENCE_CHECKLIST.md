@@ -106,7 +106,7 @@ Why this matters for a real business owner:
 1. Checkout/payment test harness and evidence capture sprint.
 2. Admin access verification and trust-boundary hardening sprint.
 3. Order operations MVP sprint (fulfillment/refund/cancellation baseline workflow).
-4. Production runtime/environment setup guide sprint.
+4. Production runtime/environment setup guide sprint (`docs/SHOPORA_RUNTIME_ENV_SETUP_GUIDE.md`).
 5. Final pilot QA sweep with sign-off rubric sprint.
 
 ## 12. Final note

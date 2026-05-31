@@ -105,3 +105,6 @@ Recommended starting points:
 - Complete checkout/webhook failure-path and reconciliation hardening.
 - Add production operational tooling for fulfillment, refunds, and customer communications.
 
+## Related Reference
+- See `docs/SHOPORA_PRODUCTION_CONFIDENCE_CHECKLIST.md` for the pilot-business-ready verification checklist used to gate show/pilot/launch decisions.
+

@@ -51,3 +51,6 @@ It is operational guidance only and does not change checkout, order creation, pa
   - Order operations/fulfillment workflow hardening
   - Runtime/auth boundary validation in production mode
   - Final business-policy and support operations sign-off
+
+## Related Reference
+- See `docs/SHOPORA_PRODUCTION_CONFIDENCE_CHECKLIST.md` for the pilot-business-ready verification checklist and P0/P1/P2 readiness framing.

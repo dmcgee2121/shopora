@@ -215,7 +215,7 @@ function OrderActivityRow({ order }) {
       <div className="admin-activity-copy">
         <div className="admin-activity-copy-top">
           <div>
-            <strong>{safeText(order.orderNumber, 'Order')}</strong>
+            <strong className="admin-order-ref">{safeText(order.orderNumber, 'Order')}</strong>
             <p>
               {safeText(order.customerName, 'Guest customer')}
             </p>
@@ -1498,6 +1498,304 @@ export default function AdminDashboard() {
         }
       />
 
+
+      {isOrdersLoading && ordersSource === 'supabase' ? (
+        <div className="admin-notice" role="status" aria-live="polite">
+          <p>Loading live Supabase orders for this admin session.</p>
+        </div>
+      ) : null}
+
+      <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-owner-snapshot-panel">
+        <div className="admin-dashboard-section-heading compact">
+          <span>Store snapshot</span>
+          <p>Quick totals for what needs attention right now.</p>
+        </div>
+        <div className="admin-owner-snapshot-grid">
+          <DashboardMetric
+            label="Orders needing attention"
+            value={analytics.pendingOrders + analytics.processingOrders}
+            note={`${analytics.pendingOrders} pending and ${analytics.processingOrders} processing`}
+          />
+          <DashboardMetric
+            label="Products needing attention"
+            value={catalogReadiness.productsNeedingAttention}
+            note={`${catalogReadiness.lowStockProducts} low stock and ${catalogReadiness.outOfStockProducts} out of stock`}
+          />
+          <DashboardMetric
+            label="Customers"
+            value={analytics.customerCount}
+            note={`${analytics.savedTotal} saved items and ${analytics.repeatCustomerCount} repeat shoppers`}
+          />
+          <DashboardMetric
+            label="Catalog health"
+            value={`${catalogReadiness.activeProducts}/${catalogReadiness.totalProducts}`}
+            note="Active products ready for storefront"
+          />
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-needs-attention-panel">
+        <div className="admin-dashboard-section-heading compact">
+          <span>Needs attention</span>
+          <p>Top issues to review first. Focus here before secondary admin checks.</p>
+        </div>
+
+        <div className="admin-needs-attention-grid">
+          {attentionProducts.length ? (
+            <div className="admin-attention-list">
+              {attentionProducts.slice(0, 4).map(({ product, issues, issueCount }) => (
+                <article key={product.id} className="admin-attention-item">
+                  <div className="admin-attention-item-header">
+                    <div>
+                      <strong>{safeText(product.name, 'Untitled product')}</strong>
+                      <p>{safeText(product.brand, 'Unbranded')} | {safeText(product.sku, 'No SKU assigned')}</p>
+                    </div>
+                    <span className="admin-attention-count">
+                      {issueCount} issue{issueCount === 1 ? '' : 's'}
+                    </span>
+                  </div>
+
+                  <p className="admin-attention-detail">
+                    {issues[0]?.detail ?? 'Review this product for missing catalog data.'}
+                  </p>
+
+                  <div className="admin-attention-actions">
+                    <Link to={`/admin/products/${product.id}/edit`} className="text-button">
+                      Review product
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="admin-empty-state admin-empty-state-tight">
+              <h3>No urgent catalog issues.</h3>
+              <p>Products currently look stable for owner review.</p>
+              <div className="admin-empty-state-actions">
+                <Link to="/admin/products" className="btn btn-ghost btn-small">Manage inventory</Link>
+                <Link to="/admin/orders" className="btn btn-dark btn-small">View orders</Link>
+              </div>
+            </div>
+          )}
+
+          <aside className="admin-dashboard-panel admin-dashboard-panel-soft admin-next-steps-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Today's next steps</span>
+              <p>Fast shortcuts for owner tasks.</p>
+            </div>
+            <div className="admin-dashboard-actions-row">
+              <Link to="/admin/orders" className="btn btn-dark btn-small">Review Orders</Link>
+              <Link to="/admin/products" className="btn btn-ghost btn-small">Manage Products</Link>
+              <Link to="/admin/customers" className="btn btn-ghost btn-small">View Customers</Link>
+              <Link to="/" className="btn btn-outline btn-small">View Storefront</Link>
+            </div>
+          </aside>
+        </div>
+      </section>
+      <div className="admin-dashboard-panels">
+        <section className="admin-dashboard-panel">
+          <div className="admin-dashboard-section-heading">
+            <span>Recent order activity</span>
+            <p>The latest orders and their current fulfillment state.</p>
+          </div>
+
+          {analytics.orderedOrders.length ? (
+            <div className="admin-activity-list">
+              {analytics.orderedOrders.slice(0, 3).map((order) => (
+                <OrderActivityRow key={order.id} order={order} />
+              ))}
+            </div>
+          ) : (
+            <div className="admin-empty-state admin-empty-state-tight">
+              <h3>No orders yet.</h3>
+              <p>Completed checkouts will appear here once orders are available in this environment.</p>
+              <div className="admin-empty-state-actions">
+                <Link to="/admin/orders" className="btn btn-ghost">
+                  View Orders
+                </Link>
+              </div>
+            </div>
+          )}
+          <div className="admin-panel-footer">
+            <Link to="/admin/orders" className="text-button">
+              Open full order management
+            </Link>
+          </div>
+        </section>
+
+        <section className="admin-dashboard-panel">
+          <div className="admin-dashboard-section-heading">
+            <span>Inventory attention</span>
+            <p>Items most likely to need a restock or follow-up.</p>
+          </div>
+
+          {analytics.lowStockItems.length || analytics.outOfStockItems.length ? (
+            <div className="admin-record-list">
+              {[...analytics.outOfStockItems, ...analytics.lowStockItems].slice(0, 4).map((product) => {
+                const stockCount = Number(product.stockCount ?? 0);
+                const stockLabel = stockCount <= 0 ? 'Out of stock' : `${stockCount} left`;
+                const stockClass = stockCount <= 0 ? 'stock-out' : 'stock-low';
+
+                return (
+                  <article key={product.id} className="admin-record-card admin-dashboard-product-row">
+                    <ShopOraImage
+                      src={product.image}
+                      alt={safeText(product.name, 'Product')}
+                      className="admin-dashboard-product-thumb"
+                      fallbackText="ShopOra"
+                    />
+                    <div className="admin-record-meta">
+                      <strong>{safeText(product.name, 'Unnamed product')}</strong>
+                      <span>
+                        {safeText(product.brand, 'ShopOra')} | {safeText(product.department, 'Unassigned')} /{' '}
+                        {safeText(product.category, 'Unassigned')}
+                      </span>
+                      <div className="admin-attention-row">
+                        <span className={`status-badge ${stockClass}`.trim()}>{stockLabel}</span>
+                        <span className="admin-attention-meta">
+                          {stockCount <= 0 ? 'Needs restock' : 'Low inventory'}
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="admin-empty-state admin-empty-state-tight">
+              <h3>All products are stocked.</h3>
+              <p>No products are currently in the low-stock or out-of-stock buckets.</p>
+            </div>
+          )}
+
+          <div className="admin-panel-footer">
+            <Link to="/admin/products" className="text-button">
+              Open product management
+            </Link>
+          </div>
+        </section>
+      </div>
+
+      <details className="admin-collapsible-suite admin-more-details-suite">
+        <summary>
+          <span>More store details</span>
+          <small>Catalog health, highlights, customer activity, and runtime context.</small>
+        </summary>
+        <div className="admin-collapsible-suite-content">
+          <div className="admin-runtime-strip" role="note">
+            <span className="status-badge status-badge-muted">{getRuntimeModeLabel()}</span>
+            <p>{orderSourceNote || 'Admin session is active.'}</p>
+          </div>
+          <div className="admin-dashboard-panels admin-dashboard-panels-secondary">
+            <section className="admin-dashboard-panel">
+          <div className="admin-dashboard-section-heading">
+            <span>Catalog health</span>
+            <p>Healthy, low, and out-of-stock status across the current catalog.</p>
+          </div>
+
+          <div className="admin-progress-list">
+            <ProgressRow
+              label="Healthy stock"
+              value={analytics.inStockProducts}
+              total={products.length}
+              note="Safe for shoppers to discover and buy."
+              toneClass="stock-in"
+            />
+            <ProgressRow
+              label="Low stock"
+              value={analytics.lowStockItems.length}
+              total={products.length}
+              note="Worth replenishing soon."
+              toneClass="stock-low"
+            />
+            <ProgressRow
+              label="Out of stock"
+              value={analytics.outOfStockItems.length}
+              total={products.length}
+              note="Unavailable until replenished."
+              toneClass="stock-out"
+            />
+          </div>
+
+          <div className="admin-panel-footer">
+            <Link to="/admin/products" className="text-button">
+              Open product management
+            </Link>
+          </div>
+            </section>
+
+            <section className="admin-dashboard-panel">
+          <div className="admin-dashboard-section-heading">
+            <span>Catalog highlights</span>
+            <p>Fresh or promoted items that are useful to keep visible for owner review.</p>
+          </div>
+
+          {analytics.catalogHighlights.length ? (
+            <div className="admin-highlight-list">
+              {analytics.catalogHighlights.map((product) => (
+                <article key={product.id} className="admin-highlight-item">
+                  <ShopOraImage
+                    src={product.image}
+                    alt={safeText(product.name, 'Product')}
+                    className="admin-highlight-thumb"
+                    fallbackText="ShopOra"
+                  />
+                  <div className="admin-highlight-copy">
+                    <div className="admin-highlight-row">
+                      <strong>{safeText(product.name, 'Unnamed product')}</strong>
+                      <span className={`status-badge ${product.isSale ? 'status-badge-sale' : 'status-badge-muted'}`}>
+                        {product.isSale ? 'Sale' : 'New'}
+                      </span>
+                    </div>
+                    <p>
+                      {safeText(product.brand, 'ShopOra')} | {safeText(product.department, 'Unassigned')} /{' '}
+                      {safeText(product.category, 'Unassigned')}
+                    </p>
+                    <div className="admin-highlight-meta">
+                      <span>{formatMoney(product.salePrice ?? product.price)}</span>
+                      <span>{Number(product.stockCount ?? 0)} in stock</span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="admin-empty-state admin-empty-state-tight">
+              <h3>No featured products yet.</h3>
+              <p>Mark products as new or sale to populate this area.</p>
+            </div>
+          )}
+            </section>
+
+            <section className="admin-dashboard-panel">
+          <div className="admin-dashboard-section-heading">
+            <span>Customer activity</span>
+            <p>Secondary account signals for owner review.</p>
+          </div>
+
+          <div className="admin-insight-list">
+            <div className="admin-insight-row">
+              <strong>{analytics.savedTotal}</strong>
+              <span>Saved items across customer accounts</span>
+            </div>
+            <div className="admin-insight-row">
+              <strong>{analytics.averageItemsPerOrder.toFixed(1)}</strong>
+              <span>Average items per order</span>
+            </div>
+            <div className="admin-insight-row">
+              <strong>{analytics.totalItems}</strong>
+              <span>Total items across tracked orders</span>
+            </div>
+            <div className="admin-insight-row">
+              <strong>{analytics.deliveredOrders}</strong>
+              <span>Delivered orders</span>
+            </div>
+          </div>
+            </section>
+          </div>
+        </div>
+      </details>
+
       <CollapsibleAdminSection
         title="Setup Details"
         description="Advanced setup, QA, and release notes. Keep collapsed for day-to-day owner workflow."
@@ -1942,294 +2240,6 @@ export default function AdminDashboard() {
       </section>
       </CollapsibleAdminSection>
 
-      {isOrdersLoading && ordersSource === 'supabase' ? (
-        <div className="admin-notice" role="status" aria-live="polite">
-          <p>Loading live Supabase orders for this admin session.</p>
-        </div>
-      ) : null}
-
-      <section className="admin-dashboard-panel admin-dashboard-panel-soft admin-owner-snapshot-panel">
-        <div className="admin-dashboard-section-heading compact">
-          <span>Store snapshot</span>
-          <p>Quick totals for what needs attention right now.</p>
-        </div>
-        <div className="admin-owner-snapshot-grid">
-          <DashboardMetric
-            label="Orders needing attention"
-            value={analytics.pendingOrders + analytics.processingOrders}
-            note={`${analytics.pendingOrders} pending and ${analytics.processingOrders} processing`}
-          />
-          <DashboardMetric
-            label="Products needing attention"
-            value={catalogReadiness.productsNeedingAttention}
-            note={`${catalogReadiness.lowStockProducts} low stock and ${catalogReadiness.outOfStockProducts} out of stock`}
-          />
-          <DashboardMetric
-            label="Customers"
-            value={analytics.customerCount}
-            note={`${analytics.savedTotal} saved items and ${analytics.repeatCustomerCount} repeat shoppers`}
-          />
-          <DashboardMetric
-            label="Catalog health"
-            value={`${catalogReadiness.activeProducts}/${catalogReadiness.totalProducts}`}
-            note="Active products ready for storefront"
-          />
-        </div>
-      </section>
-
-      <section className="admin-dashboard-panel admin-needs-attention-panel">
-        <div className="admin-dashboard-section-heading compact">
-          <span>Needs attention</span>
-          <p>Top issues to review first. Focus here before secondary admin checks.</p>
-        </div>
-
-        {attentionProducts.length ? (
-          <div className="admin-attention-list">
-            {attentionProducts.slice(0, 4).map(({ product, issues, issueCount }) => (
-              <article key={product.id} className="admin-attention-item">
-                <div className="admin-attention-item-header">
-                  <div>
-                    <strong>{safeText(product.name, 'Untitled product')}</strong>
-                    <p>{safeText(product.brand, 'Unbranded')} | {safeText(product.sku, 'No SKU assigned')}</p>
-                  </div>
-                  <span className="admin-attention-count">
-                    {issueCount} issue{issueCount === 1 ? '' : 's'}
-                  </span>
-                </div>
-
-                <p className="admin-attention-detail">
-                  {issues[0]?.detail ?? 'Review this product for missing catalog data.'}
-                </p>
-
-                <div className="admin-attention-actions">
-                  <Link to={`/admin/products/${product.id}/edit`} className="text-button">
-                    Review product
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="admin-empty-state admin-empty-state-tight">
-            <h3>No urgent catalog issues.</h3>
-            <p>Products currently look stable for owner review.</p>
-            <div className="admin-empty-state-actions">
-              <Link to="/admin/products" className="btn btn-ghost btn-small">Manage inventory</Link>
-              <Link to="/admin/orders" className="btn btn-dark btn-small">View orders</Link>
-            </div>
-          </div>
-        )}
-
-        <div className="admin-dashboard-actions-row">
-          <Link to="/admin/orders" className="btn btn-dark btn-small">Review Orders</Link>
-          <Link to="/admin/products" className="btn btn-ghost btn-small">Manage Products</Link>
-          <Link to="/admin/customers" className="btn btn-ghost btn-small">View Customers</Link>
-          <Link to="/" className="btn btn-outline btn-small">View Storefront</Link>
-        </div>
-      </section>
-      <div className="admin-dashboard-panels">
-        <section className="admin-dashboard-panel">
-          <div className="admin-dashboard-section-heading">
-            <span>Recent order activity</span>
-            <p>The latest orders and their current fulfillment state.</p>
-          </div>
-
-          {analytics.orderedOrders.length ? (
-            <div className="admin-activity-list">
-              {analytics.orderedOrders.slice(0, 3).map((order) => (
-                <OrderActivityRow key={order.id} order={order} />
-              ))}
-            </div>
-          ) : (
-            <div className="admin-empty-state admin-empty-state-tight">
-              <h3>No orders yet.</h3>
-              <p>Completed checkouts will appear here once orders are available in this environment.</p>
-              <div className="admin-empty-state-actions">
-                <Link to="/admin/orders" className="btn btn-ghost">
-                  View Orders
-                </Link>
-              </div>
-            </div>
-          )}
-          <div className="admin-panel-footer">
-            <Link to="/admin/orders" className="text-button">
-              Open full order management
-            </Link>
-          </div>
-        </section>
-
-        <section className="admin-dashboard-panel">
-          <div className="admin-dashboard-section-heading">
-            <span>Inventory attention</span>
-            <p>Items most likely to need a restock or follow-up.</p>
-          </div>
-
-          {analytics.lowStockItems.length || analytics.outOfStockItems.length ? (
-            <div className="admin-record-list">
-              {[...analytics.outOfStockItems, ...analytics.lowStockItems].slice(0, 4).map((product) => {
-                const stockCount = Number(product.stockCount ?? 0);
-                const stockLabel = stockCount <= 0 ? 'Out of stock' : `${stockCount} left`;
-                const stockClass = stockCount <= 0 ? 'stock-out' : 'stock-low';
-
-                return (
-                  <article key={product.id} className="admin-record-card admin-dashboard-product-row">
-                    <ShopOraImage
-                      src={product.image}
-                      alt={safeText(product.name, 'Product')}
-                      className="admin-dashboard-product-thumb"
-                      fallbackText="ShopOra"
-                    />
-                    <div className="admin-record-meta">
-                      <strong>{safeText(product.name, 'Unnamed product')}</strong>
-                      <span>
-                        {safeText(product.brand, 'ShopOra')} | {safeText(product.department, 'Unassigned')} /{' '}
-                        {safeText(product.category, 'Unassigned')}
-                      </span>
-                      <div className="admin-attention-row">
-                        <span className={`status-badge ${stockClass}`.trim()}>{stockLabel}</span>
-                        <span className="admin-attention-meta">
-                          {stockCount <= 0 ? 'Needs restock' : 'Low inventory'}
-                        </span>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="admin-empty-state admin-empty-state-tight">
-              <h3>All products are stocked.</h3>
-              <p>No products are currently in the low-stock or out-of-stock buckets.</p>
-            </div>
-          )}
-
-          <div className="admin-panel-footer">
-            <Link to="/admin/products" className="text-button">
-              Open product management
-            </Link>
-          </div>
-        </section>
-      </div>
-
-      <details className="admin-collapsible-suite admin-more-details-suite">
-        <summary>
-          <span>More store details</span>
-          <small>Catalog health, highlights, customer activity, and runtime context.</small>
-        </summary>
-        <div className="admin-collapsible-suite-content">
-          <div className="admin-runtime-strip" role="note">
-            <span className="status-badge status-badge-muted">{getRuntimeModeLabel()}</span>
-            <p>{orderSourceNote || 'Admin session is active.'}</p>
-          </div>
-          <div className="admin-dashboard-panels admin-dashboard-panels-secondary">
-            <section className="admin-dashboard-panel">
-          <div className="admin-dashboard-section-heading">
-            <span>Catalog health</span>
-            <p>Healthy, low, and out-of-stock status across the current catalog.</p>
-          </div>
-
-          <div className="admin-progress-list">
-            <ProgressRow
-              label="Healthy stock"
-              value={analytics.inStockProducts}
-              total={products.length}
-              note="Safe for shoppers to discover and buy."
-              toneClass="stock-in"
-            />
-            <ProgressRow
-              label="Low stock"
-              value={analytics.lowStockItems.length}
-              total={products.length}
-              note="Worth replenishing soon."
-              toneClass="stock-low"
-            />
-            <ProgressRow
-              label="Out of stock"
-              value={analytics.outOfStockItems.length}
-              total={products.length}
-              note="Unavailable until replenished."
-              toneClass="stock-out"
-            />
-          </div>
-
-          <div className="admin-panel-footer">
-            <Link to="/admin/products" className="text-button">
-              Open product management
-            </Link>
-          </div>
-            </section>
-
-            <section className="admin-dashboard-panel">
-          <div className="admin-dashboard-section-heading">
-            <span>Catalog highlights</span>
-            <p>Fresh or promoted items that are useful to keep visible for owner review.</p>
-          </div>
-
-          {analytics.catalogHighlights.length ? (
-            <div className="admin-highlight-list">
-              {analytics.catalogHighlights.map((product) => (
-                <article key={product.id} className="admin-highlight-item">
-                  <ShopOraImage
-                    src={product.image}
-                    alt={safeText(product.name, 'Product')}
-                    className="admin-highlight-thumb"
-                    fallbackText="ShopOra"
-                  />
-                  <div className="admin-highlight-copy">
-                    <div className="admin-highlight-row">
-                      <strong>{safeText(product.name, 'Unnamed product')}</strong>
-                      <span className={`status-badge ${product.isSale ? 'status-badge-sale' : 'status-badge-muted'}`}>
-                        {product.isSale ? 'Sale' : 'New'}
-                      </span>
-                    </div>
-                    <p>
-                      {safeText(product.brand, 'ShopOra')} | {safeText(product.department, 'Unassigned')} /{' '}
-                      {safeText(product.category, 'Unassigned')}
-                    </p>
-                    <div className="admin-highlight-meta">
-                      <span>{formatMoney(product.salePrice ?? product.price)}</span>
-                      <span>{Number(product.stockCount ?? 0)} in stock</span>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="admin-empty-state admin-empty-state-tight">
-              <h3>No featured products yet.</h3>
-              <p>Mark products as new or sale to populate this area.</p>
-            </div>
-          )}
-            </section>
-
-            <section className="admin-dashboard-panel">
-          <div className="admin-dashboard-section-heading">
-            <span>Customer activity</span>
-            <p>Secondary account signals for owner review.</p>
-          </div>
-
-          <div className="admin-insight-list">
-            <div className="admin-insight-row">
-              <strong>{analytics.savedTotal}</strong>
-              <span>Saved items across customer accounts</span>
-            </div>
-            <div className="admin-insight-row">
-              <strong>{analytics.averageItemsPerOrder.toFixed(1)}</strong>
-              <span>Average items per order</span>
-            </div>
-            <div className="admin-insight-row">
-              <strong>{analytics.totalItems}</strong>
-              <span>Total items across tracked orders</span>
-            </div>
-            <div className="admin-insight-row">
-              <strong>{analytics.deliveredOrders}</strong>
-              <span>Delivered orders</span>
-            </div>
-          </div>
-            </section>
-          </div>
-        </div>
-      </details>
     </div>
   );
 }

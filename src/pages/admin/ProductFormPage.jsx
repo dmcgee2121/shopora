@@ -167,7 +167,7 @@ function getEditorGuidanceCopy(status) {
     case 'Optional polish':
       return 'Nice to have for stronger merchandising, but not required to save.';
     case 'Missing required merchandising':
-      return 'This field blocks a confident launch story until it is filled in.';
+      return 'This field should be completed before treating the listing as owner-ready.';
     default:
       return 'Use this guidance to refine the product before a release batch.';
   }
@@ -508,7 +508,7 @@ export default function ProductFormPage({ mode }) {
       <AdminPageHeader
         eyebrow="Catalog editor"
         title={mode === 'edit' ? 'Edit Product' : 'Add Product'}
-        subtitle="Update product merchandising, pricing, inventory flags, and content in one place while keeping the write flow unchanged and showing advisory readiness guidance."
+        subtitle="Update product merchandising, pricing, inventory flags, and content in one place while keeping the existing save flow unchanged."
         actionLabel="Back to Products"
         actionTo="/admin/products"
         actionClassName="btn btn-ghost"
@@ -563,7 +563,7 @@ export default function ProductFormPage({ mode }) {
                 ? `${readinessMissingCount} item${readinessMissingCount === 1 ? '' : 's'} still need required merchandising before this product feels launch-ready.`
                 : readinessAttentionCount
                   ? `${readinessAttentionCount} item${readinessAttentionCount === 1 ? '' : 's'} still need attention before this product is pitched as ready to sell.`
-                  : 'This draft is ready for the storefront QA checklist, with optional polish still available if you want a stronger pitch.'}
+                  : 'This draft is ready for storefront QA, with optional polish still available if you want a stronger listing.'}
             </p>
           </div>
 
@@ -611,7 +611,7 @@ export default function ProductFormPage({ mode }) {
             <EditorGuidanceGroup
               title="Missing required merchandising"
               status="Missing required merchandising"
-              note="These gaps block a confident launch story and should be fixed first."
+              note="These gaps should be fixed first before presenting this product as ready."
               items={guidanceGroups['Missing required merchandising']}
               product={editorProduct}
             />
@@ -689,7 +689,7 @@ export default function ProductFormPage({ mode }) {
               </label>
               <label className="full-span">
                 SKU
-                <span className="field-help">Optional in the demo, but useful for support, filtering, and readiness tracking.</span>
+                <span className="field-help">Optional, but useful for support, filtering, and readiness tracking.</span>
                 <input name="sku" value={form.sku} onChange={handleChange} />
                 <span className="field-help">Keep it short, unique, and stable across product updates.</span>
                 <button
@@ -707,7 +707,7 @@ export default function ProductFormPage({ mode }) {
               </label>
               <label className="full-span">
                 Product description
-                <span className="field-help">Optional. Keep this concise, shopper-facing, and useful in demos.</span>
+                <span className="field-help">Optional. Keep this concise and shopper-facing.</span>
                 <textarea name="description" rows="4" value={form.description} onChange={handleChange} />
               </label>
             </div>
@@ -753,7 +753,7 @@ export default function ProductFormPage({ mode }) {
                 Review count
                 <span className="field-help">Optional. Pairs with rating to give shoppers quick social proof.</span>
                 <input name="reviewCount" type="number" value={form.reviewCount} onChange={handleChange} />
-                <span className="field-help">Keep it consistent with the expected demo story and discovery cues.</span>
+                <span className="field-help">Keep it consistent with the expected store story and discovery cues.</span>
                 {errors.reviewCount ? <span className="field-error">{errors.reviewCount}</span> : null}
               </label>
             </div>

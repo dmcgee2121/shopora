@@ -134,8 +134,11 @@ button {
   top: 0;
   z-index: 40;
   backdrop-filter: blur(18px);
-  background: rgba(247, 242, 233, 0.86);
+  background:
+    linear-gradient(180deg, rgba(251, 247, 240, 0.95), rgba(247, 242, 233, 0.86)),
+    rgba(247, 242, 233, 0.86);
   border-bottom: 1px solid rgba(228, 217, 204, 0.7);
+  box-shadow: 0 10px 28px rgba(43, 33, 20, 0.05);
 }
 
 .topbar {
@@ -219,6 +222,7 @@ button {
   align-items: center;
   justify-content: flex-end;
   gap: 18px;
+  flex-wrap: wrap;
 }
 
 .nav-links {
@@ -272,6 +276,13 @@ button {
   border: 1px solid var(--border);
   border-radius: 999px;
   box-shadow: var(--shadow-soft);
+}
+
+.search-form:focus-within {
+  border-color: rgba(180, 138, 77, 0.48);
+  box-shadow:
+    0 0 0 3px rgba(180, 138, 77, 0.12),
+    var(--shadow-soft);
 }
 
 .search-form svg {
@@ -370,6 +381,19 @@ main {
   gap: 14px;
   margin-top: 28px;
   flex-wrap: wrap;
+}
+
+.hero-proof-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.hero-proof-row .query-chip {
+  background: rgba(255, 253, 250, 0.94);
+  color: var(--text);
+  border-color: rgba(180, 138, 77, 0.18);
 }
 
 .btn {
@@ -492,6 +516,15 @@ main {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(243, 237, 228, 0.8)),
     var(--surface-2);
+}
+
+.hero-panel-kicker {
+  margin: 0;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  font-size: 0.76rem;
 }
 
 .hero-mini-card {
@@ -778,6 +811,12 @@ main {
 .badge-stock-low {
   background: rgba(180, 138, 77, 0.94);
   color: #fff;
+}
+
+.badge-more {
+  background: rgba(255, 253, 250, 0.94);
+  color: var(--gold-dark);
+  border: 1px solid rgba(180, 138, 77, 0.24);
 }
 
 .badge-stack {
@@ -2597,6 +2636,8 @@ main {
 
 .cart-summary {
   align-self: start;
+  position: sticky;
+  top: 110px;
   padding: 22px;
   border-radius: 24px;
   border: 1px solid var(--border);
@@ -2956,6 +2997,19 @@ main {
   margin-top: 20px;
 }
 
+.campaign-cues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.campaign-cues .query-chip {
+  background: rgba(255, 253, 250, 0.95);
+  color: var(--text);
+  border-color: rgba(180, 138, 77, 0.18);
+}
+
 .campaign-tags .query-chip {
   background: rgba(247, 242, 233, 0.98);
   color: var(--text);
@@ -3260,10 +3314,10 @@ main {
 .footer-legal {
   width: min(1180px, calc(100% - 32px));
   margin: 18px auto 0;
-  padding-top: 14px;
-  border-top: 1px solid rgba(228, 217, 204, 0.55);
+  padding-top: 16px;
+  border-top: 1px solid rgba(228, 217, 204, 0.6);
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
 }
 
 .page-heading-brand-wrap {
@@ -3307,7 +3361,26 @@ main {
 }
 
 .empty-product {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  gap: 12px;
+  text-align: center;
   padding: 40px 0;
+}
+
+.empty-product h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 0.95;
+}
+
+.empty-product p {
+  margin: 0;
+  max-width: 40ch;
+  color: var(--muted);
+  line-height: 1.65;
 }
 
 .drawer-open {
@@ -3763,6 +3836,11 @@ main {
 
   .campaign-image.main {
     min-height: 280px;
+  }
+
+  .cart-summary {
+    position: static;
+    top: auto;
   }
 
   .brand-rail,

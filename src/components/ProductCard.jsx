@@ -166,6 +166,9 @@ export default function ProductCard({ product }) {
     (reviewDisplay.hasReviews ? reviewDisplay.summary : 'Open the product page to see sizing, shipping, and support details.');
   const leftBadges = merchandisingBadges.filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured');
   const rightBadges = merchandisingBadges.filter((badge) => !leftBadges.includes(badge));
+  const visibleLeftBadges = leftBadges.slice(0, 1);
+  const visibleRightBadges = rightBadges.slice(0, 1);
+  const hiddenBadgeCount = Math.max(0, merchandisingBadges.length - visibleLeftBadges.length - visibleRightBadges.length);
 
   const handleSave = () => {
     if (!isAuthenticated) {
@@ -194,18 +197,19 @@ export default function ProductCard({ product }) {
               fallbackText="Image coming soon"
             />
             <div className="badge-stack badge-stack-left">
-              {leftBadges.map((badge) => (
+              {visibleLeftBadges.map((badge) => (
                 <span key={badge.label} className={`badge ${badge.tone}`}>
                   {badge.label}
                 </span>
               ))}
             </div>
             <div className="badge-stack badge-stack-right">
-              {rightBadges.map((badge) => (
+              {visibleRightBadges.map((badge) => (
                 <span key={badge.label} className={`badge ${badge.tone}`}>
                   {badge.label}
                 </span>
               ))}
+              {hiddenBadgeCount > 0 ? <span className="badge badge-more">+{hiddenBadgeCount}</span> : null}
             </div>
           </div>
         </Link>

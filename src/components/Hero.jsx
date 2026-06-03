@@ -19,6 +19,11 @@ export default function Hero() {
             Shop men
           </Link>
         </div>
+        <div className="hero-proof-row" aria-label="Store highlights">
+          <span className="query-chip">New arrivals each week</span>
+          <span className="query-chip">Sale picks worth scanning</span>
+          <span className="query-chip">Easy returns</span>
+        </div>
       </div>
 
       <div className="hero-visual" aria-hidden="true">
@@ -32,6 +37,7 @@ export default function Hero() {
           />
         </div>
         <div className="hero-panel hero-panel-secondary">
+          <p className="hero-panel-kicker">Featured edit</p>
           <div className="hero-mini-card">
             <span>New Arrivals</span>
             <strong>Linen Blend Blazer</strong>

@@ -226,7 +226,7 @@ function getProductQueuePriority(product, launchInfo) {
 }
 
 function ProductWorkQueueCard({ item }) {
-  const { product, launchInfo, stockState, priority } = item;
+  const { product, priority } = item;
 
   return (
     <article className="admin-work-queue-card">
@@ -242,12 +242,6 @@ function ProductWorkQueueCard({ item }) {
           </p>
         </div>
         <span className={`status-badge ${priority.tone}`.trim()}>{priority.label}</span>
-      </div>
-
-      <div className="admin-work-queue-card-meta">
-        <span className={`status-badge ${launchInfo.visibility.className}`}>{launchInfo.visibility.label}</span>
-        <span className={`status-badge ${stockState.className}`}>{stockState.label}</span>
-        <span className={`status-badge ${launchInfo.tone}`}>{launchInfo.status}</span>
       </div>
 
       <p>{priority.detail}</p>
@@ -320,7 +314,7 @@ export default function AdminProductsPage() {
 
         return safeText(left.product.name).localeCompare(safeText(right.product.name));
       })
-      .slice(0, 6);
+      .slice(0, 4);
   }, [launchReadiness.entries]);
 
   const departments = useMemo(() => {
@@ -429,7 +423,7 @@ export default function AdminProductsPage() {
         <div className="admin-owner-workbench-main">
           <div className="admin-dashboard-section-heading">
             <span>Catalog snapshot</span>
-            <p>See what is live, what needs attention, and which products should be opened first.</p>
+            <p>See what is live, what needs attention, and what to open first.</p>
           </div>
 
           <div className="admin-status-grid admin-owner-summary-grid">
@@ -460,7 +454,7 @@ export default function AdminProductsPage() {
                 <span className="admin-readiness-divider">/</span>
                 {summary.featuredProducts}
               </strong>
-              <p>Live merchandising flags already available in the catalog.</p>
+              <p>Products already promoted for shoppers.</p>
             </div>
           </div>
         </div>
@@ -468,7 +462,7 @@ export default function AdminProductsPage() {
         <aside className="admin-owner-workbench-side admin-dashboard-panel">
           <div className="admin-dashboard-section-heading compact">
             <span>Work queue</span>
-            <p>Start with the products most likely to block sales or need owner review.</p>
+            <p>The few product tasks most likely to block sales.</p>
           </div>
 
           {productWorkQueue.length ? (
@@ -573,11 +567,8 @@ export default function AdminProductsPage() {
                   {filtered.map((product) => {
                     const launchInfo = launchReadiness.byId.get(product.id);
                     const visibility = getProductVisibilityInfo(product);
-                    const merchandisingReadiness = getProductMerchandisingReadiness(product);
                     const stockState = getStockState(product.stockCount);
                     const priority = getProductQueuePriority(product, launchInfo);
-                    const saleActive = product.isSale || Number(product.salePrice ?? 0) > 0;
-                    const featuredActive = Boolean(product.isNew || product.featured);
 
                     return (
                       <tr key={product.id}>
@@ -621,24 +612,12 @@ export default function AdminProductsPage() {
                         <td>
                           <div className="admin-status-stack">
                             <span className={`status-badge ${visibility.className}`}>{visibility.label}</span>
-                            <span className={`status-badge ${launchInfo?.tone ?? 'status-badge-muted'}`}>
-                              {launchInfo?.status ?? 'Ready to launch'}
-                            </span>
                           </div>
                         </td>
                         <td>
                           <div className="admin-status-stack">
                             <span className={`status-badge ${priority.tone}`}>{priority.label}</span>
                             <span className="admin-status-caption">{priority.detail}</span>
-                            <div className="status-badges admin-readiness-badges">
-                              {merchandisingReadiness.badges.map((badge) => (
-                                <span key={badge.label} className={`status-badge ${badge.tone}`.trim()}>
-                                  {badge.label}
-                                </span>
-                              ))}
-                              {featuredActive ? <span className="status-badge status-badge-muted">Featured</span> : null}
-                              {saleActive ? <span className="status-badge status-badge-sale">Sale</span> : null}
-                            </div>
                           </div>
                         </td>
                         <td>
@@ -679,7 +658,6 @@ export default function AdminProductsPage() {
               {filtered.map((product) => {
                 const launchInfo = launchReadiness.byId.get(product.id);
                 const visibility = getProductVisibilityInfo(product);
-                const merchandisingReadiness = getProductMerchandisingReadiness(product);
                 const stockState = getStockState(product.stockCount);
                 const priority = getProductQueuePriority(product, launchInfo);
 
@@ -728,14 +706,6 @@ export default function AdminProductsPage() {
                       </div>
 
                       <p className="admin-product-readiness-detail">{priority.detail}</p>
-
-                      <div className="status-badges admin-readiness-badges">
-                        {merchandisingReadiness.badges.map((badge) => (
-                          <span key={badge.label} className={`status-badge ${badge.tone}`.trim()}>
-                            {badge.label}
-                          </span>
-                        ))}
-                      </div>
 
                       <div className="admin-product-card-actions">
                         <Link

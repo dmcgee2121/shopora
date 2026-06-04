@@ -73,6 +73,13 @@ function getOrderItemCount(order) {
   return Array.isArray(order?.items) ? order.items.length : 0;
 }
 
+function isOrderRecent(order) {
+  const createdAt = new Date(order?.createdAt).getTime();
+  if (!Number.isFinite(createdAt)) return false;
+
+  return Date.now() - createdAt <= 24 * 60 * 60 * 1000;
+}
+
 function getCustomerSummary(order) {
   return {
     name: safeText(order?.customerName, 'Guest customer'),
@@ -120,6 +127,20 @@ function getContactContextLines(order) {
   }
 
   return lines;
+}
+
+function getOwnerViewMatchesOrder(order, ownerView) {
+  if (ownerView === 'all') return true;
+
+  const attention = getOrderAttentionInfo(order);
+  const status = normalizeOrderStatusValue(order.status);
+
+  if (ownerView === 'needs-action') return attention.needsAction;
+  if (ownerView === 'processing') return status === 'processing';
+  if (ownerView === 'payment-pending') return attention.key === 'payment-pending';
+  if (ownerView === 'recent') return isOrderRecent(order);
+
+  return true;
 }
 
 function getFulfillmentReadiness(order, attention) {
@@ -253,7 +274,9 @@ function OrderQueueCard({ order, attention, ordersSource, onOpen }) {
           {getOrderStatusLabel(order.status)}
         </span>
         <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
-        <span className="status-badge status-badge-muted">{formatDate(order.createdAt)}</span>
+        <span className="admin-table-subtle">
+          {formatMoney(order.total)} | {getOrderItemCount(order)} item{getOrderItemCount(order) === 1 ? '' : 's'} | {formatDate(order.createdAt)}
+        </span>
       </div>
 
       <p>{attention.detail}</p>
@@ -277,6 +300,7 @@ export default function AdminOrdersPage() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [ownerView, setOwnerView] = useState('needs-action');
   const orderSourceNote =
     currentUser?.role === 'admin'
       ? ordersSource === 'supabase'
@@ -296,6 +320,7 @@ export default function AdminOrdersPage() {
 
     return ordered.filter((order) => {
       const statusMatches = statusFilter === 'all' || normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(statusFilter);
+      const ownerViewMatches = getOwnerViewMatchesOrder(order, ownerView);
       const searchable = [
         order.orderNumber,
         order.customerName,
@@ -306,9 +331,9 @@ export default function AdminOrdersPage() {
         .join(' ')
         .toLowerCase();
 
-      return statusMatches && (!term || searchable.includes(term));
+      return ownerViewMatches && statusMatches && (!term || searchable.includes(term));
     });
-  }, [ordered, query, statusFilter]);
+  }, [ordered, ownerView, query, statusFilter]);
 
   const selectedOrder = ordered.find((order) => idsMatch(order.id, selectedOrderId)) ?? null;
   const selectedOrderAttention = selectedOrder ? getOrderAttentionInfo(selectedOrder) : null;
@@ -337,7 +362,7 @@ export default function AdminOrdersPage() {
 
         return new Date(right.order.createdAt).getTime() - new Date(left.order.createdAt).getTime();
       })
-      .slice(0, 6);
+      .slice(0, 5);
   }, [operationsSummary.attentionOrders]);
 
   const totalRevenue = ordered.reduce((total, order) => total + Number(order.total ?? 0), 0);
@@ -345,9 +370,15 @@ export default function AdminOrdersPage() {
   const pendingOrders = counts.Pending ?? 0;
   const processingOrders = counts.Processing ?? 0;
   const recentOrders = operationsSummary.recentlyPlacedOrders;
+  const ownerViews = [
+    { key: 'needs-action', label: 'Needs action', count: operationsSummary.ordersNeedingAttention },
+    { key: 'processing', label: 'Processing', count: processingOrders },
+    { key: 'payment-pending', label: 'Payment pending', count: operationsSummary.paymentPendingOrders },
+    { key: 'recent', label: 'Recent', count: recentOrders },
+  ];
 
   const hasOrders = ordered.length > 0;
-  const hasFilters = Boolean(query.trim() || statusFilter !== 'all');
+  const hasFilters = Boolean(query.trim() || statusFilter !== 'all' || ownerView !== 'needs-action');
   const hasFilteredOrders = filteredOrders.length > 0;
   const shouldShowLoadingState = isOrdersLoading && !hasOrders;
 
@@ -377,10 +408,24 @@ export default function AdminOrdersPage() {
         subtitle="Track customer orders and see what needs action."
         actions={(
           <>
-            <button type="button" className="btn btn-dark" onClick={() => setStatusFilter('Pending')}>
+            <button
+              type="button"
+              className="btn btn-dark"
+              onClick={() => {
+                setOwnerView('all');
+                setStatusFilter('Pending');
+              }}
+            >
               Review pending
             </button>
-            <button type="button" className="btn btn-ghost" onClick={() => setStatusFilter('Processing')}>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                setOwnerView('processing');
+                setStatusFilter('all');
+              }}
+            >
               View processing
             </button>
             <Link to="/" className="btn btn-outline">
@@ -400,39 +445,29 @@ export default function AdminOrdersPage() {
         <div className="admin-owner-workbench-main">
           <div className="admin-dashboard-section-heading">
             <span>Order snapshot</span>
-            <p>See which orders are waiting, moving, complete, or blocked before opening the full list.</p>
+            <p>Start with the orders waiting on a customer, payment, or fulfillment step.</p>
           </div>
 
           <div className="admin-status-grid admin-owner-summary-grid">
             <div className="admin-status-card">
+              <span>Need action</span>
+              <strong>{operationsSummary.ordersNeedingAttention}</strong>
+              <p>Orders that should be reviewed first.</p>
+            </div>
+            <div className="admin-status-card">
               <span>Pending orders</span>
               <strong>{pendingOrders}</strong>
-              <p>Orders waiting for the next owner or team action.</p>
+              <p>Orders waiting for the next step.</p>
             </div>
             <div className="admin-status-card">
               <span>Processing</span>
               <strong>{processingOrders}</strong>
-              <p>Orders currently in the packing queue.</p>
-            </div>
-            <div className="admin-status-card">
-              <span>Shipped / fulfilled</span>
-              <strong>{shippedFulfilled}</strong>
-              <p>Orders already moved out of active handling.</p>
+              <p>Orders already in the packing queue.</p>
             </div>
             <div className="admin-status-card">
               <span>Payment pending</span>
               <strong>{operationsSummary.paymentPendingOrders}</strong>
-              <p>Orders still waiting for payment clearance.</p>
-            </div>
-            <div className="admin-status-card">
-              <span>Need attention</span>
-              <strong>{operationsSummary.ordersNeedingAttention}</strong>
-              <p>Orders with customer, payment, or fulfillment issues.</p>
-            </div>
-            <div className="admin-status-card">
-              <span>Recent orders</span>
-              <strong>{recentOrders}</strong>
-              <p>Orders placed in the last 24 hours.</p>
+              <p>Orders waiting for payment clearance.</p>
             </div>
           </div>
         </div>
@@ -440,7 +475,7 @@ export default function AdminOrdersPage() {
         <aside className="admin-owner-workbench-side admin-dashboard-panel">
           <div className="admin-dashboard-section-heading compact">
             <span>Work queue</span>
-            <p>Start with the orders that need review, fulfillment, or payment follow-up.</p>
+            <p>The next five orders most likely to need owner attention.</p>
           </div>
 
           {orderWorkQueue.length ? (
@@ -479,7 +514,10 @@ export default function AdminOrdersPage() {
             <select
               className="admin-filter"
               value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
+              onChange={(event) => {
+                setOwnerView('all');
+                setStatusFilter(event.target.value);
+              }}
               aria-label="Filter by order status"
             >
               <option value="all">All statuses</option>
@@ -498,6 +536,7 @@ export default function AdminOrdersPage() {
               onClick={() => {
                 setQuery('');
                 setStatusFilter('all');
+                setOwnerView('needs-action');
               }}
             >
               Clear filters
@@ -509,17 +548,38 @@ export default function AdminOrdersPage() {
         </div>
 
         <div className="admin-status-chip-row">
+          {ownerViews.map((view) => (
+            <button
+              key={view.key}
+              type="button"
+              className={`admin-status-chip ${ownerView === view.key ? 'is-active' : ''}`}
+              onClick={() => {
+                setOwnerView(view.key);
+                setStatusFilter('all');
+              }}
+            >
+              <span>{view.label}</span>
+              <strong>{view.count}</strong>
+            </button>
+          ))}
           {statusOptions.map((status) => (
             <button
               key={status}
               type="button"
               className={`admin-status-chip ${statusFilter === status ? 'is-active' : ''}`}
-              onClick={() => setStatusFilter(status)}
+              onClick={() => {
+                setOwnerView('all');
+                setStatusFilter(status);
+              }}
             >
               <span>{status}</span>
               <strong>{counts[status] ?? 0}</strong>
             </button>
           ))}
+          <div className="admin-status-chip total">
+            <span>Shipped / fulfilled</span>
+            <strong>{shippedFulfilled}</strong>
+          </div>
           <div className="admin-status-chip total">
             <span>Total revenue</span>
             <strong>{formatMoney(totalRevenue)}</strong>
@@ -567,14 +627,12 @@ export default function AdminOrdersPage() {
                       const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
                       const orderStatusClass = getOrderStatusClass(order.status);
                       const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
-                      const attention = getOrderAttentionInfo(order);
 
                       return (
                         <tr key={order.id}>
                           <td>
                             <div className="admin-status-stack">
                               <strong className="admin-order-ref">{safeText(order.orderNumber, 'Order')}</strong>
-                              <span className="admin-table-subtle">{getOrderSourceLabel(ordersSource)}</span>
                             </div>
                           </td>
                           <td>
@@ -604,7 +662,6 @@ export default function AdminOrdersPage() {
                                 ))}
                               </select>
                               <span className={`status-badge ${orderStatusClass}`.trim()}>{orderStatusLabel}</span>
-                              <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
                             </div>
                           </td>
                           <td>
@@ -634,7 +691,6 @@ export default function AdminOrdersPage() {
                   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
                   const orderStatusClass = getOrderStatusClass(order.status);
                   const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
-                  const attention = getOrderAttentionInfo(order);
                   const items = Array.isArray(order.items) ? order.items : [];
 
                   return (
@@ -644,12 +700,10 @@ export default function AdminOrdersPage() {
                           <strong className="admin-order-ref">{safeText(order.orderNumber, 'Order')}</strong>
                           <span>{customer.name}</span>
                           <span>{customer.email}</span>
-                          <span className="admin-order-source-label">{getOrderSourceLabel(ordersSource)}</span>
                         </div>
                         <div className="admin-status-stack">
                           <span className={`status-badge ${orderStatusClass}`.trim()}>{orderStatusLabel}</span>
                           <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
-                          <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
                         </div>
                       </div>
 
@@ -721,6 +775,7 @@ export default function AdminOrdersPage() {
                   onClick={() => {
                     setQuery('');
                     setStatusFilter('all');
+                    setOwnerView('needs-action');
                   }}
                 >
                   Clear filters
@@ -748,6 +803,7 @@ export default function AdminOrdersPage() {
                   onClick={() => {
                     setQuery('');
                     setStatusFilter('all');
+                    setOwnerView('needs-action');
                   }}
                 >
                   Clear filters

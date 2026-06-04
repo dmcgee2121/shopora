@@ -128,7 +128,7 @@ export default function HomePage() {
     () =>
       [...catalogProducts]
         .sort((a, b) => scoreTrendingProduct(b) - scoreTrendingProduct(a))
-        .slice(0, 8),
+        .slice(0, 4),
     [catalogProducts],
   );
   const salePicks = useMemo(
@@ -136,7 +136,7 @@ export default function HomePage() {
       [...catalogProducts]
         .filter((product) => product.isSale)
         .sort((a, b) => scoreSaleProduct(b) - scoreSaleProduct(a))
-        .slice(0, 8),
+        .slice(0, 4),
     [catalogProducts],
   );
   const everydayEssentials = useMemo(
@@ -147,7 +147,7 @@ export default function HomePage() {
           return price <= 120 || ['women', 'men'].includes(product.department);
         })
         .sort((a, b) => scoreEssentialsProduct(b) - scoreEssentialsProduct(a))
-        .slice(0, 8),
+        .slice(0, 4),
     [catalogProducts],
   );
   const newArrivals = useMemo(
@@ -155,15 +155,15 @@ export default function HomePage() {
       [...catalogProducts]
         .filter((product) => product.isNew)
         .sort((a, b) => scoreNewArrivalProduct(b) - scoreNewArrivalProduct(a))
-        .slice(0, 8),
+        .slice(0, 4),
     [catalogProducts],
   );
   const recentlyViewedProducts = useMemo(
-    () => filterRecentlyViewedProducts(catalogProducts, readRecentlyViewedIds(8)).slice(0, 4),
+    () => filterRecentlyViewedProducts(catalogProducts, readRecentlyViewedIds(8)).slice(0, 3),
     [catalogProducts],
   );
   const firstLookProducts = useMemo(
-    () => getRecommendedProducts(catalogProducts, [], { limit: 4 }),
+    () => getRecommendedProducts(catalogProducts, [], { limit: 3 }),
     [catalogProducts],
   );
   const discoveryProducts = recentlyViewedProducts.length ? recentlyViewedProducts : firstLookProducts;

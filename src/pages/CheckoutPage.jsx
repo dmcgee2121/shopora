@@ -551,7 +551,7 @@ export default function CheckoutPage() {
 
           <SupportLinkStrip
             title="Reassurance before payment"
-            description="Review your cart, shipping, returns, privacy, and support options here so the last step feels clear before you continue."
+            description="Quick links for shipping, returns, privacy, and support before the final step."
             links={supportLinks}
             className="checkout-support-strip"
           />

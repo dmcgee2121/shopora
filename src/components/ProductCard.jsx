@@ -160,10 +160,6 @@ export default function ProductCard({ product }) {
   const merchandisingBadges = getProductMerchandisingBadges(safeProduct);
   const reviewDisplay = getProductReviewDisplay(safeProduct);
   const discoveryCue = getDiscoveryCue(safeProduct, stockState, reviewDisplay, price);
-  const supportCue =
-    safeProduct.shippingNote ||
-    safeProduct.returnNote ||
-    (reviewDisplay.hasReviews ? reviewDisplay.summary : 'Open the product page to see sizing, shipping, and support details.');
   const leftBadges = merchandisingBadges.filter((badge) => badge.tone === 'badge-new' || badge.tone === 'badge-featured');
   const rightBadges = merchandisingBadges.filter((badge) => !leftBadges.includes(badge));
   const visibleLeftBadges = leftBadges.slice(0, 1);
@@ -247,12 +243,6 @@ export default function ProductCard({ product }) {
         </Link>
         {productDescription ? <p className="product-story">{productDescription}</p> : null}
         <p className="product-meta">{shelfLabel}</p>
-        <p className="product-review-caption">
-          {reviewDisplay.hasReviews
-            ? `${reviewDisplay.reviewCount.toLocaleString()} shopper ratings`
-            : 'No shopper ratings yet'}
-        </p>
-        {reviewDisplay.hasReviews ? <p className="product-review-summary-mini">{reviewDisplay.summary}</p> : null}
         <div className="price-row">
           <span className={hasSalePrice ? 'price price-sale' : 'price'}>{formatMoney(price)}</span>
           {hasSalePrice ? <span className="compare-price">{formatMoney(safeProduct.price)}</span> : null}
@@ -260,7 +250,6 @@ export default function ProductCard({ product }) {
         <StarRating rating={Number(safeProduct.rating ?? 0)} reviewCount={Number(safeProduct.reviewCount ?? 0)} />
         <p className={`stock-note stock-note-${stockState.tone}`}>{stockState.label}</p>
         <p className="product-discovery-cue">{discoveryCue}</p>
-        {supportCue ? <p className="product-discovery-support">{supportCue}</p> : null}
         {colors.length ? (
           <div className="product-swatches" aria-label={`${productName} colors`}>
             {colors.slice(0, 4).map((color) => (

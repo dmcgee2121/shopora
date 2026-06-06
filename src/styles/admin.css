@@ -1353,9 +1353,9 @@
 
 .admin-owner-workbench-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.75fr);
-  gap: 14px;
-  padding: 16px;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.7fr);
+  gap: 12px;
+  padding: 14px;
   border-radius: 24px;
   border: 1px solid rgba(221, 213, 203, 0.84);
   background:
@@ -1368,12 +1368,29 @@
 .admin-owner-workbench-side {
   min-width: 0;
   display: grid;
-  gap: 12px;
+  gap: 10px;
   align-content: start;
 }
 
 .admin-owner-summary-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.admin-owner-summary-grid .admin-status-card {
+  padding: 14px;
+  border-radius: 18px;
+  box-shadow: 0 10px 22px rgba(43, 33, 20, 0.045);
+}
+
+.admin-owner-summary-grid .admin-status-card strong {
+  margin: 6px 0 4px;
+  font-size: 1.75rem;
+}
+
+.admin-owner-summary-grid .admin-status-card p {
+  font-size: 0.88rem;
+  line-height: 1.38;
 }
 
 .admin-work-queue-list {
@@ -1383,8 +1400,8 @@
 
 .admin-work-queue-card {
   display: grid;
-  gap: 8px;
-  padding: 12px;
+  gap: 7px;
+  padding: 10px 12px;
   border-radius: 16px;
   border: 1px solid rgba(228, 217, 204, 0.8);
   background: rgba(251, 247, 241, 0.78);
@@ -1399,7 +1416,7 @@
 
 .admin-work-queue-card-head strong {
   display: block;
-  font-size: 0.96rem;
+  font-size: 0.94rem;
   line-height: 1.35;
 }
 
@@ -1407,8 +1424,8 @@
 .admin-work-queue-card p {
   margin: 4px 0 0;
   color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.42;
+  font-size: 0.84rem;
+  line-height: 1.38;
 }
 
 .admin-work-queue-card-meta {
@@ -1489,7 +1506,7 @@
 }
 
 .admin-toolbar {
-  padding: 18px;
+  padding: 14px;
   border-radius: 24px;
   border: 1px solid rgba(221, 213, 203, 0.88);
   background: rgba(255, 253, 250, 0.96);
@@ -1505,8 +1522,13 @@
   align-items: center;
 }
 
+.admin-toolbar-left {
+  flex: 1 1 520px;
+}
+
 .admin-search {
-  min-width: min(100%, 340px);
+  flex: 1 1 320px;
+  min-width: min(100%, 320px);
   min-height: 48px;
   padding: 0 14px;
   border-radius: 14px;
@@ -1515,7 +1537,8 @@
 }
 
 .admin-filter {
-  min-width: 180px;
+  flex: 0 1 180px;
+  min-width: 160px;
   min-height: 48px;
   padding: 0 14px;
   border-radius: 14px;
@@ -1538,7 +1561,7 @@
 
 .admin-table th,
 .admin-table td {
-  padding: 10px 12px;
+  padding: 9px 11px;
   border-bottom: 1px solid rgba(228, 217, 204, 0.65);
   text-align: left;
   vertical-align: middle;
@@ -1561,6 +1584,23 @@
 .admin-owner-table th:last-child,
 .admin-owner-table td:last-child {
   width: 1%;
+  white-space: nowrap;
+}
+
+.admin-owner-table {
+  font-size: 0.92rem;
+}
+
+.admin-owner-table .admin-status-stack {
+  gap: 3px;
+}
+
+.admin-owner-table .admin-row-actions {
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.admin-owner-table .status-badge {
   white-space: nowrap;
 }
 
@@ -1609,8 +1649,8 @@
 
 .admin-product-card {
   display: grid;
-  gap: 14px;
-  padding: 16px;
+  gap: 12px;
+  padding: 14px;
   border-radius: 24px;
   border: 1px solid rgba(221, 213, 203, 0.84);
   background: rgba(255, 253, 250, 0.98);
@@ -1643,7 +1683,7 @@
 
 .admin-product-card-body {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .admin-product-card-row {
@@ -1666,10 +1706,14 @@
   gap: 8px;
 }
 
+.admin-owner-view-row {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .admin-status-chip {
   display: grid;
   gap: 4px;
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: 14px;
   border: 1px solid rgba(228, 217, 204, 0.78);
   background: rgba(251, 247, 241, 0.72);
@@ -2022,8 +2066,8 @@
 }
 
 .admin-status-select {
-  min-height: 36px;
-  padding: 0 10px;
+  min-height: 34px;
+  padding: 0 9px;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: rgba(255, 253, 250, 0.96);
@@ -2032,6 +2076,18 @@
 
 .admin-order-cards {
   display: none;
+}
+
+.admin-order-cards .admin-record-card {
+  box-shadow: 0 10px 22px rgba(43, 33, 20, 0.045);
+}
+
+.admin-order-cards .admin-record-row {
+  gap: 12px;
+}
+
+.admin-order-cards .admin-status-select {
+  width: 100%;
 }
 
 .admin-order-ops-panel {
@@ -2676,6 +2732,11 @@
   gap: 14px;
 }
 
+.admin-status-grid.admin-owner-summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 10px;
+}
+
 .admin-readiness-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3063,9 +3124,9 @@
 
 .admin-record-card {
   display: grid;
-  gap: 10px;
-  padding: 16px;
-  border-radius: 22px;
+  gap: 9px;
+  padding: 14px;
+  border-radius: 18px;
   border: 1px solid rgba(221, 213, 203, 0.84);
   background: rgba(255, 253, 250, 0.98);
   box-shadow: 0 16px 34px rgba(43, 33, 20, 0.06);

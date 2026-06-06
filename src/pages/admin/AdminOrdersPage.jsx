@@ -250,10 +250,9 @@ function OrderItemRow({ item }) {
   );
 }
 
-function OrderQueueCard({ order, attention, ordersSource, onOpen }) {
+function OrderQueueCard({ order, attention, onOpen }) {
   const customer = getCustomerSummary(order);
   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
-  const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
 
   return (
     <article className="admin-work-queue-card">
@@ -270,12 +269,9 @@ function OrderQueueCard({ order, attention, ordersSource, onOpen }) {
       </div>
 
       <div className="admin-work-queue-card-meta">
-        <span className={`status-badge ${getOrderStatusClass(order.status)}`.trim()}>
-          {getOrderStatusLabel(order.status)}
-        </span>
-        <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
         <span className="admin-table-subtle">
-          {formatMoney(order.total)} | {getOrderItemCount(order)} item{getOrderItemCount(order) === 1 ? '' : 's'} | {formatDate(order.createdAt)}
+          {getOrderStatusLabel(order.status)} | {paymentLabel} | {formatMoney(order.total)} | {getOrderItemCount(order)} item
+          {getOrderItemCount(order) === 1 ? '' : 's'} | {formatDate(order.createdAt)}
         </span>
       </div>
 
@@ -288,7 +284,6 @@ function OrderQueueCard({ order, attention, ordersSource, onOpen }) {
         <Link to={`/order-confirmation/${order.id}`} className="text-button">
           Open receipt
         </Link>
-        <span className="admin-table-subtle">{getOrderSourceLabel(ordersSource)}</span>
       </div>
     </article>
   );
@@ -365,8 +360,6 @@ export default function AdminOrdersPage() {
       .slice(0, 5);
   }, [operationsSummary.attentionOrders]);
 
-  const totalRevenue = ordered.reduce((total, order) => total + Number(order.total ?? 0), 0);
-  const shippedFulfilled = operationsSummary.shippedOrders;
   const pendingOrders = counts.Pending ?? 0;
   const processingOrders = counts.Processing ?? 0;
   const recentOrders = operationsSummary.recentlyPlacedOrders;
@@ -481,13 +474,7 @@ export default function AdminOrdersPage() {
           {orderWorkQueue.length ? (
             <div className="admin-work-queue-list">
               {orderWorkQueue.map(({ order, attention }) => (
-                <OrderQueueCard
-                  key={order.id}
-                  order={order}
-                  attention={attention}
-                  ordersSource={ordersSource}
-                  onOpen={() => setSelectedOrderId(order.id)}
-                />
+                <OrderQueueCard key={order.id} order={order} attention={attention} onOpen={() => setSelectedOrderId(order.id)} />
               ))}
             </div>
           ) : (
@@ -547,7 +534,7 @@ export default function AdminOrdersPage() {
           </div>
         </div>
 
-        <div className="admin-status-chip-row">
+        <div className="admin-status-chip-row admin-owner-view-row" aria-label="Order views">
           {ownerViews.map((view) => (
             <button
               key={view.key}
@@ -562,28 +549,6 @@ export default function AdminOrdersPage() {
               <strong>{view.count}</strong>
             </button>
           ))}
-          {statusOptions.map((status) => (
-            <button
-              key={status}
-              type="button"
-              className={`admin-status-chip ${statusFilter === status ? 'is-active' : ''}`}
-              onClick={() => {
-                setOwnerView('all');
-                setStatusFilter(status);
-              }}
-            >
-              <span>{status}</span>
-              <strong>{counts[status] ?? 0}</strong>
-            </button>
-          ))}
-          <div className="admin-status-chip total">
-            <span>Shipped / fulfilled</span>
-            <strong>{shippedFulfilled}</strong>
-          </div>
-          <div className="admin-status-chip total">
-            <span>Total revenue</span>
-            <strong>{formatMoney(totalRevenue)}</strong>
-          </div>
         </div>
 
         {ordersError ? (
@@ -623,9 +588,7 @@ export default function AdminOrdersPage() {
                   <tbody>
                     {filteredOrders.map((order) => {
                       const customer = getCustomerSummary(order);
-                      const orderStatusLabel = getOrderStatusLabel(order.status);
                       const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
-                      const orderStatusClass = getOrderStatusClass(order.status);
                       const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
 
                       return (
@@ -661,7 +624,6 @@ export default function AdminOrdersPage() {
                                   </option>
                                 ))}
                               </select>
-                              <span className={`status-badge ${orderStatusClass}`.trim()}>{orderStatusLabel}</span>
                             </div>
                           </td>
                           <td>
@@ -687,11 +649,8 @@ export default function AdminOrdersPage() {
               <div className="admin-record-list admin-order-cards">
                 {filteredOrders.map((order) => {
                   const customer = getCustomerSummary(order);
-                  const orderStatusLabel = getOrderStatusLabel(order.status);
                   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
-                  const orderStatusClass = getOrderStatusClass(order.status);
                   const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
-                  const items = Array.isArray(order.items) ? order.items : [];
 
                   return (
                     <article key={order.id} className="admin-record-card">
@@ -702,7 +661,6 @@ export default function AdminOrdersPage() {
                           <span>{customer.email}</span>
                         </div>
                         <div className="admin-status-stack">
-                          <span className={`status-badge ${orderStatusClass}`.trim()}>{orderStatusLabel}</span>
                           <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
                         </div>
                       </div>
@@ -728,27 +686,6 @@ export default function AdminOrdersPage() {
                             </option>
                           ))}
                         </select>
-                      </div>
-
-                      <div className="order-mini-items">
-                        {items.slice(0, 3).map((item) => (
-                          <div key={item.key} className="order-mini-item">
-                            <ShopOraImage
-                              src={getOrderItemImage(item)}
-                              alt={safeText(item?.name, 'Order item')}
-                              className="order-mini-item-image"
-                              fallbackText="ShopOra"
-                            />
-                            <div className="admin-record-meta">
-                              <strong>{safeText(item?.name, 'Unnamed item')}</strong>
-                              <span>
-                                Qty {Number(item?.quantity ?? 0)}
-                                {item?.size ? ` | ${item.size}` : ''}
-                                {item?.color ? ` | ${item.color}` : ''}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
                       </div>
 
                       <div className="admin-row-actions">

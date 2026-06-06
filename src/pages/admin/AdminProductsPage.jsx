@@ -314,7 +314,7 @@ export default function AdminProductsPage() {
 
         return safeText(left.product.name).localeCompare(safeText(right.product.name));
       })
-      .slice(0, 4);
+      .slice(0, 3);
   }, [launchReadiness.entries]);
 
   const departments = useMemo(() => {
@@ -617,7 +617,6 @@ export default function AdminProductsPage() {
                         <td>
                           <div className="admin-status-stack">
                             <span className={`status-badge ${priority.tone}`}>{priority.label}</span>
-                            <span className="admin-status-caption">{priority.detail}</span>
                           </div>
                         </td>
                         <td>

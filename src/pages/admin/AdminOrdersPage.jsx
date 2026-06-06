@@ -253,25 +253,25 @@ function OrderItemRow({ item }) {
 function OrderQueueCard({ order, attention, onOpen }) {
   const customer = getCustomerSummary(order);
   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
+  const itemCount = getOrderItemCount(order);
 
   return (
     <article className="admin-work-queue-card">
       <div className="admin-work-queue-card-head">
         <div>
           <strong>{safeText(order.orderNumber, 'Order')}</strong>
-          <p>
-            {customer.name}
-            {' • '}
-            {customer.email}
-          </p>
+          <p>{customer.name}</p>
         </div>
         <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
       </div>
 
       <div className="admin-work-queue-card-meta">
+        <span className="admin-table-subtle">{customer.email}</span>
         <span className="admin-table-subtle">
-          {getOrderStatusLabel(order.status)} | {paymentLabel} | {formatMoney(order.total)} | {getOrderItemCount(order)} item
-          {getOrderItemCount(order) === 1 ? '' : 's'} | {formatDate(order.createdAt)}
+          {formatMoney(order.total)} | {itemCount} item{itemCount === 1 ? '' : 's'} | {formatDate(order.createdAt)}
+        </span>
+        <span className="admin-table-subtle">
+          {getOrderStatusLabel(order.status)} | {paymentLabel}
         </span>
       </div>
 
@@ -357,7 +357,7 @@ export default function AdminOrdersPage() {
 
         return new Date(right.order.createdAt).getTime() - new Date(left.order.createdAt).getTime();
       })
-      .slice(0, 5);
+      .slice(0, 4);
   }, [operationsSummary.attentionOrders]);
 
   const pendingOrders = counts.Pending ?? 0;
@@ -434,7 +434,7 @@ export default function AdminOrdersPage() {
         </div>
       ) : null}
 
-      <section className="admin-owner-workbench-panel">
+      <section className="admin-owner-workbench-panel admin-orders-workbench-panel">
         <div className="admin-owner-workbench-main">
           <div className="admin-dashboard-section-heading">
             <span>Order snapshot</span>
@@ -468,7 +468,7 @@ export default function AdminOrdersPage() {
         <aside className="admin-owner-workbench-side admin-dashboard-panel">
           <div className="admin-dashboard-section-heading compact">
             <span>Work queue</span>
-            <p>The next five orders most likely to need owner attention.</p>
+            <p>The next four orders most likely to need owner attention.</p>
           </div>
 
           {orderWorkQueue.length ? (
@@ -486,7 +486,12 @@ export default function AdminOrdersPage() {
         </aside>
       </section>
 
-      <section className="admin-dashboard-panel">
+      <section className="admin-dashboard-panel admin-orders-history-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>All orders</span>
+          <p>The full order list lives below the work queue so history stays available without becoming the main task area.</p>
+        </div>
+
         <div className="admin-toolbar">
           <div className="admin-toolbar-left">
             <input
@@ -571,7 +576,7 @@ export default function AdminOrdersPage() {
         ) : hasOrders ? (
           hasFilteredOrders ? (
             <>
-              <div className="admin-table-wrap">
+              <div className="admin-table-wrap admin-orders-table-wrap">
                 <table className="admin-table admin-owner-table">
                   <thead>
                     <tr>

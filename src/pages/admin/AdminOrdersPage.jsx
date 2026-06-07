@@ -442,8 +442,8 @@ export default function AdminOrdersPage() {
         </div>
       ) : null}
 
-      <section className="admin-owner-workbench-panel admin-orders-workbench-panel">
-        <div className="admin-orders-command-center-main">
+      <section className="admin-orders-command-center">
+        <div className="admin-dashboard-panel admin-orders-snapshot-panel">
           <div className="admin-dashboard-section-heading">
             <span>Order snapshot</span>
             <p>Use the snapshot first, then handle the next orders waiting on payment, customer context, or fulfillment.</p>

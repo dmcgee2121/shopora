@@ -1364,12 +1364,12 @@
   box-shadow: 0 16px 34px rgba(43, 33, 20, 0.06);
 }
 
-.admin-orders-workbench-panel {
+.admin-orders-command-center {
+  display: grid;
   gap: 12px;
-  padding: 14px;
 }
 
-.admin-orders-workbench-panel .admin-dashboard-section-heading p {
+.admin-orders-command-center .admin-dashboard-section-heading p {
   max-width: 52ch;
 }
 
@@ -1381,15 +1381,15 @@
   align-content: start;
 }
 
-.admin-orders-command-center-main {
-  display: grid;
-  gap: 10px;
+.admin-orders-snapshot-panel {
+  gap: 12px;
+  padding: 14px;
 }
 
 .admin-orders-command-center-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
-  gap: 12px;
+  gap: 10px;
   align-items: start;
 }
 
@@ -1399,26 +1399,30 @@
 }
 
 .admin-owner-summary-grid .admin-status-card {
-  min-height: 138px;
-  padding: 13px 14px;
+  min-height: 126px;
+  padding: 12px 13px;
   border-radius: 18px;
   box-shadow: 0 10px 22px rgba(43, 33, 20, 0.045);
 }
 
+.admin-owner-summary-grid .admin-status-card span {
+  font-size: 0.68rem;
+}
+
 .admin-owner-summary-grid .admin-status-card strong {
   margin: 4px 0 2px;
-  font-size: 1.9rem;
+  font-size: 1.82rem;
 }
 
 .admin-owner-summary-grid .admin-status-card p {
-  font-size: 0.88rem;
-  line-height: 1.34;
+  font-size: 0.84rem;
+  line-height: 1.32;
 }
 
 .admin-orders-queue-panel,
 .admin-orders-guidance-panel {
-  gap: 12px;
-  padding: 14px;
+  gap: 10px;
+  padding: 13px;
 }
 
 .admin-orders-guidance-panel {
@@ -1483,6 +1487,8 @@
 
 .admin-work-queue-card-note {
   margin-top: -2px;
+  font-size: 0.82rem;
+  line-height: 1.34;
 }
 
 .admin-work-queue-card-actions {
@@ -1494,28 +1500,28 @@
 
 .admin-orders-guidance-list {
   display: grid;
-  gap: 8px;
+  gap: 7px;
 }
 
 .admin-orders-guidance-item {
   display: grid;
   gap: 4px;
-  padding: 11px 12px;
+  padding: 10px 11px;
   border-radius: 16px;
   border: 1px solid rgba(228, 217, 204, 0.76);
   background: rgba(251, 247, 241, 0.76);
 }
 
 .admin-orders-guidance-item strong {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   line-height: 1.35;
 }
 
 .admin-orders-guidance-item p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.84rem;
-  line-height: 1.42;
+  font-size: 0.8rem;
+  line-height: 1.38;
 }
 
 .admin-table-subtle {

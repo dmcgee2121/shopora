@@ -10,6 +10,17 @@ function safeText(value, fallback = '-') {
   return text || fallback;
 }
 
+function normalizeText(value) {
+  return typeof value === 'string' ? value.trim().toLowerCase() : '';
+}
+
+function safeDate(value) {
+  if (!value) return null;
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 function formatDate(value) {
   if (!value) return 'Date unavailable';
 
@@ -24,24 +35,21 @@ function formatDate(value) {
   }
 }
 
-function safeDate(value) {
-  if (!value) return null;
-
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
 function formatMoney(value) {
   const amount = Number(value);
   return Number.isFinite(amount) ? `$${amount.toFixed(2)}` : '$0.00';
 }
 
-function formatName(user) {
-  return [user?.firstName, user?.lastName].map((part) => safeText(part, '')).filter(Boolean).join(' ') || 'Unnamed customer';
+function formatDecimal(value) {
+  const amount = Number(value);
+  return Number.isFinite(amount) ? amount.toFixed(1) : '0.0';
 }
 
-function normalizeText(value) {
-  return typeof value === 'string' ? value.trim().toLowerCase() : '';
+function formatName(user) {
+  return [user?.firstName, user?.lastName]
+    .map((part) => safeText(part, ''))
+    .filter(Boolean)
+    .join(' ') || 'Unnamed customer';
 }
 
 function isWithinDays(value, days = 30) {
@@ -57,6 +65,38 @@ function getRoleLabel(role) {
 
 function getRoleTone(role) {
   return role === 'admin' ? 'status-active' : 'status-badge-muted';
+}
+
+function getCustomerOrders(user, orders) {
+  const userId = normalizeId(user?.id);
+  const email = normalizeText(user?.email);
+  const name = normalizeText(formatName(user));
+
+  return orders.filter((order) => {
+    const orderUserId = normalizeId(order?.userId);
+    const orderEmail = normalizeText(order?.customerEmail);
+    const orderName = normalizeText(order?.customerName);
+
+    return (
+      (userId && idsMatch(orderUserId, userId)) ||
+      (email && orderEmail === email) ||
+      (name && orderName === name)
+    );
+  });
+}
+
+function getMostRecentOrder(orders) {
+  if (!orders.length) return null;
+
+  return [...orders].sort((left, right) => {
+    const leftTime = safeDate(left?.createdAt)?.getTime() ?? 0;
+    const rightTime = safeDate(right?.createdAt)?.getTime() ?? 0;
+    return rightTime - leftTime;
+  })[0] ?? null;
+}
+
+function getLatestOrderDate(orders) {
+  return getMostRecentOrder(orders)?.createdAt ?? null;
 }
 
 function getCustomerActivityDate(customer) {
@@ -102,11 +142,6 @@ function getCustomerRelationshipInfo(customer) {
     badges.push({ label: 'Recently active', tone: 'stock-low' });
   }
 
-  badges.push({
-    label: orderCount > 0 ? 'Has orders' : 'No orders yet',
-    tone: orderCount > 0 ? 'status-badge-muted' : 'status-draft',
-  });
-
   return {
     primaryLabel: orderCount > 1 ? 'Returning customer' : orderCount === 1 ? 'First order' : 'New customer',
     detail:
@@ -124,46 +159,45 @@ function getCustomerRelationshipInfo(customer) {
   };
 }
 
-function getCustomerOrders(user, orders) {
-  const userId = normalizeId(user?.id);
-  const email = normalizeText(user?.email);
-  const name = normalizeText(formatName(user));
+function getCustomerSignalSummary(customer) {
+  if (customer.role === 'admin') {
+    return 'Admin access account. Keep for back-office context only.';
+  }
 
-  return orders.filter((order) => {
-    const orderUserId = normalizeId(order?.userId);
-    const orderEmail = normalizeText(order?.customerEmail);
-    const orderName = normalizeText(order?.customerName);
+  if (customer.openOrderCount > 0) {
+    return `${customer.openOrderCount} pending or processing order${customer.openOrderCount === 1 ? '' : 's'} worth reviewing.`;
+  }
 
-    return (
-      (userId && idsMatch(orderUserId, userId)) ||
-      (email && orderEmail === email) ||
-      (name && orderName === name)
-    );
-  });
+  if (customer.savedItemCount > 0 && customer.orderCount > 0) {
+    return `${customer.savedItemCount} saved item${customer.savedItemCount === 1 ? '' : 's'} plus order history show current interest.`;
+  }
+
+  if (customer.savedItemCount > 0) {
+    return `${customer.savedItemCount} saved item${customer.savedItemCount === 1 ? '' : 's'} suggest browsing intent before purchase.`;
+  }
+
+  if (customer.recentOrderCount > 0) {
+    return `${customer.recentOrderCount} recent order${customer.recentOrderCount === 1 ? '' : 's'} in the last 30 days.`;
+  }
+
+  if (customer.orderCount > 1) {
+    return `${customer.orderCount} total orders show repeat behavior even without recent activity.`;
+  }
+
+  return 'Account exists, but there is little order or saved-item activity yet.';
 }
 
-function getLatestOrderDate(orders) {
-  if (!orders.length) return null;
+function getCustomerPriorityScore(customer) {
+  if (customer.role === 'admin') return 0;
 
-  return orders.reduce((latest, order) => {
-    const currentTime = safeDate(order?.createdAt)?.getTime() ?? 0;
-    return currentTime > latest ? currentTime : latest;
-  }, 0);
-}
-
-function getMostRecentOrder(orders) {
-  if (!orders.length) return null;
-
-  return [...orders].sort((left, right) => {
-    const leftTime = safeDate(left?.createdAt)?.getTime() ?? 0;
-    const rightTime = safeDate(right?.createdAt)?.getTime() ?? 0;
-    return rightTime - leftTime;
-  })[0] ?? null;
-}
-
-function getCustomerActivityOrder(customerOrders, joinedDate) {
-  const latestOrder = getMostRecentOrder(customerOrders);
-  return latestOrder?.createdAt ?? joinedDate ?? null;
+  return (
+    customer.openOrderCount * 100 +
+    customer.recentOrderCount * 28 +
+    customer.savedItemCount * 16 +
+    customer.orderCount * 10 +
+    (isWithinDays(customer.activityDate, 14) ? 12 : 0) +
+    (customer.totalSpent >= 250 ? 18 : 0)
+  );
 }
 
 function CustomerBadgeList({ badges = [] }) {
@@ -203,6 +237,116 @@ function CustomerMetrics({ customer }) {
   );
 }
 
+function CustomerWorkQueueCard({ customer, onFocusCustomer }) {
+  return (
+    <article className="admin-work-queue-card">
+      <div className="admin-work-queue-card-head">
+        <div className="admin-work-queue-card-title">
+          <strong>{customer.name}</strong>
+          <p>{customer.email}</p>
+        </div>
+        <span className={`status-badge ${customer.openOrderCount > 0 ? 'order-status-pending' : 'status-badge-muted'}`}>
+          {customer.openOrderCount > 0 ? 'Needs review' : customer.relationship.primaryLabel}
+        </span>
+      </div>
+
+      <div className="admin-work-queue-card-meta">
+        <div className="admin-work-queue-card-facts">
+          <span>{customer.orderCount} order{customer.orderCount === 1 ? '' : 's'}</span>
+          <span>{customer.savedItemCount} saved</span>
+          <span>{formatMoney(customer.totalSpent)} spent</span>
+          <span>{customer.activityDate ? formatDate(customer.activityDate) : 'No activity yet'}</span>
+        </div>
+        <p className="admin-work-queue-card-note">{customer.signalSummary}</p>
+      </div>
+
+      <div className="admin-work-queue-card-actions">
+        <button type="button" className="text-button" onClick={() => onFocusCustomer(customer)}>
+          Focus customer
+        </button>
+        <Link to="/admin/orders" className="text-button">
+          View orders
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function CustomerSignalCard({
+  label,
+  value,
+  note,
+  tone = 'status-badge-muted',
+  actionLabel,
+  actionTo,
+  onAction,
+}) {
+  return (
+    <article className="admin-customer-signal-card">
+      <div className="admin-priority-action-header">
+        <span>{label}</span>
+        <span className={`status-badge ${tone}`.trim()}>{value}</span>
+      </div>
+      <p>{note}</p>
+      {actionLabel && (actionTo || onAction) ? (
+        <div className="admin-priority-action-links">
+          {actionTo ? (
+            <Link to={actionTo} className="btn btn-ghost">
+              {actionLabel}
+            </Link>
+          ) : (
+            <button type="button" className="btn btn-ghost" onClick={onAction}>
+              {actionLabel}
+            </button>
+          )}
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function CustomerSpotlightCard({ customer, onFocusCustomer }) {
+  return (
+    <article className="admin-customer-spotlight-card">
+      <div className="admin-record-row">
+        <div className="admin-record-meta">
+          <strong>{customer.name}</strong>
+          <span>{customer.email}</span>
+        </div>
+        <span className={`status-badge ${getRoleTone(customer.role)}`.trim()}>{getRoleLabel(customer.role)}</span>
+      </div>
+
+      <CustomerBadgeList badges={customer.relationship.badges} />
+
+      <p className="admin-customer-preview-note">{customer.signalSummary}</p>
+
+      <div className="admin-customer-preview-grid admin-customer-spotlight-grid">
+        <div>
+          <span>Recent orders</span>
+          <strong>{customer.recentOrderCount}</strong>
+        </div>
+        <div>
+          <span>Open orders</span>
+          <strong>{customer.openOrderCount}</strong>
+        </div>
+        <div>
+          <span>Last order</span>
+          <strong>{customer.lastOrderDate ? formatDate(customer.lastOrderDate) : 'None yet'}</strong>
+        </div>
+      </div>
+
+      <div className="admin-work-queue-card-actions">
+        <button type="button" className="text-button" onClick={() => onFocusCustomer(customer)}>
+          Focus customer
+        </button>
+        <Link to="/admin/orders" className="text-button">
+          Review orders
+        </Link>
+      </div>
+    </article>
+  );
+}
+
 export default function AdminCustomersPage() {
   const { users } = useAuth();
   const { orders } = useOrders();
@@ -217,8 +361,17 @@ export default function AdminCustomersPage() {
         const savedItemCount = Array.isArray(user.savedProductIds) ? user.savedProductIds.length : 0;
         const orderCount = customerOrders.length;
         const totalSpent = customerOrders.reduce((total, order) => total + Number(order.total ?? 0), 0);
+        const totalItemsOrdered = customerOrders.reduce(
+          (total, order) => total + (Array.isArray(order.items) ? order.items.length : 0),
+          0,
+        );
+        const recentOrders = customerOrders.filter((order) => isWithinDays(order.createdAt, 30));
+        const pendingOrders = customerOrders.filter((order) => normalizeText(order.status) === 'pending');
+        const processingOrders = customerOrders.filter((order) => normalizeText(order.status) === 'processing');
+        const deliveredOrders = customerOrders.filter((order) => normalizeText(order.status) === 'delivered');
         const lastOrderDate = getLatestOrderDate(customerOrders);
-        const activityDate = getCustomerActivityOrder(customerOrders, user.createdAt);
+        const activityDate = lastOrderDate ?? user.createdAt ?? null;
+        const mostRecentOrder = getMostRecentOrder(customerOrders);
         const relationship = getCustomerRelationshipInfo({
           role: user.role === 'admin' ? 'admin' : 'customer',
           orderCount,
@@ -228,7 +381,7 @@ export default function AdminCustomersPage() {
           joinedDate: user.createdAt,
         });
 
-        return {
+        const record = {
           id: user.id,
           name: formatName(user),
           email: safeText(user.email, 'No email provided'),
@@ -236,57 +389,76 @@ export default function AdminCustomersPage() {
           savedItemCount,
           orderCount,
           totalSpent,
+          totalItemsOrdered,
+          averageItemsPerOrder: orderCount > 0 ? totalItemsOrdered / orderCount : 0,
           lastOrderDate,
           activityDate,
-          relationship,
+          recentOrderCount: recentOrders.length,
+          pendingOrderCount: pendingOrders.length,
+          processingOrderCount: processingOrders.length,
+          deliveredOrderCount: deliveredOrders.length,
+          openOrderCount: pendingOrders.length + processingOrders.length,
           joinedDate: user.createdAt,
+          mostRecentOrder,
+          relationship,
+        };
+
+        return {
+          ...record,
+          signalSummary: getCustomerSignalSummary(record),
+          priorityScore: getCustomerPriorityScore(record),
         };
       })
-      .sort((a, b) => new Date(b.joinedDate).getTime() - new Date(a.joinedDate).getTime());
+      .sort((left, right) => {
+        const rightActivity = safeDate(right.activityDate)?.getTime() ?? 0;
+        const leftActivity = safeDate(left.activityDate)?.getTime() ?? 0;
+        return rightActivity - leftActivity;
+      });
   }, [orders, users]);
 
   const summary = useMemo(() => {
     const customerProfiles = customerRecords.filter((customer) => customer.role !== 'admin');
-    const adminUsers = customerRecords.filter((customer) => customer.role === 'admin').length;
-    const customersWithOrders = customerProfiles.filter((customer) => customer.orderCount > 0).length;
-    const savedItemCustomers = customerProfiles.filter((customer) => customer.savedItemCount > 0).length;
-    const savedItemActivity = customerProfiles.reduce((total, customer) => total + customer.savedItemCount, 0);
     const totalOrders = customerProfiles.reduce((total, customer) => total + customer.orderCount, 0);
-    const totalSpent = customerProfiles.reduce(
-      (total, customer) => total + (customer.role === 'admin' ? 0 : customer.totalSpent),
-      0,
-    );
-    const returningCustomers = customerProfiles.filter((customer) => customer.orderCount > 1).length;
-    const recentActivityCustomers = customerProfiles.filter((customer) => isWithinDays(customer.activityDate, 30)).length;
-    const highValueCustomers = customerProfiles.filter(
-      (customer) => customer.totalSpent >= 250 || customer.orderCount >= 3,
-    ).length;
-    const averageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
+    const totalItemsOrdered = customerProfiles.reduce((total, customer) => total + customer.totalItemsOrdered, 0);
 
     return {
       totalCustomers: customerProfiles.length,
-      adminUsers,
-      customersWithOrders,
-      savedItemCustomers,
-      savedItemActivity,
-      totalSpent,
-      returningCustomers,
-      recentActivityCustomers,
-      highValueCustomers,
-      averageOrderValue,
+      adminUsers: customerRecords.filter((customer) => customer.role === 'admin').length,
+      repeatCustomers: customerProfiles.filter((customer) => customer.orderCount > 1).length,
+      savedItemCustomers: customerProfiles.filter((customer) => customer.savedItemCount > 0).length,
+      savedItemActivity: customerProfiles.reduce((total, customer) => total + customer.savedItemCount, 0),
+      recentActivityCustomers: customerProfiles.filter((customer) => isWithinDays(customer.activityDate, 30)).length,
+      recentAccounts: customerProfiles.filter((customer) => isWithinDays(customer.joinedDate, 30)).length,
+      openOrderCustomers: customerProfiles.filter((customer) => customer.openOrderCount > 0).length,
+      deliveredOrderCustomers: customerProfiles.filter((customer) => customer.deliveredOrderCount > 0).length,
+      customersWithOrders: customerProfiles.filter((customer) => customer.orderCount > 0).length,
+      totalSpent: customerProfiles.reduce((total, customer) => total + customer.totalSpent, 0),
+      averageOrderValue:
+        totalOrders > 0
+          ? customerProfiles.reduce((total, customer) => total + customer.totalSpent, 0) / totalOrders
+          : 0,
+      averageItemsPerOrder: totalOrders > 0 ? totalItemsOrdered / totalOrders : 0,
     };
   }, [customerRecords]);
 
-  const relationshipPreview = useMemo(() => {
+  const customerWorkQueue = useMemo(() => {
     return customerRecords
       .filter((customer) => customer.role !== 'admin')
       .sort((left, right) => {
-        const leftActivity = safeDate(left.activityDate)?.getTime() ?? 0;
-        const rightActivity = safeDate(right.activityDate)?.getTime() ?? 0;
+        if (right.priorityScore !== left.priorityScore) return right.priorityScore - left.priorityScore;
+        return (safeDate(right.activityDate)?.getTime() ?? 0) - (safeDate(left.activityDate)?.getTime() ?? 0);
+      })
+      .slice(0, 4);
+  }, [customerRecords]);
 
-        if (rightActivity !== leftActivity) return rightActivity - leftActivity;
-        if (right.totalSpent !== left.totalSpent) return right.totalSpent - left.totalSpent;
-        return right.orderCount - left.orderCount;
+  const customerSpotlights = useMemo(() => {
+    return customerRecords
+      .filter((customer) => customer.role !== 'admin' && (customer.recentOrderCount > 0 || customer.savedItemCount > 0))
+      .sort((left, right) => {
+        const rightRecent = safeDate(right.activityDate)?.getTime() ?? 0;
+        const leftRecent = safeDate(left.activityDate)?.getTime() ?? 0;
+        if (rightRecent !== leftRecent) return rightRecent - leftRecent;
+        return right.savedItemCount - left.savedItemCount;
       })
       .slice(0, 3);
   }, [customerRecords]);
@@ -296,13 +468,26 @@ export default function AdminCustomersPage() {
 
     return customerRecords.filter((customer) => {
       const matchesSearch =
-        !term || [customer.name, customer.email, customer.role].join(' ').toLowerCase().includes(term);
+        !term ||
+        [
+          customer.name,
+          customer.email,
+          customer.role,
+          customer.relationship.primaryLabel,
+          customer.signalSummary,
+        ]
+          .join(' ')
+          .toLowerCase()
+          .includes(term);
+
       const matchesRole = roleFilter === 'all' || customer.role === roleFilter;
       const matchesActivity =
         activityFilter === 'all' ||
         (activityFilter === 'with-orders' && customer.orderCount > 0) ||
         (activityFilter === 'saved-items' && customer.savedItemCount > 0) ||
         (activityFilter === 'with-orders-and-saved' && customer.orderCount > 0 && customer.savedItemCount > 0) ||
+        (activityFilter === 'open-orders' && customer.openOrderCount > 0) ||
+        (activityFilter === 'repeat' && customer.orderCount > 1) ||
         (activityFilter === 'no-orders' && customer.orderCount === 0);
 
       return matchesSearch && matchesRole && matchesActivity;
@@ -313,318 +498,417 @@ export default function AdminCustomersPage() {
   const hasCustomers = customerRecords.length > 0;
   const hasFilteredCustomers = filteredCustomers.length > 0;
 
+  const focusCustomer = (customer) => {
+    setQuery(customer.email !== 'No email provided' ? customer.email : customer.name);
+    setRoleFilter(customer.role);
+  };
+
   return (
     <div className="admin-page-stack">
       <AdminPageHeader
-        eyebrow="Customer directory"
+        eyebrow="Customer workspace"
         title="Customers"
-        subtitle="Browse customer accounts, saved-item activity, and order history summaries in a clear, read-only directory."
-        actions={
+        subtitle="Review customer activity, saved items, and order signals."
+        actions={(
           <>
-            <Link to="/admin" className="btn btn-dark">
-              Open dashboard
+            <Link to="/admin/orders" className="btn btn-dark">
+              View orders
             </Link>
-            <Link to="/admin/orders" className="btn btn-ghost">
-              Review orders
-            </Link>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                setRoleFilter('customer');
+                setActivityFilter('saved-items');
+                setQuery('');
+              }}
+            >
+              Saved-item activity
+            </button>
             <Link to="/" className="btn btn-outline">
               View storefront
             </Link>
           </>
-        }
+        )}
       />
 
-      <div className="admin-card-grid">
-        <div className="admin-card">
-          <span>Total customers</span>
-          <strong>{summary.totalCustomers}</strong>
-          <p>Non-admin storefront accounts.</p>
-        </div>
-        <div className="admin-card">
-          <span>Customers with orders</span>
-          <strong>{summary.customersWithOrders}</strong>
-          <p>{formatMoney(summary.totalSpent)} total spent across customer orders.</p>
-        </div>
-        <div className="admin-card">
-          <span>Returning customers</span>
-          <strong>{summary.returningCustomers}</strong>
-          <p>Customers with more than one order.</p>
-        </div>
-        <div className="admin-card">
-          <span>Saved item activity</span>
-          <strong>{summary.savedItemActivity}</strong>
-          <p>{summary.savedItemCustomers} customers are using saved items.</p>
-        </div>
-        <div className="admin-card">
-          <span>Recent activity</span>
-          <strong>{summary.recentActivityCustomers}</strong>
-          <p>Customers active in the last 30 days.</p>
-        </div>
-        <div className="admin-card">
-          <span>High-value customers</span>
-          <strong>{summary.highValueCustomers}</strong>
-          <p>Customers with meaningful spend or order volume.</p>
-        </div>
-        <div className="admin-card">
-          <span>Total customer spend</span>
-          <strong>{formatMoney(summary.totalSpent)}</strong>
-          <p>All tracked storefront customer orders combined.</p>
-        </div>
-        <div className="admin-card">
-          <span>Average order value</span>
-          <strong>{formatMoney(summary.averageOrderValue)}</strong>
-          <p>Average across customer orders in this directory.</p>
-        </div>
-      </div>
+      <section className="admin-owner-workbench-panel admin-customers-command-center">
+        <div className="admin-owner-workbench-main">
+          <div className="admin-dashboard-section-heading">
+            <span>Customer snapshot</span>
+            <p>See account volume, recent engagement, and the few customer signals most worth reviewing first.</p>
+          </div>
 
-      <section className="admin-customer-ops-panel">
-        <div className="admin-dashboard-section-heading compact">
-          <span>Relationship snapshot</span>
-          <p>
-            Preview storefront accounts and see which customers are new, returning, or building order history.
-            Admin access accounts stay visible in the directory for context only.
-          </p>
+          <div className="admin-status-grid admin-owner-summary-grid admin-customer-summary-grid">
+            <div className="admin-status-card">
+              <span>Total accounts</span>
+              <strong>{summary.totalCustomers}</strong>
+              <p>{summary.adminUsers} admin account{summary.adminUsers === 1 ? '' : 's'} stay visible separately for context.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Repeat customers</span>
+              <strong>{summary.repeatCustomers}</strong>
+              <p>Customers with more than one order already in the account history.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Saved-item customers</span>
+              <strong>{summary.savedItemCustomers}</strong>
+              <p>{summary.savedItemActivity} total saved items across visible customer accounts.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Open order customers</span>
+              <strong>{summary.openOrderCustomers}</strong>
+              <p>Customers attached to pending or processing orders right now.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Active in 30 days</span>
+              <strong>{summary.recentActivityCustomers}</strong>
+              <p>{summary.recentAccounts} newer account{summary.recentAccounts === 1 ? '' : 's'} also joined in the last 30 days.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Avg items / order</span>
+              <strong>{formatDecimal(summary.averageItemsPerOrder)}</strong>
+              <p>{formatMoney(summary.averageOrderValue)} average order value across customer orders.</p>
+            </div>
+          </div>
         </div>
 
-        <div className="admin-customer-preview-list">
-          {relationshipPreview.length ? (
-            relationshipPreview.map((customer) => (
-              <article key={customer.id} className="admin-customer-preview-card">
-                <div className="admin-record-row">
-                  <div className="admin-record-meta">
-                    <strong>{customer.name}</strong>
-                    <span>{customer.email}</span>
-                    <span>{customer.role === 'admin' ? 'Admin access account' : 'Storefront customer'}</span>
-                  </div>
-                  <span className={`status-badge ${getRoleTone(customer.role)}`.trim()}>
-                    {getRoleLabel(customer.role)}
-                  </span>
-                </div>
+        <aside className="admin-owner-workbench-side admin-dashboard-panel admin-customers-queue-panel">
+          <div className="admin-dashboard-section-heading compact">
+            <span>Work queue</span>
+            <p>The next customer records most likely to be useful for owner review.</p>
+          </div>
 
-                <CustomerBadgeList badges={customer.relationship.badges} />
-
-                <p className="admin-customer-preview-note">
-                  {customer.relationship.detail} {customer.relationship.valueLabel}.
-                </p>
-
-                <div className="admin-customer-preview-grid">
-                  <div>
-                    <span>Orders</span>
-                    <strong>{customer.orderCount}</strong>
-                  </div>
-                  <div>
-                    <span>Saved</span>
-                    <strong>{customer.savedItemCount}</strong>
-                  </div>
-                  <div>
-                    <span>Spent</span>
-                    <strong>{formatMoney(customer.totalSpent)}</strong>
-                  </div>
-                  <div>
-                    <span>Activity</span>
-                    <strong>{customer.relationship.activityLabel}</strong>
-                  </div>
-                </div>
-              </article>
-            ))
+          {customerWorkQueue.length ? (
+            <div className="admin-work-queue-list">
+              {customerWorkQueue.map((customer) => (
+                <CustomerWorkQueueCard key={customer.id} customer={customer} onFocusCustomer={focusCustomer} />
+              ))}
+            </div>
           ) : (
-            <div className="admin-empty-state-tight admin-readiness-empty">
-              <h3>No customer activity yet.</h3>
-              <p>
-                Customer accounts and relationship signals will appear here after sign-up, saved items, or order
-                activity.
-              </p>
+            <div className="admin-empty-state-tight">
+              <h3>No customer review queue yet.</h3>
+              <p>Customer signals will move into this top area once saved items or order activity start to accumulate.</p>
             </div>
           )}
+        </aside>
+      </section>
+
+      <section className="admin-orders-command-center">
+        <div className="admin-dashboard-panel admin-dashboard-panel-soft admin-customer-signals-panel">
+          <div className="admin-dashboard-section-heading">
+            <span>Signals worth reviewing</span>
+            <p>Use these quick cues to decide whether to open Orders, focus the customer directory, or check saved-item interest.</p>
+          </div>
+
+          <div className="admin-customer-signal-grid">
+            <CustomerSignalCard
+              label="Recent order behavior"
+              value={`${customerRecords.filter((customer) => customer.recentOrderCount > 0 && customer.role !== 'admin').length} customers`}
+              note="Customers with at least one order placed in the last 30 days."
+              tone="stock-low"
+              actionLabel="Show ordering customers"
+              onAction={() => {
+                setRoleFilter('customer');
+                setActivityFilter('with-orders');
+                setQuery('');
+              }}
+            />
+            <CustomerSignalCard
+              label="Saved-item interest"
+              value={`${summary.savedItemActivity} saved`}
+              note={`${summary.savedItemCustomers} customers are actively saving products for later review.`}
+              tone="status-badge-sale"
+              actionLabel="Filter saved-item activity"
+              onAction={() => {
+                setRoleFilter('customer');
+                setActivityFilter('saved-items');
+                setQuery('');
+              }}
+            />
+            <CustomerSignalCard
+              label="Repeat activity"
+              value={`${summary.repeatCustomers} repeat`}
+              note={`${summary.deliveredOrderCustomers} customers already have delivered orders in their history.`}
+              tone="stock-in"
+              actionLabel="View repeat customers"
+              onAction={() => {
+                setRoleFilter('customer');
+                setActivityFilter('repeat');
+                setQuery('');
+              }}
+            />
+            <CustomerSignalCard
+              label="Open order follow-up"
+              value={`${summary.openOrderCustomers} linked`}
+              note="Customers connected to pending or processing orders are usually the first ones worth reviewing beside the Orders page."
+              tone="order-status-pending"
+              actionLabel="Open orders page"
+              actionTo="/admin/orders"
+            />
+          </div>
         </div>
 
-        <div className="admin-panel-footer">
-          <div className="admin-quick-actions">
-            <Link to="/admin" className="text-button">
-              Open dashboard
-            </Link>
-            <Link to="/admin/orders" className="text-button">
-              Review orders
-            </Link>
-          </div>
-          <p className="admin-status-caption">Read-only customer relationship view for the current session. This is not a CRM automation tool.</p>
+        <div className="admin-orders-command-center-grid">
+          <aside className="admin-dashboard-panel admin-customers-spotlight-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Recent customer activity</span>
+              <p>The most active customer accounts, ordered by the latest visible activity signal.</p>
+            </div>
+
+            {customerSpotlights.length ? (
+              <div className="admin-customer-spotlight-list">
+                {customerSpotlights.map((customer) => (
+                  <CustomerSpotlightCard key={customer.id} customer={customer} onFocusCustomer={focusCustomer} />
+                ))}
+              </div>
+            ) : (
+              <div className="admin-empty-state-tight">
+                <h3>No active customer highlights yet.</h3>
+                <p>Order or saved-item activity will populate this area automatically when it becomes available.</p>
+              </div>
+            )}
+          </aside>
+
+          <aside className="admin-dashboard-panel admin-dashboard-panel-soft admin-orders-guidance-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Owner notes</span>
+              <p>Keep this page focused on relationship signals, not a raw CRM export.</p>
+            </div>
+
+            <div className="admin-orders-guidance-list">
+              <div className="admin-orders-guidance-item">
+                <strong>Start with customers tied to open orders.</strong>
+                <p>Pending or processing orders usually give the clearest reason to jump from Customers into Orders.</p>
+              </div>
+              <div className="admin-orders-guidance-item">
+                <strong>Saved items show browsing intent.</strong>
+                <p>Use saved-item counts as a lightweight interest signal, especially when order history is still thin.</p>
+              </div>
+              <div className="admin-orders-guidance-item">
+                <strong>Keep the posture read-only.</strong>
+                <p>This page summarizes activity and account history only. It does not add CRM automation or mutation behavior.</p>
+              </div>
+            </div>
+          </aside>
         </div>
       </section>
 
-      <div className="admin-toolbar">
-        <div className="admin-toolbar-left">
-          <input
-            className="admin-search"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search name, email, role, or relationship"
-            aria-label="Search customers"
-          />
-
-          <select
-            className="admin-filter"
-            value={roleFilter}
-            onChange={(event) => setRoleFilter(event.target.value)}
-            aria-label="Filter customers by role"
-          >
-            <option value="all">All roles</option>
-            <option value="customer">Customers</option>
-            <option value="admin">Admins</option>
-          </select>
-
-          <select
-            className="admin-filter"
-            value={activityFilter}
-            onChange={(event) => setActivityFilter(event.target.value)}
-            aria-label="Filter customers by activity"
-          >
-            <option value="all">All activity</option>
-            <option value="with-orders">With orders</option>
-            <option value="saved-items">Saved items</option>
-            <option value="with-orders-and-saved">Orders and saved items</option>
-            <option value="no-orders">No orders</option>
-          </select>
+      <section className="admin-dashboard-panel admin-orders-history-panel admin-customers-history-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>Customer directory</span>
+          <p>Full account history stays below the summary area so names, email, order signals, and saved-item activity are easier to scan.</p>
         </div>
 
-        <div className="admin-toolbar-actions">
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => {
-              setQuery('');
-              setRoleFilter('all');
-              setActivityFilter('all');
-            }}
-          >
-            Clear Filters
-          </button>
-        </div>
-      </div>
+        <div className="admin-toolbar">
+          <div className="admin-toolbar-left">
+            <input
+              className="admin-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search customer name, email, or relationship"
+              aria-label="Search customers"
+            />
 
-      {hasCustomers ? (
-        hasFilteredCustomers ? (
-          <>
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Relationship</th>
-                    <th>Orders</th>
-                    <th>Saved</th>
-                    <th>Spent</th>
-                    <th>Last activity</th>
-                    <th>Joined</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredCustomers.map((customer) => (
-                    <tr key={customer.id}>
-                      <td>
-                        <strong>{customer.name}</strong>
-                        <p>{customer.role === 'admin' ? 'Admin access account' : 'Storefront customer'}</p>
-                        <CustomerBadgeList badges={customer.relationship.badges} />
-                      </td>
-                      <td>{customer.email}</td>
-                      <td>
-                        <div className="admin-status-stack">
-                          <span className={`status-badge ${getRoleTone(customer.role)}`.trim()}>
-                            {getRoleLabel(customer.role)}
-                          </span>
-                          <span className={`status-badge ${customer.role === 'admin' ? 'status-active' : 'status-badge-muted'}`}>
-                            {customer.relationship.primaryLabel}
-                          </span>
-                        </div>
-                      </td>
-                      <td>{customer.orderCount}</td>
-                      <td>{customer.savedItemCount}</td>
-                      <td>{formatMoney(customer.totalSpent)}</td>
-                      <td>{customer.activityDate ? formatDate(customer.activityDate) : 'No activity yet'}</td>
-                      <td>{formatDate(customer.joinedDate)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <select
+              className="admin-filter"
+              value={roleFilter}
+              onChange={(event) => setRoleFilter(event.target.value)}
+              aria-label="Filter customers by role"
+            >
+              <option value="all">All roles</option>
+              <option value="customer">Customers</option>
+              <option value="admin">Admins</option>
+            </select>
+
+            <select
+              className="admin-filter"
+              value={activityFilter}
+              onChange={(event) => setActivityFilter(event.target.value)}
+              aria-label="Filter customers by activity"
+            >
+              <option value="all">All activity</option>
+              <option value="with-orders">With orders</option>
+              <option value="saved-items">Saved items</option>
+              <option value="with-orders-and-saved">Orders and saved items</option>
+              <option value="open-orders">Open orders</option>
+              <option value="repeat">Repeat customers</option>
+              <option value="no-orders">No orders</option>
+            </select>
+          </div>
+
+          <div className="admin-toolbar-actions">
+            <div className="admin-toolbar-summary" aria-live="polite">
+              <strong>{filteredCustomers.length}</strong>
+              <span>{filteredCustomers.length === 1 ? 'customer in view' : 'customers in view'}</span>
             </div>
 
-            <div className="admin-record-list admin-customer-records">
-              {filteredCustomers.map((customer) => (
-                <article key={customer.id} className="admin-record-card admin-customer-card">
-                  <div className="admin-record-row">
-                    <div className="admin-record-meta">
-                      <strong>{customer.name}</strong>
-                      <span>{customer.email}</span>
-                      <span>{customer.role === 'admin' ? 'Admin access account' : 'Storefront customer'}</span>
-                      <CustomerBadgeList badges={customer.relationship.badges} />
-                    </div>
-                    <div className="admin-status-stack">
-                      <span className={`status-badge ${getRoleTone(customer.role)}`.trim()}>
-                        {getRoleLabel(customer.role)}
-                      </span>
-                      <span className={`status-badge ${customer.role === 'admin' ? 'status-active' : 'status-badge-muted'}`}>
-                        {customer.relationship.primaryLabel}
-                      </span>
-                    </div>
-                  </div>
-
-                  <CustomerMetrics customer={customer} />
-
-                  <div className="admin-record-row">
-                    <div className="admin-record-meta">
-                      <span>Joined</span>
-                      <strong>{formatDate(customer.joinedDate)}</strong>
-                    </div>
-                    <div className="admin-record-meta">
-                      <span>Last activity</span>
-                      <strong>{customer.activityDate ? formatDate(customer.activityDate) : 'No activity yet'}</strong>
-                    </div>
-                  </div>
-
-                  <p className="admin-customer-preview-note">
-                    {customer.relationship.detail} {customer.relationship.valueLabel}.
-                  </p>
-                </article>
-              ))}
-            </div>
-          </>
-        ) : (
-        <div className="admin-empty-state">
-          <h2>No matching customers.</h2>
-          <p>Try a different name, email, role, or activity filter.</p>
-          <div className="admin-empty-state-actions">
             <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => {
-                  setQuery('');
-                  setRoleFilter('all');
-                  setActivityFilter('all');
-                }}
-              >
-                Clear Filters
-              </button>
-              <Link to="/admin" className="btn btn-ghost">
-                Open dashboard
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                setQuery('');
+                setRoleFilter('all');
+                setActivityFilter('all');
+              }}
+            >
+              Clear filters
+            </button>
+          </div>
+        </div>
+
+        {hasCustomers ? (
+          hasFilteredCustomers ? (
+            <>
+              <div className="admin-table-wrap">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Customer</th>
+                      <th>Signals</th>
+                      <th>Orders</th>
+                      <th>Saved</th>
+                      <th>Spend</th>
+                      <th>Last activity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredCustomers.map((customer) => (
+                      <tr key={customer.id}>
+                        <td>
+                          <strong>{customer.name}</strong>
+                          <div className="admin-table-subtle">{customer.email}</div>
+                          <div className="admin-table-subtle">
+                            {customer.role === 'admin' ? 'Admin access account' : 'Storefront customer'}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="admin-status-stack">
+                            <span className={`status-badge ${getRoleTone(customer.role)}`.trim()}>
+                              {getRoleLabel(customer.role)}
+                            </span>
+                            <span className={`status-badge ${customer.openOrderCount > 0 ? 'order-status-pending' : 'status-badge-muted'}`}>
+                              {customer.openOrderCount > 0 ? `${customer.openOrderCount} open` : customer.relationship.primaryLabel}
+                            </span>
+                          </div>
+                          <CustomerBadgeList badges={customer.relationship.badges} />
+                        </td>
+                        <td>
+                          <strong>{customer.orderCount}</strong>
+                          <div className="admin-table-subtle">
+                            {customer.recentOrderCount} recent
+                            {customer.deliveredOrderCount > 0 ? ` - ${customer.deliveredOrderCount} delivered` : ''}
+                          </div>
+                        </td>
+                        <td>
+                          <strong>{customer.savedItemCount}</strong>
+                          <div className="admin-table-subtle">
+                            {customer.savedItemCount > 0 ? 'Saved-item activity visible' : 'No saved items'}
+                          </div>
+                        </td>
+                        <td>
+                          <strong>{formatMoney(customer.totalSpent)}</strong>
+                          <div className="admin-table-subtle">
+                            Avg {formatMoney(customer.orderCount > 0 ? customer.totalSpent / customer.orderCount : 0)}
+                          </div>
+                        </td>
+                        <td>
+                          <strong>{customer.activityDate ? formatDate(customer.activityDate) : 'No activity yet'}</strong>
+                          <div className="admin-table-subtle">
+                            Joined {formatDate(customer.joinedDate)}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="admin-record-list admin-customer-records">
+                {filteredCustomers.map((customer) => (
+                  <article key={customer.id} className="admin-record-card admin-customer-card">
+                    <div className="admin-record-row">
+                      <div className="admin-record-meta">
+                        <strong>{customer.name}</strong>
+                        <span>{customer.email}</span>
+                        <span>{customer.role === 'admin' ? 'Admin access account' : 'Storefront customer'}</span>
+                        <CustomerBadgeList badges={customer.relationship.badges} />
+                      </div>
+                      <div className="admin-status-stack">
+                        <span className={`status-badge ${getRoleTone(customer.role)}`.trim()}>
+                          {getRoleLabel(customer.role)}
+                        </span>
+                        <span className={`status-badge ${customer.openOrderCount > 0 ? 'order-status-pending' : 'status-badge-muted'}`}>
+                          {customer.openOrderCount > 0 ? `${customer.openOrderCount} open` : customer.relationship.primaryLabel}
+                        </span>
+                      </div>
+                    </div>
+
+                    <CustomerMetrics customer={customer} />
+
+                    <div className="admin-record-row">
+                      <div className="admin-record-meta">
+                        <span>Joined</span>
+                        <strong>{formatDate(customer.joinedDate)}</strong>
+                      </div>
+                      <div className="admin-record-meta">
+                        <span>Recent orders</span>
+                        <strong>{customer.recentOrderCount}</strong>
+                      </div>
+                    </div>
+
+                    <p className="admin-customer-preview-note">{customer.signalSummary}</p>
+
+                    <div className="admin-work-queue-card-actions">
+                      <button type="button" className="text-button" onClick={() => focusCustomer(customer)}>
+                        Focus customer
+                      </button>
+                      <Link to="/admin/orders" className="text-button">
+                        Review orders
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="admin-empty-state">
+              <h2>No matching customers.</h2>
+              <p>Try a different name, email, role, or customer-signal filter.</p>
+              <div className="admin-empty-state-actions">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setQuery('');
+                    setRoleFilter('all');
+                    setActivityFilter('all');
+                  }}
+                >
+                  Clear filters
+                </button>
+                <Link to="/admin/orders" className="btn btn-ghost">
+                  Review orders
+                </Link>
+              </div>
+            </div>
+          )
+        ) : (
+          <div className="admin-empty-state">
+            <h2>No customer records yet.</h2>
+            <p>Customer accounts appear here after sign-up, saved-item activity, or completed orders in this environment.</p>
+            <div className="admin-empty-state-actions">
+              <Link to="/admin/orders" className="btn btn-ghost">
+                Review orders
+              </Link>
+              <Link to="/" className="btn btn-dark">
+                View storefront
               </Link>
             </div>
           </div>
-        )
-      ) : (
-        <div className="admin-empty-state">
-          <h2>No customer records yet.</h2>
-          <p>Customer accounts appear here after sign-up, saved-item activity, or completed orders in this environment.</p>
-          <div className="admin-empty-state-actions">
-            <Link to="/admin" className="btn btn-ghost">
-              Open dashboard
-            </Link>
-            <Link to="/" className="btn btn-dark">
-              View storefront
-            </Link>
-          </div>
-        </div>
-      )}
+        )}
+      </section>
 
       {hasFilters ? (
         <p className="admin-catalog-helper">
@@ -635,3 +919,4 @@ export default function AdminCustomersPage() {
     </div>
   );
 }
+

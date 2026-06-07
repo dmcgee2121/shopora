@@ -267,32 +267,18 @@ function OrderQueueCard({ order, attention, onOpen }) {
         <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
       </div>
 
-      <div className="admin-work-queue-card-grid" aria-label={`Queue summary for ${orderLabel}`}>
-        <div className="admin-work-queue-card-stat">
-          <span>Customer</span>
-          <strong>{customer.email}</strong>
-        </div>
-        <div className="admin-work-queue-card-stat">
-          <span>Amount</span>
-          <strong>{formatMoney(order.total)}</strong>
-        </div>
-        <div className="admin-work-queue-card-stat">
-          <span>Items</span>
-          <strong>
+      <div className="admin-work-queue-card-meta" aria-label={`Queue summary for ${orderLabel}`}>
+        <span className="admin-table-subtle">{customer.email}</span>
+        <div className="admin-work-queue-card-facts">
+          <span>{formatMoney(order.total)}</span>
+          <span>
             {itemCount} item{itemCount === 1 ? '' : 's'}
-          </strong>
+          </span>
+          <span>{formatDate(order.createdAt)}</span>
         </div>
-        <div className="admin-work-queue-card-stat">
-          <span>Status</span>
-          <strong>{orderStatusLabel}</strong>
-        </div>
-        <div className="admin-work-queue-card-stat">
-          <span>Payment</span>
-          <strong>{paymentLabel}</strong>
-        </div>
-        <div className="admin-work-queue-card-stat">
-          <span>Placed</span>
-          <strong>{formatDate(order.createdAt)}</strong>
+        <div className="admin-work-queue-card-facts">
+          <span>{orderStatusLabel}</span>
+          <span>{paymentLabel}</span>
         </div>
       </div>
 
@@ -457,10 +443,10 @@ export default function AdminOrdersPage() {
       ) : null}
 
       <section className="admin-owner-workbench-panel admin-orders-workbench-panel">
-        <div className="admin-owner-workbench-main">
+        <div className="admin-orders-command-center-main">
           <div className="admin-dashboard-section-heading">
             <span>Order snapshot</span>
-            <p>Start with the orders that need a payment, customer, or fulfillment follow-up.</p>
+            <p>Use the snapshot first, then handle the next orders waiting on payment, customer context, or fulfillment.</p>
           </div>
 
           <div className="admin-status-grid admin-owner-summary-grid">
@@ -487,25 +473,49 @@ export default function AdminOrdersPage() {
           </div>
         </div>
 
-        <aside className="admin-owner-workbench-side admin-dashboard-panel">
-          <div className="admin-dashboard-section-heading compact">
-            <span>Work queue</span>
-            <p>The next {Math.min(orderWorkQueue.length, 4) || 4} orders most likely to need owner attention.</p>
-          </div>
+        <div className="admin-orders-command-center-grid">
+          <aside className="admin-owner-workbench-side admin-dashboard-panel admin-orders-queue-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Work queue</span>
+              <p>The next {Math.min(orderWorkQueue.length, 4) || 4} orders most likely to need owner attention.</p>
+            </div>
 
-          {orderWorkQueue.length ? (
-            <div className="admin-work-queue-list">
-              {orderWorkQueue.map(({ order, attention }) => (
-                <OrderQueueCard key={order.id} order={order} attention={attention} onOpen={() => setSelectedOrderId(order.id)} />
-              ))}
+            {orderWorkQueue.length ? (
+              <div className="admin-work-queue-list">
+                {orderWorkQueue.map(({ order, attention }) => (
+                  <OrderQueueCard key={order.id} order={order} attention={attention} onOpen={() => setSelectedOrderId(order.id)} />
+                ))}
+              </div>
+            ) : (
+              <div className="admin-empty-state-tight">
+                <h3>Queue looks clear.</h3>
+                <p>No orders are currently flagged for owner attention.</p>
+              </div>
+            )}
+          </aside>
+
+          <aside className="admin-dashboard-panel admin-dashboard-panel-soft admin-orders-guidance-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Handling notes</span>
+              <p>Keep the top area focused on the next operational decisions, not the full order archive.</p>
             </div>
-          ) : (
-            <div className="admin-empty-state-tight">
-              <h3>Queue looks clear.</h3>
-              <p>No orders are currently flagged for owner attention.</p>
+
+            <div className="admin-orders-guidance-list">
+              <div className="admin-orders-guidance-item">
+                <strong>Handle payment-pending orders first.</strong>
+                <p>Orders waiting on payment should stay in review until payment clearance is visible.</p>
+              </div>
+              <div className="admin-orders-guidance-item">
+                <strong>Use Order History below for the full list.</strong>
+                <p>The bounded history section keeps every order available without crowding the daily work queue.</p>
+              </div>
+              <div className="admin-orders-guidance-item">
+                <strong>Status updates remain read-only in this release.</strong>
+                <p>{orderSourceNote || 'Live and local order views stay behaviorally unchanged in this admin pass.'}</p>
+              </div>
             </div>
-          )}
-        </aside>
+          </aside>
+        </div>
       </section>
 
       <section className="admin-dashboard-panel admin-orders-history-panel">

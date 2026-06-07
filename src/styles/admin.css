@@ -1369,6 +1369,10 @@
   padding: 12px;
 }
 
+.admin-orders-workbench-panel .admin-dashboard-section-heading p {
+  max-width: 44ch;
+}
+
 .admin-owner-workbench-main,
 .admin-owner-workbench-side {
   min-width: 0;
@@ -1405,11 +1409,15 @@
 
 .admin-work-queue-card {
   display: grid;
-  gap: 6px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 11px 12px;
   border-radius: 16px;
   border: 1px solid rgba(228, 217, 204, 0.8);
   background: rgba(251, 247, 241, 0.78);
+}
+
+.admin-work-queue-card-title {
+  min-width: 0;
 }
 
 .admin-work-queue-card-head {
@@ -1436,6 +1444,41 @@
 .admin-work-queue-card-meta {
   display: grid;
   gap: 2px;
+}
+
+.admin-work-queue-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.admin-work-queue-card-stat {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 9px;
+  border-radius: 12px;
+  background: rgba(255, 253, 250, 0.82);
+  border: 1px solid rgba(228, 217, 204, 0.72);
+}
+
+.admin-work-queue-card-stat span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.admin-work-queue-card-stat strong {
+  min-width: 0;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.admin-work-queue-card-note {
+  margin-top: -2px;
 }
 
 .admin-work-queue-card-actions {
@@ -1521,6 +1564,26 @@
   gap: 14px;
 }
 
+.admin-toolbar-summary {
+  display: grid;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(228, 217, 204, 0.78);
+  background: rgba(247, 240, 231, 0.75);
+}
+
+.admin-toolbar-summary strong {
+  font-size: 0.96rem;
+  line-height: 1.2;
+}
+
+.admin-toolbar-summary span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
 .admin-toolbar-left,
 .admin-toolbar-filters,
 .admin-toolbar-actions {
@@ -1563,7 +1626,7 @@
 }
 
 .admin-orders-table-wrap {
-  max-height: 560px;
+  max-height: 500px;
 }
 
 .admin-table {
@@ -1603,7 +1666,7 @@
 }
 
 .admin-owner-table {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .admin-owner-table .admin-status-stack {
@@ -1620,7 +1683,12 @@
 }
 
 .admin-owner-table td {
-  line-height: 1.3;
+  line-height: 1.25;
+}
+
+.admin-orders-history-panel .admin-table th,
+.admin-orders-history-panel .admin-table td {
+  padding: 7px 9px;
 }
 
 .admin-product-cell {
@@ -2103,6 +2171,10 @@
 
 .admin-order-cards .admin-record-row {
   gap: 12px;
+}
+
+.admin-order-card-statuses {
+  align-items: flex-end;
 }
 
 .admin-order-cards .admin-status-select {

@@ -254,28 +254,49 @@ function OrderQueueCard({ order, attention, onOpen }) {
   const customer = getCustomerSummary(order);
   const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
   const itemCount = getOrderItemCount(order);
+  const orderLabel = safeText(order.orderNumber, 'Order');
+  const orderStatusLabel = getOrderStatusLabel(order.status);
 
   return (
     <article className="admin-work-queue-card">
       <div className="admin-work-queue-card-head">
-        <div>
-          <strong>{safeText(order.orderNumber, 'Order')}</strong>
+        <div className="admin-work-queue-card-title">
+          <strong>{orderLabel}</strong>
           <p>{customer.name}</p>
         </div>
         <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
       </div>
 
-      <div className="admin-work-queue-card-meta">
-        <span className="admin-table-subtle">{customer.email}</span>
-        <span className="admin-table-subtle">
-          {formatMoney(order.total)} | {itemCount} item{itemCount === 1 ? '' : 's'} | {formatDate(order.createdAt)}
-        </span>
-        <span className="admin-table-subtle">
-          {getOrderStatusLabel(order.status)} | {paymentLabel}
-        </span>
+      <div className="admin-work-queue-card-grid" aria-label={`Queue summary for ${orderLabel}`}>
+        <div className="admin-work-queue-card-stat">
+          <span>Customer</span>
+          <strong>{customer.email}</strong>
+        </div>
+        <div className="admin-work-queue-card-stat">
+          <span>Amount</span>
+          <strong>{formatMoney(order.total)}</strong>
+        </div>
+        <div className="admin-work-queue-card-stat">
+          <span>Items</span>
+          <strong>
+            {itemCount} item{itemCount === 1 ? '' : 's'}
+          </strong>
+        </div>
+        <div className="admin-work-queue-card-stat">
+          <span>Status</span>
+          <strong>{orderStatusLabel}</strong>
+        </div>
+        <div className="admin-work-queue-card-stat">
+          <span>Payment</span>
+          <strong>{paymentLabel}</strong>
+        </div>
+        <div className="admin-work-queue-card-stat">
+          <span>Placed</span>
+          <strong>{formatDate(order.createdAt)}</strong>
+        </div>
       </div>
 
-      <p>{attention.detail}</p>
+      <p className="admin-work-queue-card-note">{attention.detail}</p>
 
       <div className="admin-work-queue-card-actions">
         <button type="button" className="text-button" onClick={onOpen}>
@@ -374,6 +395,7 @@ export default function AdminOrdersPage() {
   const hasFilters = Boolean(query.trim() || statusFilter !== 'all' || ownerView !== 'needs-action');
   const hasFilteredOrders = filteredOrders.length > 0;
   const shouldShowLoadingState = isOrdersLoading && !hasOrders;
+  const ordersHistoryLabel = ownerView === 'all' && statusFilter === 'all' && !query.trim() ? 'All orders' : 'Order history';
 
   useEffect(() => {
     if (!selectedOrderId) return undefined;
@@ -438,7 +460,7 @@ export default function AdminOrdersPage() {
         <div className="admin-owner-workbench-main">
           <div className="admin-dashboard-section-heading">
             <span>Order snapshot</span>
-            <p>Start with the orders waiting on a customer, payment, or fulfillment step.</p>
+            <p>Start with the orders that need a payment, customer, or fulfillment follow-up.</p>
           </div>
 
           <div className="admin-status-grid admin-owner-summary-grid">
@@ -468,7 +490,7 @@ export default function AdminOrdersPage() {
         <aside className="admin-owner-workbench-side admin-dashboard-panel">
           <div className="admin-dashboard-section-heading compact">
             <span>Work queue</span>
-            <p>The next four orders most likely to need owner attention.</p>
+            <p>The next {Math.min(orderWorkQueue.length, 4) || 4} orders most likely to need owner attention.</p>
           </div>
 
           {orderWorkQueue.length ? (
@@ -488,8 +510,8 @@ export default function AdminOrdersPage() {
 
       <section className="admin-dashboard-panel admin-orders-history-panel">
         <div className="admin-dashboard-section-heading">
-          <span>All orders</span>
-          <p>The full order list lives below the work queue so history stays available without becoming the main task area.</p>
+          <span>{ordersHistoryLabel}</span>
+          <p>The full order list stays below the work queue so history remains easy to scan without becoming the main task area.</p>
         </div>
 
         <div className="admin-toolbar">
@@ -522,6 +544,10 @@ export default function AdminOrdersPage() {
           </div>
 
           <div className="admin-toolbar-actions">
+            <div className="admin-toolbar-summary" aria-live="polite">
+              <strong>{filteredOrders.length}</strong>
+              <span>{filteredOrders.length === 1 ? 'order in view' : 'orders in view'}</span>
+            </div>
             <button
               type="button"
               className="btn btn-ghost"
@@ -601,6 +627,7 @@ export default function AdminOrdersPage() {
                           <td>
                             <div className="admin-status-stack">
                               <strong className="admin-order-ref">{safeText(order.orderNumber, 'Order')}</strong>
+                              <span className="admin-table-subtle">{getOrderSourceLabel(ordersSource)}</span>
                             </div>
                           </td>
                           <td>
@@ -615,21 +642,19 @@ export default function AdminOrdersPage() {
                           </td>
                           <td>{getOrderItemCount(order)}</td>
                           <td>
-                            <div className="admin-status-stack">
-                              <select
-                                className="admin-status-select"
-                                value={getOrderStatusOptionValue(order.status)}
-                                onChange={(event) => updateOrderStatus(order.id, event.target.value)}
-                                disabled={!canUpdateOrderStatus}
-                                aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
-                              >
-                                {statusOptions.map((status) => (
-                                  <option key={status} value={status}>
-                                    {status}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
+                            <select
+                              className="admin-status-select"
+                              value={getOrderStatusOptionValue(order.status)}
+                              onChange={(event) => updateOrderStatus(order.id, event.target.value)}
+                              disabled={!canUpdateOrderStatus}
+                              aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
+                            >
+                              {statusOptions.map((status) => (
+                                <option key={status} value={status}>
+                                  {status}
+                                </option>
+                              ))}
+                            </select>
                           </td>
                           <td>
                             <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
@@ -665,18 +690,19 @@ export default function AdminOrdersPage() {
                           <span>{customer.name}</span>
                           <span>{customer.email}</span>
                         </div>
-                        <div className="admin-status-stack">
+                        <div className="admin-status-stack admin-order-card-statuses">
+                          <span className="admin-table-subtle">{formatDate(order.createdAt)}</span>
                           <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
                         </div>
                       </div>
 
                       <div className="admin-record-row">
                         <div className="admin-record-meta">
-                          <span>{formatDate(order.createdAt)}</span>
                           <strong>{formatMoney(order.total)}</strong>
                           <span>
                             {getOrderItemCount(order)} item{getOrderItemCount(order) === 1 ? '' : 's'}
                           </span>
+                          <span className="admin-table-subtle">{getOrderStatusLabel(order.status)}</span>
                         </div>
                         <select
                           className="admin-status-select"

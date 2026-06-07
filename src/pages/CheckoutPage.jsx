@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BrandLogo from '../components/BrandLogo';
-import SupportLinkStrip from '../components/SupportLinkStrip';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useOrders } from '../context/OrdersContext';
@@ -53,6 +52,7 @@ export default function CheckoutPage() {
   const { createOrder } = useOrders();
   const navigate = useNavigate();
   const supportLinks = getSupportLinks(currentUser);
+  const checkoutHelpLinks = supportLinks.slice(0, 4);
   const [form, setForm] = useState(defaultForm);
   const [error, setError] = useState('');
   const [placedOrderId, setPlacedOrderId] = useState('');
@@ -549,12 +549,20 @@ export default function CheckoutPage() {
             </p>
           </div>
 
-          <SupportLinkStrip
-            title="Reassurance before payment"
-            description="Review your cart, shipping, returns, privacy, and support options here so the last step feels clear before you continue."
-            links={supportLinks}
-            className="checkout-support-strip"
-          />
+          <section className="checkout-help-card" aria-labelledby="checkout-help-title">
+            <p className="checkout-help-kicker">Need help?</p>
+            <h3 id="checkout-help-title">Before you pay</h3>
+            <p className="checkout-help-copy">
+              Quick links for shipping, returns, privacy, and support before the final step.
+            </p>
+            <nav className="checkout-help-links" aria-label="Checkout help links">
+              {checkoutHelpLinks.map((link) => (
+                <Link key={`${link.to}-${link.label}`} to={link.to} className="checkout-help-link">
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </section>
 
           <button
             type="button"

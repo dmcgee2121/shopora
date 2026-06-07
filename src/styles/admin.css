@@ -2895,6 +2895,33 @@
   line-height: 1;
 }
 
+.admin-status-value-split {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  font-family: inherit;
+  line-height: 1.2;
+}
+
+.admin-status-value-split-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.6em;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.admin-status-value-split-dot {
+  color: var(--gold-dark);
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.56em;
+  font-weight: 800;
+}
+
 .admin-status-card p {
   margin: 0;
   color: var(--muted);
@@ -3908,6 +3935,11 @@
     gap: 12px;
   }
 
+  .admin-status-grid.admin-owner-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
   .admin-top-nav-shell,
   .admin-sidebar,
   .admin-dashboard-overview,
@@ -3958,6 +3990,24 @@
   .admin-catalog-readiness-stat strong,
   .admin-editor-readiness-stat strong {
     font-size: 1.3rem;
+  }
+
+  .admin-status-grid.admin-owner-summary-grid .admin-status-card {
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .admin-status-grid.admin-owner-summary-grid .admin-status-card p {
+    font-size: 0.74rem;
+    line-height: 1.35;
+  }
+
+  .admin-status-value-split {
+    gap: 5px;
+  }
+
+  .admin-status-value-split-item {
+    font-size: 0.58em;
   }
 
   .admin-owner-snapshot-card,

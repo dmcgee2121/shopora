@@ -449,10 +449,19 @@ export default function AdminProductsPage() {
             </div>
             <div className="admin-status-card">
               <span>Sale / featured</span>
-              <strong>
-                {summary.saleProducts}
-                <span className="admin-readiness-divider">/</span>
-                {summary.featuredProducts}
+              <strong
+                className="admin-status-value-split"
+                aria-label={`${summary.saleProducts} sale and ${summary.featuredProducts} featured products`}
+              >
+                <span className="admin-status-value-split-item">
+                  {summary.saleProducts} sale
+                </span>
+                <span className="admin-status-value-split-dot" aria-hidden="true">
+                  &middot;
+                </span>
+                <span className="admin-status-value-split-item">
+                  {summary.featuredProducts} featured
+                </span>
               </strong>
               <p>Products already promoted for shoppers.</p>
             </div>

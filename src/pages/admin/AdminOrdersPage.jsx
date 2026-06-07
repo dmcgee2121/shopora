@@ -319,10 +319,11 @@ export default function AdminOrdersPage() {
 
   const filteredOrders = useMemo(() => {
     const term = query.trim().toLowerCase();
+    const hasSearchTerm = Boolean(term);
 
     return ordered.filter((order) => {
       const statusMatches = statusFilter === 'all' || normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(statusFilter);
-      const ownerViewMatches = getOwnerViewMatchesOrder(order, ownerView);
+      const ownerViewMatches = hasSearchTerm ? true : getOwnerViewMatchesOrder(order, ownerView);
       const searchable = [
         order.orderNumber,
         order.customerName,

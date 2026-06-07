@@ -18,7 +18,7 @@ const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancell
 
 const statusCopy = {
   Pending: 'Orders awaiting action.',
-  Processing: 'Orders being prepared.',
+  Processing: 'Orders currently being prepared.',
   Shipped: 'Orders in transit.',
   Delivered: 'Orders completed.',
   Cancelled: 'Orders stopped before completion.',
@@ -73,6 +73,13 @@ function getOrderItemCount(order) {
   return Array.isArray(order?.items) ? order.items.length : 0;
 }
 
+function isOrderRecent(order) {
+  const createdAt = new Date(order?.createdAt).getTime();
+  if (!Number.isFinite(createdAt)) return false;
+
+  return Date.now() - createdAt <= 24 * 60 * 60 * 1000;
+}
+
 function getCustomerSummary(order) {
   return {
     name: safeText(order?.customerName, 'Guest customer'),
@@ -122,6 +129,20 @@ function getContactContextLines(order) {
   return lines;
 }
 
+function getOwnerViewMatchesOrder(order, ownerView) {
+  if (ownerView === 'all') return true;
+
+  const attention = getOrderAttentionInfo(order);
+  const status = normalizeOrderStatusValue(order.status);
+
+  if (ownerView === 'needs-action') return attention.needsAction;
+  if (ownerView === 'processing') return status === 'processing';
+  if (ownerView === 'payment-pending') return attention.key === 'payment-pending';
+  if (ownerView === 'recent') return isOrderRecent(order);
+
+  return true;
+}
+
 function getFulfillmentReadiness(order, attention) {
   if (!order) {
     return {
@@ -164,7 +185,7 @@ function getFulfillmentReadiness(order, attention) {
     default:
       return {
         label: 'Review before action',
-        detail: 'The order can be scanned for the next operational step without any live mutation.',
+        detail: 'Scan the order details and confirm the next operational step.',
       };
   }
 }
@@ -176,31 +197,20 @@ function getNextOperationalStep(order, attention) {
 
   switch (attention?.key) {
     case 'customer-info':
-      return 'Confirm the shipping snapshot and contact details before the order could enter fulfillment.';
+      return 'Confirm the shipping snapshot and contact details before the order enters fulfillment.';
     case 'payment-pending':
       return 'Wait for payment to clear, then revisit the order queue.';
     case 'ready-to-process':
-      return 'Move the order into a future pick-and-pack workflow when live writes are available.';
+      return 'Move the order into the packing queue.';
     case 'needs-fulfillment':
-      return 'Continue packing and preparing the order while keeping the admin view read-only.';
+      return 'Continue packing and preparing the order.';
     case 'shipped-complete':
-      return 'Use the receipt and support links only for customer follow-up or post-shipment review.';
+      return 'Use the receipt and support links only for customer follow-up.';
     case 'cancelled-refunded':
-      return 'Leave the order closed and use it as a prototype reference for non-active workflow states.';
+      return 'Leave the order closed unless customer support needs context.';
     default:
-      return 'Review the order details and confirm how a future live action should be staged.';
+      return 'Review the order details and confirm the next step for the team.';
   }
-}
-
-function getPrototypeWorkflowFlags(order, attention) {
-  if (!order) return [];
-
-  return [
-    order.demoMode ? 'Local simulation only' : 'Live order, read-only in UI',
-    attention?.label ? attention.label : 'No attention flag',
-    order.customerPhone ? 'Customer phone provided' : 'Phone missing',
-    formatAddress(order.shippingAddress).length ? 'Shipping snapshot present' : 'Shipping snapshot missing',
-  ];
 }
 
 function getDetailBannerLabels(order, attention, ordersSource) {
@@ -211,7 +221,6 @@ function getDetailBannerLabels(order, attention, ordersSource) {
     getOrderStatusLabel(order.status) || 'No status available',
     getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode }),
     attention?.label ?? 'No attention flag',
-    order.demoMode ? 'Prototype detail view' : 'Read-only live Supabase order',
   ];
 }
 
@@ -241,39 +250,80 @@ function OrderItemRow({ item }) {
   );
 }
 
+function OrderQueueCard({ order, attention, onOpen }) {
+  const customer = getCustomerSummary(order);
+  const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
+  const itemCount = getOrderItemCount(order);
+  const orderLabel = safeText(order.orderNumber, 'Order');
+  const orderStatusLabel = getOrderStatusLabel(order.status);
+
+  return (
+    <article className="admin-work-queue-card">
+      <div className="admin-work-queue-card-head">
+        <div className="admin-work-queue-card-title">
+          <strong>{orderLabel}</strong>
+          <p>{customer.name}</p>
+        </div>
+        <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
+      </div>
+
+      <div className="admin-work-queue-card-meta" aria-label={`Queue summary for ${orderLabel}`}>
+        <span className="admin-table-subtle">{customer.email}</span>
+        <div className="admin-work-queue-card-facts">
+          <span>{formatMoney(order.total)}</span>
+          <span>
+            {itemCount} item{itemCount === 1 ? '' : 's'}
+          </span>
+          <span>{formatDate(order.createdAt)}</span>
+        </div>
+        <div className="admin-work-queue-card-facts">
+          <span>{orderStatusLabel}</span>
+          <span>{paymentLabel}</span>
+        </div>
+      </div>
+
+      <p className="admin-work-queue-card-note">{attention.detail}</p>
+
+      <div className="admin-work-queue-card-actions">
+        <button type="button" className="text-button" onClick={onOpen}>
+          Quick view
+        </button>
+        <Link to={`/order-confirmation/${order.id}`} className="text-button">
+          Open receipt
+        </Link>
+      </div>
+    </article>
+  );
+}
+
 export default function AdminOrdersPage() {
   const { orders, ordersSource, updateOrderStatus, isOrdersLoading, ordersError } = useOrders();
   const { currentUser } = useAuth();
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [ownerView, setOwnerView] = useState('needs-action');
   const orderSourceNote =
     currentUser?.role === 'admin'
       ? ordersSource === 'supabase'
-        ? 'Note: live Supabase orders are visible here, but status updates remain read-only in this release.'
-        : 'Note: this admin order list is reading browser-local orders only in this mode. Status changes here are local-only.'
+        ? 'Live Supabase orders are visible here, but status updates remain read-only in this release.'
+        : 'This view is reading local demo orders in this mode. Status changes stay local-only.'
       : '';
   const canUpdateOrderStatus = ordersSource === 'local';
-  const ordersSubtitle =
-    ordersSource === 'supabase'
-      ? 'Review live Supabase orders, spot fulfillment gaps, and open receipts while status changes remain read-only.'
-      : 'Review completed local orders, simulate status changes locally, and open receipts without leaving the admin area.';
 
   const ordered = useMemo(
-    () =>
-      [...orders].sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      ),
+    () => [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
     [orders],
   );
   const operationsSummary = useMemo(() => getOrderOperationsSummary(ordered), [ordered]);
-  const attentionPreviewOrders = operationsSummary.attentionOrders.slice(0, 3);
 
   const filteredOrders = useMemo(() => {
     const term = query.trim().toLowerCase();
+    const hasSearchTerm = Boolean(term);
 
     return ordered.filter((order) => {
       const statusMatches = statusFilter === 'all' || normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(statusFilter);
+      const ownerViewMatches = hasSearchTerm ? true : getOwnerViewMatchesOrder(order, ownerView);
       const searchable = [
         order.orderNumber,
         order.customerName,
@@ -284,41 +334,55 @@ export default function AdminOrdersPage() {
         .join(' ')
         .toLowerCase();
 
-      return statusMatches && (!term || searchable.includes(term));
+      return ownerViewMatches && statusMatches && (!term || searchable.includes(term));
     });
-  }, [ordered, query, statusFilter]);
+  }, [ordered, ownerView, query, statusFilter]);
 
   const selectedOrder = ordered.find((order) => idsMatch(order.id, selectedOrderId)) ?? null;
   const selectedOrderAttention = selectedOrder ? getOrderAttentionInfo(selectedOrder) : null;
   const selectedOrderDetailBannerLabels = selectedOrder
     ? getDetailBannerLabels(selectedOrder, selectedOrderAttention, ordersSource)
     : [];
-  const workflowPreviewOrder = selectedOrder ?? ordered[0] ?? null;
-  const workflowPreviewAttention = workflowPreviewOrder ? getOrderAttentionInfo(workflowPreviewOrder) : null;
-  const workflowPreviewReadiness = getFulfillmentReadiness(workflowPreviewOrder, workflowPreviewAttention);
-  const workflowPreviewFlags = getPrototypeWorkflowFlags(workflowPreviewOrder, workflowPreviewAttention);
-  const workflowPreviewContactLines = getContactContextLines(workflowPreviewOrder);
-  const workflowPreviewNextStep = getNextOperationalStep(workflowPreviewOrder, workflowPreviewAttention);
 
-  const counts = statusOptions.reduce((result, status) => {
-    result[status] = ordered.filter(
-      (order) => normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(status),
-    ).length;
-    return result;
-  }, {});
+  const counts = useMemo(
+    () =>
+      statusOptions.reduce((result, status) => {
+        result[status] = ordered.filter(
+          (order) => normalizeOrderStatusValue(order.status) === normalizeOrderStatusValue(status),
+        ).length;
+        return result;
+      }, {}),
+    [ordered],
+  );
 
-  const processingOrders = operationsSummary.processingOrders;
-  const shippedOrders = operationsSummary.shippedOrders;
-  const cancelledOrders = operationsSummary.cancelledOrders;
-  const refundedOrders = operationsSummary.refundedOrders;
-  const totalRevenue = ordered.reduce((total, order) => total + Number(order.total ?? 0), 0);
-  const sourceLabel = ordersSource === 'supabase' ? 'Live Supabase orders' : 'Local demo orders';
-  const closedOrders = cancelledOrders + refundedOrders;
+  const orderWorkQueue = useMemo(() => {
+    return operationsSummary.attentionOrders
+      .slice()
+      .sort((left, right) => {
+        if (right.attention.priority !== left.attention.priority) {
+          return right.attention.priority - left.attention.priority;
+        }
+
+        return new Date(right.order.createdAt).getTime() - new Date(left.order.createdAt).getTime();
+      })
+      .slice(0, 4);
+  }, [operationsSummary.attentionOrders]);
+
+  const pendingOrders = counts.Pending ?? 0;
+  const processingOrders = counts.Processing ?? 0;
+  const recentOrders = operationsSummary.recentlyPlacedOrders;
+  const ownerViews = [
+    { key: 'needs-action', label: 'Needs action', count: operationsSummary.ordersNeedingAttention },
+    { key: 'processing', label: 'Processing', count: processingOrders },
+    { key: 'payment-pending', label: 'Payment pending', count: operationsSummary.paymentPendingOrders },
+    { key: 'recent', label: 'Recent', count: recentOrders },
+  ];
 
   const hasOrders = ordered.length > 0;
-  const hasFilters = Boolean(query.trim() || statusFilter !== 'all');
+  const hasFilters = Boolean(query.trim() || statusFilter !== 'all' || ownerView !== 'needs-action');
   const hasFilteredOrders = filteredOrders.length > 0;
   const shouldShowLoadingState = isOrdersLoading && !hasOrders;
+  const ordersHistoryLabel = ownerView === 'all' && statusFilter === 'all' && !query.trim() ? 'All orders' : 'Order history';
 
   useEffect(() => {
     if (!selectedOrderId) return undefined;
@@ -343,10 +407,34 @@ export default function AdminOrdersPage() {
       <AdminPageHeader
         eyebrow="Order operations"
         title="Orders"
-        subtitle={ordersSubtitle}
-        actionLabel="Open dashboard"
-        actionTo="/admin"
-        actionClassName="btn btn-dark"
+        subtitle="Track customer orders and see what needs action."
+        actions={(
+          <>
+            <button
+              type="button"
+              className="btn btn-dark"
+              onClick={() => {
+                setOwnerView('all');
+                setStatusFilter('Pending');
+              }}
+            >
+              Review pending
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                setOwnerView('processing');
+                setStatusFilter('all');
+              }}
+            >
+              View processing
+            </button>
+            <Link to="/" className="btn btn-outline">
+              Open storefront
+            </Link>
+          </>
+        )}
       />
 
       {orderSourceNote ? (
@@ -355,500 +443,367 @@ export default function AdminOrdersPage() {
         </div>
       ) : null}
 
-      <div className="admin-status-grid">
-        <div className="admin-status-card">
-          <span>Total orders</span>
-          <strong>{operationsSummary.totalOrders}</strong>
-          <p>{sourceLabel} currently visible in this session. Local status edits are simulation-only.</p>
-        </div>
-        <div className="admin-status-card">
-          <span>Paid / payment pending</span>
-          <strong>
-            {operationsSummary.paidOrders}/{operationsSummary.paymentPendingOrders}
-          </strong>
-          <p>Orders that have cleared payment versus orders still waiting.</p>
-        </div>
-        <div className="admin-status-card">
-          <span>Processing</span>
-          <strong>{processingOrders}</strong>
-          <p>{statusCopy.Processing}</p>
-        </div>
-        <div className="admin-status-card">
-          <span>Shipped / fulfilled</span>
-          <strong>{shippedOrders}</strong>
-          <p>Orders that have moved out of the packing queue.</p>
-        </div>
-        <div className="admin-status-card">
-          <span>Cancelled / refunded</span>
-          <strong>{closedOrders}</strong>
-          <p>
-            {cancelledOrders} cancelled and {refundedOrders} refunded orders.
-          </p>
-        </div>
-        <div className="admin-status-card">
-          <span>Needs attention</span>
-          <strong>{operationsSummary.ordersNeedingAttention}</strong>
-          <p>Orders with missing customer, payment, or fulfillment details.</p>
-        </div>
-        <div className="admin-status-card">
-          <span>Recent activity</span>
-          <strong>{operationsSummary.recentlyPlacedOrders}</strong>
-          <p>Orders placed in the last 24 hours.</p>
-        </div>
-        <div className="admin-status-card">
-          <span>Total revenue</span>
-          <strong>{formatMoney(totalRevenue)}</strong>
-          <p>Gross order value across the current result set.</p>
-        </div>
-      </div>
-
-      <section className="admin-order-workflow-panel">
-        <div className="admin-dashboard-section-heading compact">
-          <span>Order workflow preview</span>
-          <p>
-            Read-only layout for planning order operations. These cards show fulfillment, contact, notes, and
-            next-step context without mutating order data.
-          </p>
-        </div>
-        {workflowPreviewOrder ? (
-          <div className="admin-order-workflow-grid">
-            <article className="admin-order-workflow-card">
-              <span>Fulfillment readiness</span>
-              <strong>{workflowPreviewReadiness.label}</strong>
-              <p>{workflowPreviewReadiness.detail}</p>
-              <div className="admin-workflow-chip-row">
-                <span className={`status-badge ${workflowPreviewAttention?.tone ?? ''}`.trim()}>
-                  {workflowPreviewAttention?.label ?? 'No attention flag'}
-                </span>
-                <span className="status-badge status-badge-muted">Prototype-only</span>
-              </div>
-            </article>
-            <article className="admin-order-workflow-card">
-              <span>Customer contact context</span>
-              <strong>{safeText(workflowPreviewOrder.customerName, 'Guest customer')}</strong>
-              <div className="admin-workflow-list">
-                {workflowPreviewContactLines.map((line, index) => (
-                  <span key={`${line}-${index}`}>{line}</span>
-                ))}
-              </div>
-            </article>
-            <article className="admin-order-workflow-card">
-              <span>Order attention flags</span>
-              <strong>{workflowPreviewAttention?.label ?? 'No attention flag'}</strong>
-              <p>{workflowPreviewAttention?.detail ?? 'No attention details available.'}</p>
-              <div className="admin-workflow-chip-row">
-                {workflowPreviewFlags.map((flag, index) => (
-                  <span key={`${flag}-${index}`} className="admin-workflow-chip">
-                    {flag}
-                  </span>
-                ))}
-              </div>
-            </article>
-            <article className="admin-order-workflow-card">
-              <span>Internal notes placeholder</span>
-              <strong>Not wired yet</strong>
-              <p>
-                This is a prototype-only placeholder for future fulfillment notes, escalation comments, and
-                audit context.
-              </p>
-              <div className="admin-notes-placeholder" aria-label="Prototype internal notes placeholder">
-                Internal notes will be added here when a live write path exists.
-              </div>
-            </article>
-            <article className="admin-order-workflow-card">
-              <span>Next operational step</span>
-              <strong>{safeText(workflowPreviewOrder.orderNumber, 'Order')}</strong>
-              <p>{workflowPreviewNextStep}</p>
-              <div className="admin-workflow-chip-row">
-                <span className="admin-workflow-chip">Read-only preview</span>
-                <span className="admin-workflow-chip">Local-first planning</span>
-                <span className="admin-workflow-chip">No live mutation</span>
-              </div>
-            </article>
+      <section className="admin-orders-command-center">
+        <div className="admin-dashboard-panel admin-orders-snapshot-panel">
+          <div className="admin-dashboard-section-heading">
+            <span>Order snapshot</span>
+            <p>Use the snapshot first, then handle the next orders waiting on payment, customer context, or fulfillment.</p>
           </div>
-        ) : (
-          <div className="admin-empty-state-tight admin-readiness-empty">
-            <h3>Order workflow preview is waiting for an order.</h3>
+
+          <div className="admin-status-grid admin-owner-summary-grid">
+            <div className="admin-status-card">
+              <span>Need action</span>
+              <strong>{operationsSummary.ordersNeedingAttention}</strong>
+              <p>Orders that should be reviewed first.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Pending orders</span>
+              <strong>{pendingOrders}</strong>
+              <p>Orders waiting for the next step.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Processing</span>
+              <strong>{processingOrders}</strong>
+              <p>Orders already in the packing queue.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Payment pending</span>
+              <strong>{operationsSummary.paymentPendingOrders}</strong>
+              <p>Orders waiting for payment clearance.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="admin-orders-command-center-grid">
+          <aside className="admin-owner-workbench-side admin-dashboard-panel admin-orders-queue-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Work queue</span>
+              <p>The next {Math.min(orderWorkQueue.length, 4) || 4} orders most likely to need owner attention.</p>
+            </div>
+
+            {orderWorkQueue.length ? (
+              <div className="admin-work-queue-list">
+                {orderWorkQueue.map(({ order, attention }) => (
+                  <OrderQueueCard key={order.id} order={order} attention={attention} onOpen={() => setSelectedOrderId(order.id)} />
+                ))}
+              </div>
+            ) : (
+              <div className="admin-empty-state-tight">
+                <h3>Queue looks clear.</h3>
+                <p>No orders are currently flagged for owner attention.</p>
+              </div>
+            )}
+          </aside>
+
+          <aside className="admin-dashboard-panel admin-dashboard-panel-soft admin-orders-guidance-panel">
+            <div className="admin-dashboard-section-heading compact">
+              <span>Handling notes</span>
+              <p>Keep the top area focused on the next operational decisions, not the full order archive.</p>
+            </div>
+
+            <div className="admin-orders-guidance-list">
+              <div className="admin-orders-guidance-item">
+                <strong>Handle payment-pending orders first.</strong>
+                <p>Orders waiting on payment should stay in review until payment clearance is visible.</p>
+              </div>
+              <div className="admin-orders-guidance-item">
+                <strong>Use Order History below for the full list.</strong>
+                <p>The bounded history section keeps every order available without crowding the daily work queue.</p>
+              </div>
+              <div className="admin-orders-guidance-item">
+                <strong>Status updates remain read-only in this release.</strong>
+                <p>{orderSourceNote || 'Live and local order views stay behaviorally unchanged in this admin pass.'}</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section className="admin-dashboard-panel admin-orders-history-panel">
+        <div className="admin-dashboard-section-heading">
+          <span>{ordersHistoryLabel}</span>
+          <p>The full order list stays below the work queue so history remains easy to scan without becoming the main task area.</p>
+        </div>
+
+        <div className="admin-toolbar">
+          <div className="admin-toolbar-left">
+            <input
+              className="admin-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search order number, customer, email, or status"
+              aria-label="Search orders"
+            />
+
+            <select
+              className="admin-filter"
+              value={statusFilter}
+              onChange={(event) => {
+                setOwnerView('all');
+                setStatusFilter(event.target.value);
+              }}
+              aria-label="Filter by order status"
+            >
+              <option value="all">All statuses</option>
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="admin-toolbar-actions">
+            <div className="admin-toolbar-summary" aria-live="polite">
+              <strong>{filteredOrders.length}</strong>
+              <span>{filteredOrders.length === 1 ? 'order in view' : 'orders in view'}</span>
+            </div>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                setQuery('');
+                setStatusFilter('all');
+                setOwnerView('needs-action');
+              }}
+            >
+              Clear filters
+            </button>
+            <Link to="/" className="btn btn-outline">
+              Open storefront
+            </Link>
+          </div>
+        </div>
+
+        <div className="admin-status-chip-row admin-owner-view-row" aria-label="Order views">
+          {ownerViews.map((view) => (
+            <button
+              key={view.key}
+              type="button"
+              className={`admin-status-chip ${ownerView === view.key ? 'is-active' : ''}`}
+              onClick={() => {
+                setOwnerView(view.key);
+                setStatusFilter('all');
+              }}
+            >
+              <span>{view.label}</span>
+              <strong>{view.count}</strong>
+            </button>
+          ))}
+        </div>
+
+        {ordersError ? (
+          <div className="admin-catalog-error" role="alert">
+            {ordersSource === 'supabase'
+              ? 'Supabase orders could not be loaded right now. Refresh the page and verify the admin RPC and permissions.'
+              : 'Orders could not be loaded right now. Refresh the page and try again.'}
+          </div>
+        ) : null}
+
+        {shouldShowLoadingState ? (
+          <div className="admin-empty-state" aria-live="polite">
+            <h2>Loading orders...</h2>
             <p>
-              Open checkout or local orders to preview fulfillment readiness, contact context, notes, and
-              next-step planning in this read-only layout.
+              {ordersSource === 'supabase'
+                ? 'Retrieving the latest live Supabase orders for this admin view.'
+                : 'Retrieving the latest local demo orders for this admin view.'}
             </p>
           </div>
-        )}
-      </section>
+        ) : hasOrders ? (
+          hasFilteredOrders ? (
+            <>
+              <div className="admin-table-wrap admin-orders-table-wrap">
+                <table className="admin-table admin-owner-table">
+                  <thead>
+                    <tr>
+                      <th>Order</th>
+                      <th>Customer</th>
+                      <th>Date</th>
+                      <th>Amount</th>
+                      <th>Items</th>
+                      <th>Status</th>
+                      <th>Payment</th>
+                      <th />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredOrders.map((order) => {
+                      const customer = getCustomerSummary(order);
+                      const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
+                      const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
 
-      <div className="admin-toolbar">
-        <div className="admin-toolbar-left">
-          <input
-            className="admin-search"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search order number, customer, email, or status"
-            aria-label="Search orders"
-          />
-
-          <select
-            className="admin-filter"
-            value={statusFilter}
-            onChange={(event) => setStatusFilter(event.target.value)}
-            aria-label="Filter by order status"
-          >
-            <option value="all">All statuses</option>
-            {statusOptions.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="admin-toolbar-actions">
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => {
-              setQuery('');
-              setStatusFilter('all');
-            }}
-          >
-            Clear Filters
-          </button>
-        </div>
-      </div>
-
-      <section className="admin-order-ops-panel">
-        <div className="admin-dashboard-section-heading compact">
-          <span>Store readiness</span>
-          <p>
-            A quick snapshot of the current order queue, with the items that need a closer look first.
-          </p>
-        </div>
-        <div className="admin-order-attention-list">
-          {attentionPreviewOrders.length ? (
-            attentionPreviewOrders.map(({ order, attention }) => {
-              const customer = getCustomerSummary(order);
-
-              return (
-                <article key={order.id} className="admin-order-attention-item">
-                  <div className="admin-order-attention-copy">
-                    <div className="admin-order-attention-row">
-                      <strong>{safeText(order.orderNumber, 'Order')}</strong>
-                      <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
-                    </div>
-                    <p>{attention.detail}</p>
-                    <span>
-                      {customer.name} - {customer.email}
-                    </span>
-                    <span className="admin-status-caption">
-                      Placed {formatDate(order.createdAt)} | {getOrderSourceLabel(ordersSource)}
-                    </span>
-                  </div>
-                  <div className="admin-order-attention-actions">
-                    <button
-                      type="button"
-                      className="text-button"
-                      onClick={() => setSelectedOrderId(order.id)}
-                    >
-                      Quick view
-                    </button>
-                    <Link to={`/order-confirmation/${order.id}`} className="text-button">
-                      Open receipt
-                    </Link>
-                  </div>
-                </article>
-              );
-            })
-          ) : (
-            <div className="admin-empty-state-tight admin-readiness-empty">
-              <h3>Storefront queue looks healthy.</h3>
-              <p>
-                No order issues are being flagged right now. New checkouts will still appear here as they come
-                in.
-              </p>
-            </div>
-          )}
-        </div>
-        <div className="admin-panel-footer">
-          <div className="admin-quick-actions">
-            <Link to="/admin/orders" className="text-button">
-              Review all orders
-            </Link>
-            <Link to="/admin" className="text-button">
-              Open dashboard
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <div className="admin-status-grid">
-        {statusOptions.map((status) => (
-          <section key={status} className="admin-status-card">
-            <span>{status}</span>
-            <strong>{counts[status]}</strong>
-            <p>{statusCopy[status]}</p>
-          </section>
-        ))}
-      </div>
-
-      {ordersError ? (
-        <div className="admin-catalog-error" role="alert">
-          {ordersSource === 'supabase'
-            ? 'Supabase orders could not be loaded right now. Refresh the page and verify the admin RPC and permissions.'
-            : 'Orders could not be loaded right now. Refresh the page and try again.'}
-        </div>
-      ) : null}
-
-      {shouldShowLoadingState ? (
-        <div className="admin-empty-state" aria-live="polite">
-          <h2>Loading orders...</h2>
-          <p>
-            {ordersSource === 'supabase'
-              ? 'Retrieving the latest live Supabase orders for this admin view.'
-              : 'Retrieving the latest local demo orders for this admin view.'}
-          </p>
-        </div>
-      ) : hasOrders ? (
-        hasFilteredOrders ? (
-          <>
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Order</th>
-                    <th>Customer</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Payment</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th />
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredOrders.map((order) => {
-                    const customer = getCustomerSummary(order);
-                    const orderStatusLabel = getOrderStatusLabel(order.status);
-                    const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
-                    const orderStatusClass = getOrderStatusClass(order.status);
-                    const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
-                    const attention = getOrderAttentionInfo(order);
-
-                    return (
-                      <tr key={order.id}>
-                        <td>
-                          <strong>{safeText(order.orderNumber, 'Order')}</strong>
-                          <p>{safeText(order.id, 'No order id')}</p>
-                          <p className="admin-order-source-label">{getOrderSourceLabel(ordersSource)}</p>
-                        </td>
-                        <td>
-                          <strong>{customer.name}</strong>
-                          <p>{customer.email}</p>
-                        </td>
-                        <td>{formatDate(order.createdAt)}</td>
-                        <td>
-                          <select
-                            className="admin-status-select"
-                            value={getOrderStatusOptionValue(order.status)}
-                            onChange={(event) => updateOrderStatus(order.id, event.target.value)}
-                            disabled={!canUpdateOrderStatus}
-                            aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
-                          >
-                            {statusOptions.map((status) => (
-                              <option key={status} value={status}>
-                                {status}
-                              </option>
-                            ))}
-                          </select>
-                          <div className={`status-badge ${attention.tone}`.trim()}>{attention.label}</div>
-                          <div className="admin-status-subtext">
-                            {canUpdateOrderStatus
-                              ? orderStatusLabel || 'No status available'
-                              : 'View-only for live Supabase orders.'}
-                          </div>
-                        </td>
-                        <td>
-                          <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
-                        </td>
-                        <td>{getOrderItemCount(order)}</td>
-                        <td>{formatMoney(order.total)}</td>
-                        <td>
-                          <div className="admin-row-actions">
-                            <button
-                              type="button"
-                              className="text-button"
-                              onClick={() => setSelectedOrderId(order.id)}
+                      return (
+                        <tr key={order.id}>
+                          <td>
+                            <div className="admin-status-stack">
+                              <strong className="admin-order-ref">{safeText(order.orderNumber, 'Order')}</strong>
+                              <span className="admin-table-subtle">{getOrderSourceLabel(ordersSource)}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="admin-status-stack">
+                              <strong>{customer.name}</strong>
+                              <span className="admin-table-subtle">{customer.email}</span>
+                            </div>
+                          </td>
+                          <td>{formatDate(order.createdAt)}</td>
+                          <td>
+                            <strong>{formatMoney(order.total)}</strong>
+                          </td>
+                          <td>{getOrderItemCount(order)}</td>
+                          <td>
+                            <select
+                              className="admin-status-select"
+                              value={getOrderStatusOptionValue(order.status)}
+                              onChange={(event) => updateOrderStatus(order.id, event.target.value)}
+                              disabled={!canUpdateOrderStatus}
+                              aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
                             >
-                              Quick view
-                            </button>
-                            <Link to={`/order-confirmation/${order.id}`} className="text-button">
-                              Open receipt
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                              {statusOptions.map((status) => (
+                                <option key={status} value={status}>
+                                  {status}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                          <td>
+                            <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
+                          </td>
+                          <td>
+                            <div className="admin-row-actions">
+                              <button type="button" className="text-button" onClick={() => setSelectedOrderId(order.id)}>
+                                Quick view
+                              </button>
+                              <Link to={`/order-confirmation/${order.id}`} className="text-button">
+                                Open receipt
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
 
-            <div className="admin-record-list admin-order-cards">
-              {filteredOrders.map((order) => {
-                const customer = getCustomerSummary(order);
-                const orderStatusLabel = getOrderStatusLabel(order.status);
-                const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
-                const orderStatusClass = getOrderStatusClass(order.status);
-                const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
-                const attention = getOrderAttentionInfo(order);
-                const items = Array.isArray(order.items) ? order.items : [];
+              <div className="admin-record-list admin-order-cards">
+                {filteredOrders.map((order) => {
+                  const customer = getCustomerSummary(order);
+                  const paymentLabel = getPaymentStatusLabel(order.paymentStatus, { demoMode: order.demoMode });
+                  const paymentClass = getPaymentBadgeClass(order.paymentStatus, order.demoMode);
 
-                return (
-                  <article key={order.id} className="admin-record-card">
-                    <div className="admin-record-row">
-                      <div className="admin-record-meta">
-                        <strong>{safeText(order.orderNumber, 'Order')}</strong>
-                        <span>{customer.name}</span>
-                        <span>{customer.email}</span>
-                        <span className="admin-order-source-label">
-                          {getOrderSourceLabel(ordersSource)}
-                        </span>
-                      </div>
-                      <div className="admin-status-stack">
-                        <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
-                        <span className={`status-badge ${attention.tone}`.trim()}>{attention.label}</span>
-                      </div>
-                    </div>
-
-                    <div className="admin-record-row">
-                      <div className="admin-record-meta">
-                        <span>{formatDate(order.createdAt)}</span>
-                        <strong>{formatMoney(order.total)}</strong>
-                        <span>
-                          {getOrderItemCount(order)} item{getOrderItemCount(order) === 1 ? '' : 's'}
-                        </span>
-                      </div>
-                      <select
-                        className="admin-status-select"
-                        value={getOrderStatusOptionValue(order.status)}
-                        onChange={(event) => updateOrderStatus(order.id, event.target.value)}
-                        disabled={!canUpdateOrderStatus}
-                        aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
-                      >
-                        {statusOptions.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="order-mini-items">
-                      {items.slice(0, 3).map((item) => (
-                        <div key={item.key} className="order-mini-item">
-                          <ShopOraImage
-                            src={getOrderItemImage(item)}
-                            alt={safeText(item?.name, 'Order item')}
-                            className="order-mini-item-image"
-                            fallbackText="ShopOra"
-                          />
-                          <div className="admin-record-meta">
-                            <strong>{safeText(item?.name, 'Unnamed item')}</strong>
-                            <span>
-                              Qty {Number(item?.quantity ?? 0)}
-                              {item?.size ? ` | ${item.size}` : ''}
-                              {item?.color ? ` | ${item.color}` : ''}
-                            </span>
-                          </div>
+                  return (
+                    <article key={order.id} className="admin-record-card">
+                      <div className="admin-record-row">
+                        <div className="admin-record-meta">
+                          <strong className="admin-order-ref">{safeText(order.orderNumber, 'Order')}</strong>
+                          <span>{customer.name}</span>
+                          <span>{customer.email}</span>
                         </div>
-                      ))}
-                    </div>
+                        <div className="admin-status-stack admin-order-card-statuses">
+                          <span className="admin-table-subtle">{formatDate(order.createdAt)}</span>
+                          <span className={`status-badge ${paymentClass}`.trim()}>{paymentLabel}</span>
+                        </div>
+                      </div>
 
-                    <div className="admin-record-row">
-                      <span className={`status-badge ${orderStatusClass}`.trim()}>{orderStatusLabel}</span>
-                      {!canUpdateOrderStatus ? (
-                        <span className="admin-status-subtext">View-only for live Supabase orders.</span>
-                      ) : null}
-                      <div className="admin-row-actions">
-                        <button
-                          type="button"
-                          className="btn btn-ghost btn-small"
-                          onClick={() => setSelectedOrderId(order.id)}
+                      <div className="admin-record-row">
+                        <div className="admin-record-meta">
+                          <strong>{formatMoney(order.total)}</strong>
+                          <span>
+                            {getOrderItemCount(order)} item{getOrderItemCount(order) === 1 ? '' : 's'}
+                          </span>
+                          <span className="admin-table-subtle">{getOrderStatusLabel(order.status)}</span>
+                        </div>
+                        <select
+                          className="admin-status-select"
+                          value={getOrderStatusOptionValue(order.status)}
+                          onChange={(event) => updateOrderStatus(order.id, event.target.value)}
+                          disabled={!canUpdateOrderStatus}
+                          aria-label={`Update status for ${safeText(order.orderNumber, 'this order')}`}
                         >
+                          {statusOptions.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="admin-row-actions">
+                        <button type="button" className="btn btn-ghost btn-small" onClick={() => setSelectedOrderId(order.id)}>
                           Quick view
                         </button>
                         <Link to={`/order-confirmation/${order.id}`} className="btn btn-outline btn-small">
                           Open receipt
                         </Link>
                       </div>
-                    </div>
-                  </article>
-                );
-              })}
+                    </article>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="admin-empty-state">
+              <h2>No matching orders.</h2>
+              <p>Try a different order number, customer name, email, or status filter.</p>
+              <div className="admin-empty-state-actions">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setQuery('');
+                    setStatusFilter('all');
+                    setOwnerView('needs-action');
+                  }}
+                >
+                  Clear filters
+                </button>
+              </div>
             </div>
-          </>
+          )
         ) : (
           <div className="admin-empty-state">
-            <h2>No matching orders.</h2>
-            <p>Try a different order number, customer name, email, or status filter.</p>
+            <h2>{hasFilters ? 'No matching orders.' : 'No orders yet.'}</h2>
+            <p>
+              {hasFilters
+                ? 'Try a different order number, customer name, email, or status filter.'
+                : ordersSource === 'supabase'
+                  ? 'Live Supabase customer orders appear here when the admin session is connected to the protected admin RPC.'
+                  : currentUser?.role === 'admin'
+                    ? 'Orders will appear here after checkout. This admin view is showing browser-local demo orders in this prototype.'
+                    : 'Orders will appear here after checkout.'}
+            </p>
             <div className="admin-empty-state-actions">
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => {
-                  setQuery('');
-                  setStatusFilter('all');
-                }}
-              >
-                Clear Filters
-              </button>
+              {hasFilters ? (
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setQuery('');
+                    setStatusFilter('all');
+                    setOwnerView('needs-action');
+                  }}
+                >
+                  Clear filters
+                </button>
+              ) : null}
+              <Link to="/" className="btn btn-ghost">
+                Open storefront
+              </Link>
+              <Link to="/admin" className="btn btn-ghost">
+                Open dashboard
+              </Link>
+              <Link to="/checkout" className="btn btn-dark">
+                View checkout
+              </Link>
             </div>
           </div>
-        )
-      ) : (
-        <div className="admin-empty-state">
-          <h2>{hasFilters ? 'No matching orders.' : 'No orders yet.'}</h2>
-          <p>
-            {hasFilters
-              ? 'Try a different order number, customer name, email, or status filter.'
-              : ordersSource === 'supabase'
-                ? 'Live Supabase customer orders appear here when the admin session is connected to the protected admin RPC.'
-                : currentUser?.role === 'admin'
-                  ? 'Orders will appear here after checkout. This admin view is showing browser-local demo orders in this prototype.'
-                  : 'Orders will appear here after checkout.'}
-          </p>
-          <div className="admin-empty-state-actions">
-            {hasFilters ? (
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => {
-                  setQuery('');
-                  setStatusFilter('all');
-                }}
-              >
-                Clear Filters
-              </button>
-            ) : null}
-            <Link to="/" className="btn btn-ghost">
-              Open storefront
-            </Link>
-            <Link to="/admin" className="btn btn-ghost">
-              Open dashboard
-            </Link>
-            <Link to="/checkout" className="btn btn-dark">
-              View checkout
-            </Link>
-          </div>
-        </div>
-      )}
+        )}
+      </section>
 
       {selectedOrder ? (
-        <div
-          className="admin-order-modal-overlay"
-          role="presentation"
-          onClick={() => setSelectedOrderId(null)}
-        >
+        <div className="admin-order-modal-overlay" role="presentation" onClick={() => setSelectedOrderId(null)}>
           <div
             className="admin-order-modal"
             role="dialog"
@@ -871,13 +826,10 @@ export default function AdminOrdersPage() {
               </button>
             </div>
 
-            <section className="admin-order-detail-banner" aria-label="Prototype order detail summary">
+            <section className="admin-order-detail-banner" aria-label="Order detail summary">
               <div className="admin-order-detail-banner-copy">
-                <span>Prototype order detail</span>
-                <p>
-                  Read-only layout for reviewing order context, fulfillment readiness, and the next operational
-                  step before any future admin write path is defined.
-                </p>
+                <span>Order detail</span>
+                <p>Review status, payment, customer context, and the next operational step from one place.</p>
               </div>
               <div className="admin-order-detail-banner-meta">
                 <strong>{safeText(selectedOrder.orderNumber, 'Order')}</strong>
@@ -925,13 +877,11 @@ export default function AdminOrdersPage() {
                 <p>
                   <strong>Items:</strong> {getOrderItemCount(selectedOrder)}
                 </p>
-                <p className="admin-order-source-label">
-                  {getOrderSourceLabel(ordersSource)}
-                </p>
+                <p className="admin-order-source-label">{getOrderSourceLabel(ordersSource)}</p>
                 <p className="admin-status-subtext">
                   {ordersSource === 'supabase'
                     ? 'Live Supabase orders are visible here. Status updates remain read-only until backend support is added.'
-                    : 'Local demo orders can be updated in browser storage only. This is a prototype simulation, not a live order workflow.'}
+                    : 'Local demo orders can be updated in browser storage only. This does not affect a live order system.'}
                 </p>
               </section>
 
@@ -974,13 +924,11 @@ export default function AdminOrdersPage() {
                     Open receipt
                   </Link>
                 </p>
-                <p className="admin-status-subtext">
-                  Use the order summary above to judge whether a future live workflow should move this order forward.
-                </p>
+                <p className="admin-status-subtext">{getNextOperationalStep(selectedOrder, selectedOrderAttention)}</p>
               </section>
 
               <section className="admin-order-modal-panel">
-                <h3>Order attention flags</h3>
+                <h3>Order attention</h3>
                 <p>
                   <strong>Attention:</strong>{' '}
                   <span className={`status-badge ${selectedOrderAttention.tone}`.trim()}>
@@ -989,34 +937,7 @@ export default function AdminOrdersPage() {
                 </p>
                 <p>{selectedOrderAttention.detail}</p>
                 <p>
-                  <strong>Prototype flag:</strong> live writes remain disabled in this view.
-                </p>
-              </section>
-
-              <section className="admin-order-modal-panel">
-                <h3>Internal notes placeholder</h3>
-                <p>
-                  This panel is reserved for future fulfillment notes, escalation comments, or customer follow-up
-                  context.
-                </p>
-                <div className="admin-notes-placeholder" aria-label="Prototype internal notes placeholder">
-                  No notes are stored yet. This area stays read-only until a safe live write path exists.
-                </div>
-              </section>
-
-              <section className="admin-order-modal-panel">
-                <h3>Next operational step</h3>
-                <p>{getNextOperationalStep(selectedOrder, selectedOrderAttention)}</p>
-                <div className="admin-workflow-chip-row">
-                  <span className="admin-workflow-chip">Prototype-only</span>
-                  <span className="admin-workflow-chip">Read-only</span>
-                  <span className="admin-workflow-chip">No backend writes</span>
-                </div>
-                <p>
-                  <strong>Storefront order number:</strong> {safeText(selectedOrder.orderNumber, 'Order')}
-                </p>
-                <p className="admin-status-subtext">
-                  Use this area to stage a future workflow, but do not treat it as a live admin action surface yet.
+                  <strong>Notes:</strong> This page is for review. It does not add any new backend mutation path.
                 </p>
               </section>
 
@@ -1057,9 +978,7 @@ export default function AdminOrdersPage() {
                     Open receipt
                   </Link>
                 </p>
-                <p className="admin-status-subtext">
-                  Keep the order number handy when following up with support or fulfillment.
-                </p>
+                <p className="admin-status-subtext">Keep the order number handy when following up with support or fulfillment.</p>
               </section>
             </div>
 

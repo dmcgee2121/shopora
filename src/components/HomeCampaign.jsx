@@ -29,9 +29,14 @@ export default function HomeCampaign({ products = [] }) {
             Explore sale picks
           </Link>
         </div>
+        <div className="campaign-cues" aria-label="Store highlights">
+          <span className="query-chip">New arrivals weekly</span>
+          <span className="query-chip">Secure checkout</span>
+          <span className="query-chip">Easy returns</span>
+        </div>
         <div className="campaign-tags" aria-label="Merchandising highlights">
           <span className="query-chip">New arrivals</span>
-          <span className="query-chip">Stripe checkout handoff</span>
+          <span className="query-chip">Secure checkout</span>
           <span className="query-chip">Return guidance</span>
           <span className="query-chip">Editor's picks</span>
         </div>

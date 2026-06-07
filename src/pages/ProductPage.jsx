@@ -177,8 +177,6 @@ export default function ProductPage() {
   const price = hasSalePrice ? Number(product.salePrice) : basePrice;
   const stockMessage =
     stockCount <= 0 ? 'Out of stock' : stockCount <= 7 ? `Low stock: ${stockCount} available` : 'In stock';
-  const isSaved = typeof isSavedItem === 'function' ? Boolean(isSavedItem(product.id)) : false;
-  const isSaving = typeof isSavingSavedItem === 'function' ? Boolean(isSavingSavedItem(product.id)) : false;
 
   useEffect(() => {
     setSelectedSize(sizes[0] ?? '');
@@ -236,6 +234,8 @@ export default function ProductPage() {
     );
   }
 
+  const isSaved = typeof isSavedItem === 'function' ? Boolean(isSavedItem(product.id)) : false;
+  const isSaving = typeof isSavingSavedItem === 'function' ? Boolean(isSavingSavedItem(product.id)) : false;
   const currentImage = getProductImage(product, activeImage);
   const shelfLabel = getProductShelfLabel(product);
   const merchandisingBadges = getProductMerchandisingBadges(product);

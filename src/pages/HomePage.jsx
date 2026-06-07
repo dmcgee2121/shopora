@@ -128,7 +128,7 @@ export default function HomePage() {
     () =>
       [...catalogProducts]
         .sort((a, b) => scoreTrendingProduct(b) - scoreTrendingProduct(a))
-        .slice(0, 8),
+        .slice(0, 3),
     [catalogProducts],
   );
   const salePicks = useMemo(
@@ -136,7 +136,7 @@ export default function HomePage() {
       [...catalogProducts]
         .filter((product) => product.isSale)
         .sort((a, b) => scoreSaleProduct(b) - scoreSaleProduct(a))
-        .slice(0, 8),
+        .slice(0, 3),
     [catalogProducts],
   );
   const everydayEssentials = useMemo(
@@ -147,7 +147,7 @@ export default function HomePage() {
           return price <= 120 || ['women', 'men'].includes(product.department);
         })
         .sort((a, b) => scoreEssentialsProduct(b) - scoreEssentialsProduct(a))
-        .slice(0, 8),
+        .slice(0, 3),
     [catalogProducts],
   );
   const newArrivals = useMemo(
@@ -155,15 +155,15 @@ export default function HomePage() {
       [...catalogProducts]
         .filter((product) => product.isNew)
         .sort((a, b) => scoreNewArrivalProduct(b) - scoreNewArrivalProduct(a))
-        .slice(0, 8),
+        .slice(0, 3),
     [catalogProducts],
   );
   const recentlyViewedProducts = useMemo(
-    () => filterRecentlyViewedProducts(catalogProducts, readRecentlyViewedIds(8)).slice(0, 4),
+    () => filterRecentlyViewedProducts(catalogProducts, readRecentlyViewedIds(8)).slice(0, 2),
     [catalogProducts],
   );
   const firstLookProducts = useMemo(
-    () => getRecommendedProducts(catalogProducts, [], { limit: 4 }),
+    () => getRecommendedProducts(catalogProducts, [], { limit: 2 }),
     [catalogProducts],
   );
   const discoveryProducts = recentlyViewedProducts.length ? recentlyViewedProducts : firstLookProducts;
@@ -269,16 +269,6 @@ export default function HomePage() {
         <FeaturedBrands />
 
         <DepartmentTiles products={catalogProducts} />
-
-        <MerchSection
-          id="trending-now"
-          title="Trending Now"
-          description="Highly rated styles and featured favorites from across the store."
-          products={trendingProducts}
-          loading={isInitialCatalogLoading}
-          emptyTitle="Featured styles are loading."
-          emptyText="We are getting the latest catalog ready so you can keep browsing."
-        />
 
         <MerchSection
           id="everyday-essentials"

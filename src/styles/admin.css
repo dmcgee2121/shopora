@@ -3542,6 +3542,7 @@
 
   .admin-owner-snapshot-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .admin-sidebar-top {
@@ -3567,7 +3568,12 @@
   }
 
   .admin-page-header-copy h1 {
-    font-size: 2.35rem;
+    font-size: 2.05rem;
+  }
+
+  .admin-page-header-copy p {
+    font-size: 0.92rem;
+    line-height: 1.55;
   }
 
   .admin-card-grid,
@@ -3584,7 +3590,66 @@
 
   .admin-dashboard-overview,
   .admin-dashboard-panel {
-    padding: 15px;
+    gap: 12px;
+    padding: 13px;
+    border-radius: 20px;
+  }
+
+  .admin-dashboard-section-heading p,
+  .admin-status-card p,
+  .admin-owner-snapshot-card p,
+  .admin-catalog-readiness-stat span,
+  .admin-editor-readiness-stat span,
+  .admin-record-meta span,
+  .admin-record-meta p {
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .admin-dashboard-metric {
+    gap: 6px;
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .admin-dashboard-metric strong {
+    font-size: clamp(1.55rem, 6vw, 2rem);
+  }
+
+  .admin-dashboard-metric p {
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+
+  .admin-owner-snapshot-card {
+    gap: 4px;
+    padding: 11px;
+    border-radius: 16px;
+  }
+
+  .admin-owner-snapshot-card strong {
+    font-size: 1.45rem;
+  }
+
+  .admin-status-card,
+  .admin-catalog-readiness-panel,
+  .admin-editor-readiness-panel,
+  .admin-record-card,
+  .admin-customer-ops-panel {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .admin-status-card strong,
+  .admin-catalog-readiness-stat strong,
+  .admin-editor-readiness-stat strong {
+    font-size: 1.45rem;
+  }
+
+  .admin-catalog-readiness-stat,
+  .admin-editor-readiness-stat {
+    padding: 11px 12px;
+    border-radius: 14px;
   }
 
   .admin-product-launch-panel,
@@ -3837,6 +3902,72 @@
   .admin-product-card-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .admin-shell {
+    gap: 12px;
+  }
+
+  .admin-top-nav-shell,
+  .admin-sidebar,
+  .admin-dashboard-overview,
+  .admin-dashboard-panel,
+  .admin-status-card,
+  .admin-catalog-readiness-panel,
+  .admin-editor-readiness-panel,
+  .admin-record-card,
+  .admin-customer-ops-panel,
+  .admin-form-card,
+  .admin-form-section {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .admin-page-header {
+    gap: 12px;
+  }
+
+  .admin-page-header-copy h1 {
+    font-size: 1.85rem;
+  }
+
+  .admin-page-header-copy p,
+  .admin-runtime-strip p {
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .admin-dashboard-metric-grid,
+  .admin-dashboard-mini-grid {
+    gap: 10px;
+  }
+
+  .admin-dashboard-metric {
+    padding: 12px;
+  }
+
+  .admin-dashboard-metric span,
+  .admin-owner-snapshot-card span,
+  .admin-status-card span {
+    font-size: 0.66rem;
+  }
+
+  .admin-dashboard-metric strong,
+  .admin-owner-snapshot-card strong,
+  .admin-status-card strong,
+  .admin-catalog-readiness-stat strong,
+  .admin-editor-readiness-stat strong {
+    font-size: 1.3rem;
+  }
+
+  .admin-owner-snapshot-card,
+  .admin-catalog-readiness-stat,
+  .admin-editor-readiness-stat {
+    padding: 10px;
+  }
+
+  .admin-record-card {
+    gap: 8px;
   }
 
   .admin-page-header-actions .btn,

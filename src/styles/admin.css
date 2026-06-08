@@ -2622,6 +2622,11 @@
   align-items: start;
 }
 
+.admin-editor-main {
+  display: grid;
+  gap: 14px;
+}
+
 .admin-form-card,
 .admin-form {
   display: grid;
@@ -2669,6 +2674,15 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--gold-dark);
+}
+
+.admin-form-section-kicker {
+  color: var(--gold-dark);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  text-transform: uppercase;
 }
 
 .admin-form-grid {
@@ -2733,6 +2747,111 @@
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 16px;
+}
+
+.admin-editor-preview-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-editor-preview-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.82fr) minmax(0, 1.18fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.admin-editor-preview-media {
+  overflow: hidden;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f8f3ec, #ede4d7);
+  aspect-ratio: 4 / 5;
+}
+
+.admin-editor-preview-media .admin-preview-image,
+.admin-editor-preview-media .admin-image-preview-empty {
+  width: 100%;
+  height: 100%;
+}
+
+.admin-editor-preview-copy {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-editor-preview-copy > strong {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  line-height: 0.95;
+}
+
+.admin-editor-preview-subtitle,
+.admin-editor-preview-price {
+  margin: 0;
+}
+
+.admin-editor-preview-subtitle {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.admin-editor-preview-price {
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.admin-editor-preview-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-editor-preview-meta div,
+.admin-flag-panel {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(245, 240, 232, 0.72);
+}
+
+.admin-editor-preview-meta span,
+.admin-editor-preview-notes span {
+  color: var(--gold-dark);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.admin-editor-preview-meta strong {
+  font-size: 0.96rem;
+  line-height: 1.35;
+}
+
+.admin-editor-preview-notes {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(228, 217, 204, 0.78);
+  background: rgba(251, 247, 241, 0.76);
+}
+
+.admin-editor-preview-notes ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.admin-editor-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .admin-image-preview-panel,
@@ -2874,11 +2993,25 @@
   flex: none;
 }
 
+.admin-flag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
 .admin-form-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-form-actions-note {
+  margin: 0;
+  max-width: 560px;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .checkbox-row {
@@ -3508,6 +3641,11 @@
     grid-template-columns: 1fr;
   }
 
+  .admin-editor-preview-card,
+  .admin-editor-preview-meta {
+    grid-template-columns: 1fr;
+  }
+
   .admin-store-readiness-grid,
   .admin-owner-checklist-grid,
   .admin-editor-summary-grid,
@@ -3916,6 +4054,11 @@
     grid-template-columns: 1fr;
   }
 
+  .admin-form-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .admin-product-launch-card-top {
     grid-template-columns: 1fr;
   }
@@ -3999,6 +4142,10 @@
   .admin-status-grid.admin-owner-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
+  }
+
+  .admin-editor-preview-copy > strong {
+    font-size: 1.7rem;
   }
 
   .admin-top-nav-shell,

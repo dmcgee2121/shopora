@@ -502,57 +502,156 @@ export default function ProductFormPage({ mode }) {
     { label: 'Add Product', to: '/admin/products/new', className: 'btn btn-ghost' },
     { label: 'Check Storefront', to: '/', className: 'btn btn-outline' },
   ];
+  const pageTitle =
+    mode === 'edit'
+      ? form.name.trim()
+        ? `Edit ${form.name.trim()}`
+        : 'Edit Product'
+      : 'Add Product';
+  const previewRoute = mode === 'edit' && existingProduct ? `/product/${existingProduct.id}` : '/';
+  const previewActionLabel = mode === 'edit' && existingProduct ? 'Preview product' : 'View storefront';
+  const shopperPreviewDetails = splitLines(form.details).slice(0, 3);
+  const shopperPreviewCopy = form.description.trim()
+    ? form.description.trim()
+    : 'Add a short shopper-facing description so this listing feels clear before launch.';
 
   return (
     <section className="admin-form-page">
       <AdminPageHeader
         eyebrow="Catalog editor"
-        title={mode === 'edit' ? 'Edit Product' : 'Add Product'}
-        subtitle="Update product merchandising, pricing, inventory flags, and content in one place while keeping the existing save flow unchanged."
-        actionLabel="Back to Products"
-        actionTo="/admin/products"
-        actionClassName="btn btn-ghost"
+        title={pageTitle}
+        subtitle="Update shopper-facing details, pricing, inventory, and launch readiness."
+        actions={(
+          <>
+            <Link to="/admin/products" className="btn btn-ghost">
+              Back to Products
+            </Link>
+            <Link to={previewRoute} className="btn btn-outline">
+              {previewActionLabel}
+            </Link>
+          </>
+        )}
       />
 
       <div className="admin-editor-overview">
-        <div className="admin-status-grid admin-editor-summary-grid">
-          <div className="admin-status-card">
-            <span>Storefront preview</span>
-            <strong>{merchandisingSummary.productLabel}</strong>
-            <p>
-              {form.department || 'Unassigned department'}
-              {form.category ? ` / ${form.category}` : ''}{' '}
-              {form.sku ? ` - SKU ${form.sku}` : ' - SKU not assigned'}
-            </p>
-            <div className="status-badges admin-preview-badges">
-              <span className={`status-badge ${merchandisingSummary.visibility.className}`}>
-                {merchandisingSummary.visibility.label}
-              </span>
-              <span className="status-badge status-badge-muted">{merchandisingSummary.stockLabel}</span>
+        <div className="admin-editor-main">
+          <div className="admin-status-grid admin-editor-summary-grid">
+            <div className="admin-status-card">
+              <span>Product summary</span>
+              <strong>{merchandisingSummary.productLabel}</strong>
+              <p>
+                {form.department || 'Unassigned department'}
+                {form.category ? ` / ${form.category}` : ''}
+                {form.sku ? ` - SKU ${form.sku}` : ' - SKU not assigned'}
+              </p>
+              <div className="status-badges admin-preview-badges">
+                <span className={`status-badge ${merchandisingSummary.visibility.className}`}>
+                  {merchandisingSummary.visibility.label}
+                </span>
+                <span className="status-badge status-badge-muted">{merchandisingSummary.stockLabel}</span>
+              </div>
+              <p className="admin-preview-hint">{merchandisingSummary.visibility.helper}</p>
             </div>
-            <p className="admin-preview-hint">
-              {merchandisingSummary.visibility.helper} The editor preview reflects the current draft values before save.
-            </p>
+            <div className="admin-status-card">
+              <span>Pricing</span>
+              <strong>{merchandisingSummary.priceLabel}</strong>
+              <p>Use the base price for the everyday listing and add a sale price only when the markdown is intentional.</p>
+            </div>
+            <div className="admin-status-card">
+              <span>Inventory review</span>
+              <strong>{merchandisingSummary.stockLabel}</strong>
+              <p>
+                {Number.isFinite(merchandisingSummary.stockCount)
+                  ? `${merchandisingSummary.stockCount} units currently shown in the draft.`
+                  : 'Stock count is still missing from the draft.'}
+              </p>
+            </div>
+            <div className="admin-status-card">
+              <span>Media & options</span>
+              <strong>{galleryImages.length + (form.image.trim() ? 1 : 0)} visual{galleryImages.length + (form.image.trim() ? 1 : 0) === 1 ? '' : 's'}</strong>
+              <p>{merchandisingSummary.assetLabel}</p>
+            </div>
           </div>
-          <div className="admin-status-card">
-            <span>Pricing</span>
-            <strong>{merchandisingSummary.priceLabel}</strong>
-            <p>Sale price, if set, renders as compare-at pricing in the storefront.</p>
-          </div>
-          <div className="admin-status-card">
-            <span>Inventory</span>
-            <strong>{merchandisingSummary.stockLabel}</strong>
-            <p>
-              {Number.isFinite(merchandisingSummary.stockCount)
-                ? `${merchandisingSummary.stockCount} units`
-                : 'Stock count not set'}
-            </p>
-          </div>
-          <div className="admin-status-card">
-            <span>Merchandising assets</span>
-            <strong>{galleryImages.length} images</strong>
-            <p>{merchandisingSummary.assetLabel}</p>
-          </div>
+
+          <section className="admin-dashboard-panel admin-editor-preview-panel">
+            <div className="admin-dashboard-section-heading">
+              <span>Shopper preview</span>
+              <p>Quickly check how the current draft reads before you save or return to Products.</p>
+            </div>
+
+            <div className="admin-editor-preview-card">
+              <div className="admin-editor-preview-media">
+                {form.image.trim() ? (
+                  <ShopOraImage
+                    src={form.image.trim()}
+                    alt={form.name || 'Product preview'}
+                    className="admin-preview-image"
+                    fallbackText="Image coming soon"
+                  />
+                ) : (
+                  <div className="admin-image-preview-empty">
+                    <span>Image coming soon</span>
+                    <p>Add a hosted image URL to preview the shopper-facing hero image here.</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="admin-editor-preview-copy">
+                <div className="status-badges admin-preview-badges">
+                  <span className={`status-badge ${merchandisingSummary.visibility.className}`}>
+                    {merchandisingSummary.visibility.label}
+                  </span>
+                  <span className="status-badge status-badge-muted">{merchandisingSummary.stockLabel}</span>
+                  {form.isSale ? <span className="status-badge status-badge-sale">Sale</span> : null}
+                  {form.isNew ? <span className="status-badge status-active">New</span> : null}
+                </div>
+
+                <strong>{form.name.trim() || 'Untitled product'}</strong>
+                <p className="admin-editor-preview-subtitle">
+                  {[form.brand.trim() || 'Brand pending', form.category.trim() || 'Category pending']
+                    .filter(Boolean)
+                    .join(' / ')}
+                </p>
+                <p className="admin-editor-preview-price">{merchandisingSummary.priceLabel}</p>
+                <p className="admin-preview-hint">{shopperPreviewCopy}</p>
+
+                <div className="admin-editor-preview-meta">
+                  <div>
+                    <span>Department</span>
+                    <strong>{form.department.trim() || 'Unassigned'}</strong>
+                  </div>
+                  <div>
+                    <span>Sizes</span>
+                    <strong>{sizeValues.length ? `${sizeValues.length} listed` : 'Not listed yet'}</strong>
+                  </div>
+                  <div>
+                    <span>Colors</span>
+                    <strong>{colorValues.length ? `${colorValues.length} listed` : 'Not listed yet'}</strong>
+                  </div>
+                </div>
+
+                {shopperPreviewDetails.length ? (
+                  <div className="admin-editor-preview-notes">
+                    <span>Shopper detail cues</span>
+                    <ul>
+                      {shopperPreviewDetails.map((detail) => (
+                        <li key={detail}>{detail}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                <div className="admin-editor-preview-actions">
+                  <Link to="/admin/products" className="text-button">
+                    Return to Products
+                  </Link>
+                  <Link to={previewRoute} className="text-button">
+                    {previewActionLabel}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
         <aside className="admin-editor-readiness-panel">
@@ -637,13 +736,13 @@ export default function ProductFormPage({ mode }) {
       {mode === 'edit' && !existingProduct ? (
         <div className="admin-empty-state">
           <h2>Product not found.</h2>
-          <p>The product you are trying to edit does not exist in the current catalog.</p>
+          <p>The product you are trying to edit is not available in the current catalog view.</p>
           <Link to="/admin/products" className="btn btn-dark">
             Back to Products
           </Link>
         </div>
       ) : (
-        <form className="admin-form-card admin-form" onSubmit={handleSubmit}>
+        <form id="admin-product-editor-form" className="admin-form-card admin-form" onSubmit={handleSubmit}>
           {formError ? <div className="auth-message auth-message-error">{formError}</div> : null}
           {catalogMutationError ? (
             <div className="auth-message auth-message-error">{catalogMutationError}</div>
@@ -652,46 +751,42 @@ export default function ProductFormPage({ mode }) {
           <section className="admin-form-section">
             <div className="admin-form-section-header">
               <h2>Product Basics</h2>
-              <p>Core merchandising fields that define the product in the storefront and keep the readiness panel useful for QA.</p>
-              <p className="field-help">
-                Required fields keep the listing usable in the catalog and product detail pages. Keep the title,
-                brand, SKU, category, and department aligned with storefront naming so QA and discovery stay consistent.
-              </p>
+              <p>Set the core identity shoppers and the admin catalog both rely on.</p>
             </div>
             <div className="admin-form-grid">
               <label>
                 Name
                 <span className="field-help field-required">Required</span>
                 <input name="name" value={form.name} onChange={handleChange} />
-                <span className="field-help">Use the shopper-facing product title, not an internal label.</span>
+                <span className="field-help">Use the shopper-facing title, not an internal shorthand.</span>
                 {errors.name ? <span className="field-error">{errors.name}</span> : null}
               </label>
               <label>
                 Brand
                 <span className="field-help field-required">Required</span>
                 <input name="brand" value={form.brand} onChange={handleChange} />
-                <span className="field-help">Use the exact published brand name shown to shoppers.</span>
+                <span className="field-help">Use the exact brand name shoppers should see.</span>
                 {errors.brand ? <span className="field-error">{errors.brand}</span> : null}
               </label>
               <label>
                 Department
                 <span className="field-help field-required">Required</span>
                 <input name="department" value={form.department} onChange={handleChange} />
-                <span className="field-help">Controls browse navigation and category discovery.</span>
+                <span className="field-help">Controls top-level browsing and category placement.</span>
                 {errors.department ? <span className="field-error">{errors.department}</span> : null}
               </label>
               <label>
                 Category
                 <span className="field-help field-required">Required</span>
                 <input name="category" value={form.category} onChange={handleChange} />
-                <span className="field-help">Pick the closest catalog category for filtering and search.</span>
+                <span className="field-help">Use the closest catalog category for search and filtering.</span>
                 {errors.category ? <span className="field-error">{errors.category}</span> : null}
               </label>
               <label className="full-span">
                 SKU
-                <span className="field-help">Optional, but useful for support, filtering, and readiness tracking.</span>
+                <span className="field-help">Optional, but helpful for support, filtering, and catalog review.</span>
                 <input name="sku" value={form.sku} onChange={handleChange} />
-                <span className="field-help">Keep it short, unique, and stable across product updates.</span>
+                <span className="field-help">Keep it short, unique, and stable across later edits.</span>
                 <button
                   type="button"
                   className="btn btn-ghost btn-small sku-generate-button"
@@ -705,29 +800,65 @@ export default function ProductFormPage({ mode }) {
                   Generate SKU
                 </button>
               </label>
+            </div>
+          </section>
+
+          <section className="admin-form-section">
+            <div className="admin-form-section-header">
+              <h2>Shopper-Facing Details</h2>
+              <p>Fill in the product story and support notes shoppers will use to decide whether to buy.</p>
+            </div>
+            <div className="admin-form-grid">
               <label className="full-span">
                 Product description
-                <span className="field-help">Optional. Keep this concise and shopper-facing.</span>
+                <span className="field-help field-required">Recommended for launch readiness</span>
                 <textarea name="description" rows="4" value={form.description} onChange={handleChange} />
+                <span className="field-help">Use short, readable copy that explains the product quickly.</span>
+              </label>
+              <label className="full-span">
+                Material
+                <input name="material" value={form.material} onChange={handleChange} />
+                <span className="field-help">Optional, but useful when shoppers compare similar items.</span>
+              </label>
+              <label className="full-span">
+                Care
+                <input name="care" value={form.care} onChange={handleChange} />
+                <span className="field-help">Use concise care instructions shoppers can scan quickly.</span>
+              </label>
+              <label className="full-span">
+                Fit type
+                <input name="fit" value={form.fit} onChange={handleChange} />
+                <span className="field-help">A simple fit note often makes the listing easier to trust.</span>
+              </label>
+              <label className="full-span">
+                Details, one per line
+                <textarea name="details" rows="5" value={form.details} onChange={handleChange} />
+                <span className="field-help">Each line becomes a separate shopper-facing bullet.</span>
+              </label>
+              <label className="full-span">
+                Shipping note
+                <textarea name="shippingNote" rows="3" value={form.shippingNote} onChange={handleChange} />
+                <span className="field-help">Optional. Use short, confident fulfillment copy.</span>
+              </label>
+              <label className="full-span">
+                Return note
+                <textarea name="returnNote" rows="3" value={form.returnNote} onChange={handleChange} />
+                <span className="field-help">Optional. Keep the policy language short and readable.</span>
               </label>
             </div>
           </section>
 
           <section className="admin-form-section">
             <div className="admin-form-section-header">
-              <h2>Pricing &amp; Merchandising</h2>
-              <p>Keep the base price and optional sale price aligned with the catalog presentation.</p>
-              <p className="field-help">
-                Ratings and reviews are display-only metadata. Sale price should stay lower than the base price and
-                the readiness panel will flag it if the values do not line up.
-              </p>
+              <h2>Pricing &amp; Inventory</h2>
+              <p>Review what shoppers will pay and whether the listing is ready to stay in stock.</p>
             </div>
             <div className="admin-form-grid">
               <label>
                 Base price
                 <span className="field-help field-required">Required</span>
                 <input name="price" type="number" step="0.01" value={form.price} onChange={handleChange} />
-                <span className="field-help">Required. Use the standard price shown on the storefront.</span>
+                <span className="field-help">Use the everyday price shown on the storefront.</span>
                 {errors.price ? <span className="field-error">{errors.price}</span> : null}
               </label>
               <label>
@@ -742,6 +873,13 @@ export default function ProductFormPage({ mode }) {
                 />
                 <span className="field-help">When used, it should stay below the base price.</span>
                 {errors.salePrice ? <span className="field-error">{errors.salePrice}</span> : null}
+              </label>
+              <label>
+                Stock count
+                <span className="field-help field-required">Required</span>
+                <input name="stockCount" type="number" value={form.stockCount} onChange={handleChange} />
+                <span className="field-help">Use 0 for out of stock. Low stock warnings appear automatically.</span>
+                {errors.stockCount ? <span className="field-error">{errors.stockCount}</span> : null}
               </label>
               <label>
                 Rating
@@ -834,22 +972,10 @@ export default function ProductFormPage({ mode }) {
 
           <section className="admin-form-section">
             <div className="admin-form-section-header">
-              <h2>Stock, Visibility &amp; Flags</h2>
-              <p>Control availability and merchandising badges without touching the storefront code.</p>
-              <p className="field-help">
-                Products without an explicit status remain Active in the admin list. Draft and archived values are
-                shown if they already exist in the catalog data. Stock counts are read by the readiness checklist,
-                and sale or low-stock states will surface in the admin product list.
-              </p>
+              <h2>Category, Options &amp; Merchandising Flags</h2>
+              <p>Review the option set and the lightweight visual flags that affect how the listing is presented.</p>
             </div>
             <div className="admin-form-grid">
-              <label>
-                Stock count
-                <span className="field-help field-required">Required</span>
-                <input name="stockCount" type="number" value={form.stockCount} onChange={handleChange} />
-                <span className="field-help">Use 0 for out of stock. Low stock warnings appear automatically.</span>
-                {errors.stockCount ? <span className="field-error">{errors.stockCount}</span> : null}
-              </label>
               <label>
                 Sizes, comma separated
                 <input name="sizes" value={form.sizes} onChange={handleChange} />
@@ -886,83 +1012,38 @@ export default function ProductFormPage({ mode }) {
                   )}
                 </div>
               </label>
-              <label className="checkbox-row">
-                <input name="isNew" type="checkbox" checked={form.isNew} onChange={handleChange} />
-                New
-              </label>
-              <label className="checkbox-row">
-                <input name="isSale" type="checkbox" checked={form.isSale} onChange={handleChange} />
-                Sale
-              </label>
-              <p className="field-help full-span">
-                These flags only change presentation. They do not alter pricing, inventory, or storefront contracts.
-              </p>
-            </div>
-          </section>
-
-          <section className="admin-form-section">
-            <div className="admin-form-section-header">
-              <h2>Material, Fit &amp; Details</h2>
-              <p>These fields power the product page accordion and detail sections.</p>
-              <p className="field-help">
-                The readiness panel treats these as merchandising enrichments, so adding them makes the listing feel
-                complete even if the base product is already valid. They also give the admin list stronger discovery
-                cues beyond price and stock.
-              </p>
-            </div>
-            <div className="admin-form-grid">
-              <label className="full-span">
-                Material
-                <input name="material" value={form.material} onChange={handleChange} />
-                <span className="field-help">Optional, but helpful for materials-led shopping decisions.</span>
-              </label>
-              <label className="full-span">
-                Care
-                <input name="care" value={form.care} onChange={handleChange} />
-                <span className="field-help">Optional. Use concise care instructions shoppers can scan quickly.</span>
-              </label>
-              <label className="full-span">
-                Fit type
-                <input name="fit" value={form.fit} onChange={handleChange} />
-                <span className="field-help">Optional. A simple fit note makes the listing easier to understand.</span>
-              </label>
-              <label className="full-span">
-                Details, one per line
-                <textarea name="details" rows="5" value={form.details} onChange={handleChange} />
-                <span className="field-help">Each line becomes a separate bullet in the storefront.</span>
-              </label>
-            </div>
-          </section>
-
-          <section className="admin-form-section">
-            <div className="admin-form-section-header">
-              <h2>Shipping &amp; Returns</h2>
-              <p>These notes keep the product page polished without requiring fulfillment integration.</p>
-              <p className="field-help">
-                Short, readable notes help shoppers trust the product page without implying a real shipping backend.
-              </p>
-            </div>
-            <div className="admin-form-grid">
-              <label className="full-span">
-                Shipping note
-                <textarea name="shippingNote" rows="3" value={form.shippingNote} onChange={handleChange} />
-                <span className="field-help">Optional. Use short, confident fulfillment copy.</span>
-              </label>
-              <label className="full-span">
-                Return note
-                <textarea name="returnNote" rows="3" value={form.returnNote} onChange={handleChange} />
-                <span className="field-help">Optional. Keep the policy language short and readable.</span>
-              </label>
+              <div className="admin-flag-panel full-span">
+                <span className="admin-form-section-kicker">Merchandising flags</span>
+                <div className="admin-flag-row">
+                  <label className="checkbox-row">
+                    <input name="isNew" type="checkbox" checked={form.isNew} onChange={handleChange} />
+                    New arrival
+                  </label>
+                  <label className="checkbox-row">
+                    <input name="isSale" type="checkbox" checked={form.isSale} onChange={handleChange} />
+                    Sale
+                  </label>
+                </div>
+                <p className="field-help">
+                  These flags change presentation only. They do not alter pricing, inventory, or save behavior.
+                </p>
+              </div>
             </div>
           </section>
 
           <div className="admin-form-actions">
-            <button type="button" className="btn btn-ghost" onClick={handleCancel}>
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-dark" disabled={isCatalogSaving}>
-              {isCatalogSaving ? 'Saving...' : 'Save Product'}
-            </button>
+            <p className="admin-form-actions-note">
+              Required fields are marked in the form, readiness guidance stays advisory, and save/update behavior
+              remains unchanged.
+            </p>
+            <div className="admin-cta-row">
+              <button type="button" className="btn btn-ghost" onClick={handleCancel}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-dark" disabled={isCatalogSaving}>
+                {isCatalogSaving ? 'Saving...' : 'Save Product'}
+              </button>
+            </div>
           </div>
         </form>
       )}
